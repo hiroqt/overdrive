@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering Skill Author"
+  short_description: "Create and review focused engineering skills"
+  default_prompt: "Use $engineering-skill-author to create or review a focused engineering skill with explicit verification."
