@@ -13,10 +13,14 @@ Global Codex instructions and a focused skill-authoring toolkit for adaptive eng
 | [Spec template](skills/spec-first-tdd/assets/spec-template.md) | Lightweight SDD artifact for multi-part changes without an existing spec |
 | [Spec-First TDD evaluation guide](skills/spec-first-tdd/references/evaluation.md) | Proposed selection and behavior cases for validating the coding workflow |
 | [Token-Efficient Coding](skills/token-efficient-coding/SKILL.md) | Reduce avoidable context and tool-output overhead without limiting useful investigation |
+| [Hiroqt Concise Communication](skills/hiroqt-concise-communication/SKILL.md) | Concise coding-agent replies with evidence, technical detail, and safety clarity preserved |
 | [Hiroqt Frontend Craft](skills/hiroqt-frontend-craft/SKILL.md) | Product-first visual design, interaction, accessibility, SEO, and production workflow |
 | [Frontend inspection script](skills/hiroqt-frontend-craft/scripts/inspect_html.py) | Dependency-free static checks for rendered HTML metadata and basic link, button, and form label signals |
 | [Frontend skill brief and validation](docs/frontend-craft-validation.md) | Scope, decisions, and package verification status |
 | [Current codebase map](docs/CODEBASE_MAP.md) | Source-linked guide to this toolkit repository’s instructions, packages, and validation boundaries |
+| [Hiroqt Concise Communication validation](docs/hiroqt-concise-communication-validation.md) | In-session behavioral probes, outcomes, and evaluation limits |
+| [Skill E2E benchmark](benchmarks/skills-e2e/README.md) | Paired, synthetic Codex CLI benchmark for all installable skills |
+| [Skill E2E benchmark results](docs/skills-e2e-benchmark-results.md) | Actual run outcomes, usage telemetry, and limitations |
 | [Skill template](skills/engineering-skill-author/assets/SKILL.template.md) | Adaptable starting point for a new skill |
 | [Evaluation protocol](skills/engineering-skill-author/references/evaluation.md) | Separate discovery and execution testing with evidence records |
 
@@ -84,6 +88,18 @@ npx skills@latest add . --global --agent codex --skill token-efficient-coding
 ```text
 Use $token-efficient-coding to investigate and implement this task efficiently.
 ```
+
+## Concise communication
+
+Use [Hiroqt Concise Communication](skills/hiroqt-concise-communication/SKILL.md) for compact answers and progress updates that retain technical details, evidence, and uncertainty. It covers response wording; use Token-Efficient Coding for search, tool-output, and context overhead.
+
+Install this skill to Codex with:
+
+```bash
+npx skills@latest add . --global --agent codex --skill hiroqt-concise-communication
+```
+
+Invoke it with `$hiroqt-concise-communication`, or ask for `/concise lite`, `/concise full`, or `/concise ultra`. `/concise off` returns to the host's normal response style. Commands and aliases work only when the host exposes the installed skill; they do not configure host commands by themselves.
 
 The Engineering Skill Author package includes its template, evaluation reference, and optional Codex UI metadata; it has no custom executable helpers. Hiroqt Frontend Craft includes scoped references and a read-only static HTML inspector. Follow each target host’s discovery and invocation rules; portable metadata does not guarantee identical behavior across products.
 

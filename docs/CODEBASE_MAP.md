@@ -6,7 +6,7 @@
 
 - **Project:** Arnel’s Agent Engineering Toolkit, a documentation and installable-skill repository.
 - **Last verified:** 2026-10-15.
-- **Revision / working tree:** base revision `a441758`; working tree contains uncommitted documentation and skill-package changes.
+- **Revision / working tree:** base revision `94bb1b2`; working tree contains uncommitted documentation and skill-package changes.
 - **Primary instructions:** [AGENTS.md](../AGENTS.md).
 
 ## Purpose and architecture
@@ -20,6 +20,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 | Skill authoring capability | Create, revise, or review focused engineering skills | [Engineering Skill Author](../skills/engineering-skill-author/SKILL.md) |
 | Spec-first coding workflow | Specify behavior before code, then test-first implementation | [Spec-First TDD](../skills/spec-first-tdd/SKILL.md) |
 | Token-efficient coding workflow | Targeted retrieval, MCP consideration, bounded outputs, and persistent codebase map maintenance | [Token-Efficient Coding](../skills/token-efficient-coding/SKILL.md) |
+| Concise communication style | Compact answers and progress updates while preserving evidence, technical payloads, uncertainty, and safety clarity | [Hiroqt Concise Communication](../skills/hiroqt-concise-communication/SKILL.md) |
 | Frontend design workflow | Hiroqt’s product-first visual direction, purposeful motion, semantic icon use, accessibility, responsive checks, technical SEO, and static HTML inspection | [Hiroqt Frontend Craft](../skills/hiroqt-frontend-craft/SKILL.md) |
 
 ## Entrypoints and boundaries
@@ -27,8 +28,11 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 - Repository overview, skill usage, and install examples: [README.md](../README.md).
 - Authoring guide and package checklist: [SKILLS.md](../SKILLS.md).
 - Installable capabilities live in `skills/<name>/SKILL.md`; optional Codex UI metadata is in that package’s `agents/openai.yaml`.
+- Concise response style and tool/context efficiency are separate capabilities; the former must not suppress useful retrieval, verification, or exact evidence.
 - Hiroqt Frontend Craft no-dependency HTML inspector and fixtures are in `skills/hiroqt-frontend-craft/scripts/` and `skills/hiroqt-frontend-craft/tests/`.
 - Evaluation records and package-specific validation notes live in `docs/`.
+- The paired skill benchmark and case fixtures live in [benchmarks/skills-e2e/README.md](../benchmarks/skills-e2e/README.md); the actual Codex CLI run and limitations are in [its results record](skills-e2e-benchmark-results.md).
+- [Hiroqt Concise Communication validation](hiroqt-concise-communication-validation.md) records seven in-session behavior probes and separates them from untested host discovery and telemetry claims.
 - Skills provide workflow guidance; they do not install themselves, grant authorization, publish changes, or prove automatic host selection.
 
 ## Commands
@@ -47,3 +51,6 @@ This is primarily a Markdown/YAML toolkit with a small standard-library Python H
 
 - Initial map created on 2026-10-15 from the root instructions, README, skill handbook, package entrypoints, and current Git status.
 - Updated on 2026-10-15 to include Hiroqt Frontend Craft and its static inspection harness.
+- Updated on 2026-10-15 to include Hiroqt Concise Communication and clarify its boundary with Token-Efficient Coding.
+- Updated on 2026-10-15 with the in-session Hiroqt behavior probe and its evaluation limits.
+- Updated on 2026-10-15 with the paired Codex CLI skill benchmark and actual five-skill results.
