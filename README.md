@@ -9,6 +9,11 @@ Global Codex instructions and a focused skill-authoring toolkit for adaptive eng
 | [AGENTS.md](AGENTS.md) | Global engineering defaults, permissions, delegation, harnesses, and private project memory |
 | [SKILLS.md](SKILLS.md) | Skill-writing standard, the 30-point release checklist, and evaluation guidance |
 | [Engineering Skill Author](skills/engineering-skill-author/SKILL.md) | Installable skill for creating, revising, or reviewing engineering skills |
+| [Spec-First TDD](skills/spec-first-tdd/SKILL.md) | Personalized coding workflow: specify behavior, then implement test-first |
+| [Spec template](skills/spec-first-tdd/assets/spec-template.md) | Lightweight SDD artifact for multi-part changes without an existing spec |
+| [Spec-First TDD evaluation guide](skills/spec-first-tdd/references/evaluation.md) | Proposed selection and behavior cases for validating the coding workflow |
+| [Token-Efficient Coding](skills/token-efficient-coding/SKILL.md) | Reduce avoidable context and tool-output overhead without limiting useful investigation |
+| [Current codebase map](docs/CODEBASE_MAP.md) | Source-linked guide to this toolkit repository’s instructions, packages, and validation boundaries |
 | [Skill template](skills/engineering-skill-author/assets/SKILL.template.md) | Adaptable starting point for a new skill |
 | [Evaluation protocol](skills/engineering-skill-author/references/evaluation.md) | Separate discovery and execution testing with evidence records |
 
@@ -47,6 +52,34 @@ using this repository’s existing contracts and validation commands.
 
 ```text
 Use $engineering-skill-author to review this skill package without modifying it.
+```
+
+## Spec-driven, test-first engineering
+
+Use the [spec-first-tdd skill](skills/spec-first-tdd/SKILL.md) for coding requests. It turns the request into a proportionate spec with acceptance checks before implementation, then uses a red-green-refactor loop for behavior changes. It carries Arnel’s preferences for small diffs, existing conventions, preserved unrelated work, and honest verification reports. The skill is guidance; it does not replace higher-priority instructions, repository rules, or task-specific authorization.
+
+Install this skill to Codex with:
+
+```bash
+npx skills@latest add . --global --agent codex --skill spec-first-tdd
+```
+
+```text
+Use $spec-first-tdd to implement the requested behavior.
+```
+
+## Token-efficient coding
+
+Use [token-efficient-coding](skills/token-efficient-coding/SKILL.md) to reduce repeated searches, oversized tool results, and unnecessary context retention while preserving the investigation needed for a correct solution. On first use in a codebase, it creates or extends a source-linked `docs/CODEBASE_MAP.md`; after meaningful code changes and before session handoff, it refreshes that map. It explicitly considers relevant MCP tools and schemas as part of the efficiency decision; it does not optimize token count by skipping useful sources, checks, or domain knowledge.
+
+Install this skill to Codex with:
+
+```bash
+npx skills@latest add . --global --agent codex --skill token-efficient-coding
+```
+
+```text
+Use $token-efficient-coding to investigate and implement this task efficiently.
 ```
 
 The package includes its template, evaluation reference, and optional Codex UI metadata. It requires no custom executable helpers. Follow the target host’s discovery and invocation rules; portable metadata does not guarantee identical behavior across products.
