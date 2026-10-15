@@ -13,6 +13,9 @@ Global Codex instructions and a focused skill-authoring toolkit for adaptive eng
 | [Spec template](skills/spec-first-tdd/assets/spec-template.md) | Lightweight SDD artifact for multi-part changes without an existing spec |
 | [Spec-First TDD evaluation guide](skills/spec-first-tdd/references/evaluation.md) | Proposed selection and behavior cases for validating the coding workflow |
 | [Token-Efficient Coding](skills/token-efficient-coding/SKILL.md) | Reduce avoidable context and tool-output overhead without limiting useful investigation |
+| [Hiroqt Frontend Craft](skills/hiroqt-frontend-craft/SKILL.md) | Product-first visual design, interaction, accessibility, SEO, and production workflow |
+| [Frontend inspection script](skills/hiroqt-frontend-craft/scripts/inspect_html.py) | Dependency-free static checks for rendered HTML metadata and basic link, button, and form label signals |
+| [Frontend skill brief and validation](docs/frontend-craft-validation.md) | Scope, decisions, and package verification status |
 | [Current codebase map](docs/CODEBASE_MAP.md) | Source-linked guide to this toolkit repository’s instructions, packages, and validation boundaries |
 | [Skill template](skills/engineering-skill-author/assets/SKILL.template.md) | Adaptable starting point for a new skill |
 | [Evaluation protocol](skills/engineering-skill-author/references/evaluation.md) | Separate discovery and execution testing with evidence records |
@@ -82,7 +85,19 @@ npx skills@latest add . --global --agent codex --skill token-efficient-coding
 Use $token-efficient-coding to investigate and implement this task efficiently.
 ```
 
-The package includes its template, evaluation reference, and optional Codex UI metadata. It requires no custom executable helpers. Follow the target host’s discovery and invocation rules; portable metadata does not guarantee identical behavior across products.
+The Engineering Skill Author package includes its template, evaluation reference, and optional Codex UI metadata; it has no custom executable helpers. Hiroqt Frontend Craft includes scoped references and a read-only static HTML inspector. Follow each target host’s discovery and invocation rules; portable metadata does not guarantee identical behavior across products.
+
+## Frontend design and production checks
+
+Use [Hiroqt Frontend Craft](skills/hiroqt-frontend-craft/SKILL.md) for new web surfaces, redesigns, visual critiques, or frontend implementation. It prioritizes product-fit visual direction, useful icons and motion, practical accessibility, responsive inspection, technical SEO for public pages, and measured performance guidance. Familiar patterns are critique signals, not blanket bans.
+
+Install it to Codex with:
+
+```bash
+npx skills@latest add . --global --agent codex --skill hiroqt-frontend-craft
+```
+
+For static or server-rendered HTML, the packaged inspector can be run with `python3 skills/hiroqt-frontend-craft/scripts/inspect_html.py <html-file-or-directory>`. It checks a small set of markup signals; browser interaction, visual quality, accessibility, and field performance still need appropriate project-level validation.
 
 ## Validation and limits
 
