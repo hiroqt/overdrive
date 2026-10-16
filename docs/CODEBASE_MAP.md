@@ -21,7 +21,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 | Spec-first coding workflow | Specify behavior before code, then test-first implementation | [Spec-First TDD](../skills/spec-first-tdd/SKILL.md) |
 | Token-efficient coding workflow | Targeted retrieval, MCP consideration, bounded outputs, and persistent codebase map maintenance | [Token-Efficient Coding](../skills/token-efficient-coding/SKILL.md) |
 | Concise communication style | Compact answers and progress updates while preserving evidence, technical payloads, uncertainty, and safety clarity | [Hiroqt Concise Communication](../skills/hiroqt-concise-communication/SKILL.md) |
-| Frontend design workflow | Hiroqt’s product-first visual direction, purposeful motion, semantic icon use, accessibility, responsive checks, technical SEO, and static HTML inspection | [Hiroqt Frontend Craft](../skills/hiroqt-frontend-craft/SKILL.md) |
+| Frontend design workflow | Hiroqt’s product-first visual direction, purposeful motion, semantic icon use, accessibility, responsive checks, technical SEO, static HTML inspection, and applied UX concepts | [Hiroqt Frontend Craft](../skills/hiroqt-frontend-craft/SKILL.md), [Laws of UX source link](../skills/hiroqt-frontend-craft/references/laws-of-ux.md) |
 
 ## Entrypoints and boundaries
 
@@ -54,3 +54,4 @@ This is primarily a Markdown/YAML toolkit with a small standard-library Python H
 - Updated on 2026-10-15 to include Hiroqt Concise Communication and clarify its boundary with Token-Efficient Coding.
 - Updated on 2026-10-15 with the in-session Hiroqt behavior probe and its evaluation limits.
 - Updated on 2026-10-15 with the paired Codex CLI skill benchmark and actual five-skill results.
+- Updated on 2026-10-16 with individual Laws of UX application notes and concept links in the Frontend Craft reference.

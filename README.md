@@ -15,6 +15,7 @@ Global Codex instructions and a focused skill-authoring toolkit for adaptive eng
 | [Token-Efficient Coding](skills/token-efficient-coding/SKILL.md) | Reduce avoidable context and tool-output overhead without limiting useful investigation |
 | [Hiroqt Concise Communication](skills/hiroqt-concise-communication/SKILL.md) | Concise coding-agent replies with evidence, technical detail, and safety clarity preserved |
 | [Hiroqt Frontend Craft](skills/hiroqt-frontend-craft/SKILL.md) | Product-first visual design, interaction, accessibility, SEO, and production workflow |
+| [Laws of UX guide](skills/hiroqt-frontend-craft/references/laws-of-ux.md) | Practical notes on applying 30 UX concepts, with cautions and a direct source link for each concept |
 | [Frontend inspection script](skills/hiroqt-frontend-craft/scripts/inspect_html.py) | Dependency-free static checks for rendered HTML metadata and basic link, button, and form label signals |
 | [Frontend skill brief and validation](docs/frontend-craft-validation.md) | Scope, decisions, and package verification status |
 | [Current codebase map](docs/CODEBASE_MAP.md) | Source-linked guide to this toolkit repository’s instructions, packages, and validation boundaries |
