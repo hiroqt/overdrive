@@ -5,8 +5,8 @@
 ## Identity and status
 
 - **Project:** Arnel’s Agent Engineering Toolkit, a documentation and installable-skill repository.
-- **Last verified:** 2026-10-15.
-- **Revision / working tree:** base revision `94bb1b2`; working tree contains uncommitted documentation and skill-package changes.
+- **Last verified:** 2026-10-17.
+- **Revision / working tree:** base revision `41c4d10d1336a6aa6c4f1f2dbc80d7689cee76d9`; working tree contains README, ignore-rule, benchmark, installer, and documentation changes.
 - **Primary instructions:** [AGENTS.md](../AGENTS.md).
 
 ## Purpose and architecture
@@ -21,23 +21,24 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 | Spec-first coding workflow | Specify behavior before code, then test-first implementation | [Spec-First TDD](../skills/spec-first-tdd/SKILL.md) |
 | Token-efficient coding workflow | Targeted retrieval, MCP consideration, bounded outputs, and persistent codebase map maintenance | [Token-Efficient Coding](../skills/token-efficient-coding/SKILL.md) |
 | Concise communication style | Compact answers and progress updates while preserving evidence, technical payloads, uncertainty, and safety clarity | [Hiroqt Concise Communication](../skills/hiroqt-concise-communication/SKILL.md) |
-| Frontend design workflow | Hiroqt’s product-first visual direction, purposeful motion, semantic icon use, accessibility, responsive checks, technical SEO, static HTML inspection, and applied UX concepts | [Hiroqt Frontend Craft](../skills/hiroqt-frontend-craft/SKILL.md), [Laws of UX source link](../skills/hiroqt-frontend-craft/references/laws-of-ux.md) |
+| Frontend design workflow | Hiroqt’s product-first visual direction, purposeful motion, semantic icon use, accessibility, responsive checks, technical SEO, static HTML inspection, and applied UX concepts | [Hiroqt Frontend Craft](../skills/hiroqt-frontend-craft/SKILL.md), [Laws of UX guide](../skills/hiroqt-frontend-craft/references/laws-of-ux.md) |
 
 ## Entrypoints and boundaries
 
 - Repository overview, skill usage, and install examples: [README.md](../README.md).
+- Animated interactive installer: [scripts/install_skills.py](../scripts/install_skills.py); real project/global install runs and terminal banner capture: [cross-agent installability results](cross-agent-skill-installability-results.md).
 - Authoring guide and package checklist: [SKILLS.md](../SKILLS.md).
 - Installable capabilities live in `skills/<name>/SKILL.md`; optional Codex UI metadata is in that package’s `agents/openai.yaml`.
 - Concise response style and tool/context efficiency are separate capabilities; the former must not suppress useful retrieval, verification, or exact evidence.
 - Hiroqt Frontend Craft no-dependency HTML inspector and fixtures are in `skills/hiroqt-frontend-craft/scripts/` and `skills/hiroqt-frontend-craft/tests/`.
 - Evaluation records and package-specific validation notes live in `docs/`.
-- The paired skill benchmark and case fixtures live in [benchmarks/skills-e2e/README.md](../benchmarks/skills-e2e/README.md); the actual Codex CLI run and limitations are in [its results record](skills-e2e-benchmark-results.md).
+- Actual outcomes from the paired Codex benchmark and cross-agent installation checks are recorded in the [Codex benchmark results](skills-e2e-benchmark-results.md) and [cross-agent installability results](cross-agent-skill-installability-results.md). Local benchmark scripts and synthetic fixtures are excluded by `.gitignore`.
 - [Hiroqt Concise Communication validation](hiroqt-concise-communication-validation.md) records seven in-session behavior probes and separates them from untested host discovery and telemetry claims.
 - Skills provide workflow guidance; they do not install themselves, grant authorization, publish changes, or prove automatic host selection.
 
 ## Commands
 
-This is primarily a Markdown/YAML toolkit with a small standard-library Python HTML inspector and unittest suite under Hiroqt Frontend Craft. Its focused check is `python3 -m unittest skills.hiroqt-frontend-craft.tests.test_inspect_html`; install examples are in [README.md](../README.md). The skill-authoring guide documents package validation; see [skill-author validation evidence](skill-author-validation.md) for prior checks and their limits.
+This is primarily a Markdown/YAML toolkit with small standard-library Python utilities and tests for Frontend Craft. Local benchmark scripts and fixtures are ignored by Git; previous E2E outcomes are retained in [the skill benchmark results](skills-e2e-benchmark-results.md) and [cross-agent installability results](cross-agent-skill-installability-results.md). Install examples are in [README.md](../README.md); see [skill-author validation evidence](skill-author-validation.md) for evidence boundaries.
 
 ## High-value checks and constraints
 
@@ -55,3 +56,6 @@ This is primarily a Markdown/YAML toolkit with a small standard-library Python H
 - Updated on 2026-10-15 with the in-session Hiroqt behavior probe and its evaluation limits.
 - Updated on 2026-10-15 with the paired Codex CLI skill benchmark and actual five-skill results.
 - Updated on 2026-10-16 with individual Laws of UX application notes and concept links in the Frontend Craft reference.
+- Updated on 2026-10-17 with host-specific Agent Skills installation guidance and cross-agent installability E2E.
+- Updated on 2026-10-17 with the animated, interactive Hiroqt installer and actual project/global E2E runs.
+- Updated on 2026-10-17 to exclude local benchmark scripts and fixtures from Git while retaining recorded outcomes.

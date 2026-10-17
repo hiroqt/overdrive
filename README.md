@@ -20,8 +20,8 @@ Global Codex instructions and a focused skill-authoring toolkit for adaptive eng
 | [Frontend skill brief and validation](docs/frontend-craft-validation.md) | Scope, decisions, and package verification status |
 | [Current codebase map](docs/CODEBASE_MAP.md) | Source-linked guide to this toolkit repository’s instructions, packages, and validation boundaries |
 | [Hiroqt Concise Communication validation](docs/hiroqt-concise-communication-validation.md) | In-session behavioral probes, outcomes, and evaluation limits |
-| [Skill E2E benchmark](benchmarks/skills-e2e/README.md) | Paired, synthetic Codex CLI benchmark for all installable skills |
 | [Skill E2E benchmark results](docs/skills-e2e-benchmark-results.md) | Actual run outcomes, usage telemetry, and limitations |
+| [Cross-agent installability results](docs/cross-agent-skill-installability-results.md) | E2E installation and package-resource verification across supported agents |
 | [Skill template](skills/engineering-skill-author/assets/SKILL.template.md) | Adaptable starting point for a new skill |
 | [Evaluation protocol](skills/engineering-skill-author/references/evaluation.md) | Separate discovery and execution testing with evidence records |
 
@@ -39,17 +39,56 @@ Read [SKILLS.md](SKILLS.md) when creating or reviewing a capability. It distingu
 
 `SKILLS.md` is a handbook. It is not an installable skill and should not be pasted into every skill’s entrypoint. Each installable capability lives in its own folder with an exact `SKILL.md` filename.
 
-## Install the authoring skill
+## Install skills across coding agents
 
-This repository is private. Authenticate with GitHub and clone it into a chosen directory:
+Installable folders under [`skills/`](skills/) use the open [Agent Skills format](https://agentskills.io/specification): each contains `SKILL.md` metadata and instructions, with optional bundled references, scripts, or assets. The [Vercel Skills CLI](https://github.com/vercel-labs/skills) installs packages into host-specific directories. A shared format makes packages portable; discovery, activation, slash commands, script execution, and permissions still depend on each host and version.
+
+This repository is private. Authenticate with GitHub CLI, clone the skill source once, then run the installer from the root of the project where you want to use the skills. It shows an animated Hiroqt wordmark, asks whether to install to that project or your user-wide agent folders, then displays the destination and agent list for confirmation. It installs all skill packages to Claude Code, Codex, Gemini CLI, Google Antigravity, Cursor, and Kiro CLI.
 
 ```bash
-gh repo clone hiroqt/agents.md
-cd agents.md
-npx skills@latest add . --global --agent codex --skill engineering-skill-author
+gh repo clone hiroqt/agents.md ~/hiroqt-skills
+cd /path/to/your/project
+python3 ~/hiroqt-skills/scripts/install_skills.py
 ```
 
-Review any existing skill with the same name before approving an overwrite. Alternatively, copy the complete `skills/engineering-skill-author` folder into a supported skill directory without overwriting existing work. Codex documents user skills under `~/.agents/skills` and repository skills under `.agents/skills`; see [local skill discovery](https://learn.chatgpt.com/docs/build-skills).
+Requirements: Python 3, Node.js/npm, and GitHub CLI authentication for this private repository. The selected project is the current working directory. Choose `1` for project-local skill files or `2` for user-wide skill locations, then type `y` to confirm. `Ctrl+C` cancels. In terminals without ANSI color support, or when `NO_COLOR` is set, the logo prints without animation. Update the cloned source with `git -C ~/hiroqt-skills pull` and rerun the installer when you want newer versions.
+
+The installer copies files to avoid skills depending on the source clone after installation. It targets the six listed agents as a set; the Skills CLI controls their host-specific directories. To install a single skill or a different agent set, use the direct Skills CLI command below and replace the skill/agent options as needed.
+
+| Host | Skills CLI target | Common project location | Host-specific discovery check |
+| --- | --- | --- | --- |
+| Claude Code | `claude-code` | `.claude/skills/<name>/SKILL.md` | Run `/skills`; see [Claude skill locations](https://code.claude.com/docs/en/skills). |
+| OpenAI Codex CLI | `codex` | `.agents/skills/<name>/SKILL.md` | Check Codex's available skills; see [Codex skill locations](https://learn.chatgpt.com/docs/build-skills). |
+| Gemini CLI | `gemini-cli` | `.agents/skills/` or `.gemini/skills/` | Run `/skills list`; see [Gemini skill management](https://geminicli.com/docs/cli/using-agent-skills/). |
+| Google Antigravity IDE | `antigravity` | `.agents/skills/<name>/SKILL.md` | Check the agent's Customizations/skills UI; see [Antigravity skill locations](https://antigravity.google/docs/skills). |
+| Cursor | `cursor` | `.agents/skills/` or `.cursor/skills/` | Check Agent skills in Cursor; see [Cursor skill locations](https://cursor.com/help/customization/skills). |
+| Kiro CLI | `kiro-cli` | `.kiro/skills/<name>/SKILL.md` | Check discovered skills in the CLI; see [Kiro Agent Skills](https://kiro.dev/docs/skills/). |
+
+Gemini CLI and Antigravity are separate Google products with different global paths and lifecycle behavior. The installer uses each selected host's supported project path; Antigravity IDE also documents `~/.gemini/config/skills/` for global skills. Kiro IDE supports `.kiro/skills/` and can import a skill folder through its UI; the E2E below tests only the `kiro-cli` installer target, not the IDE import UI. For targets not listed, use only the host's documented Agent Skills folder or import flow. Do not assume a `SKILL.md` file alone enables discovery in every AI coding tool. See the [installer's current supported-agent list](https://github.com/vercel-labs/skills#supported-agents).
+
+### Direct install with the Skills CLI
+
+Run this from the destination project if you need a single skill or a custom agent selection:
+
+```bash
+npx skills@latest add ~/hiroqt-skills --skill hiroqt-frontend-craft --agent codex
+```
+
+Add `--global` for user-wide installation. See [the Skills CLI options](https://github.com/vercel-labs/skills#options).
+
+### Recorded installation checks
+
+The [cross-agent installation results](docs/cross-agent-skill-installability-results.md) record actual Skills CLI package copies, project/global scope runs, and a pseudo-terminal check of the animated installer banner. These results verify installation paths and copied file contents; they do not prove each coding agent activates or follows the skills.
+
+## Install the authoring skill
+
+After cloning the repository, install only the authoring skill to a supported host with:
+
+```bash
+npx skills@latest add . --skill engineering-skill-author --agent <agent-id>
+```
+
+Review existing skills with the same name before confirming an overwrite. Alternatively, import or copy the complete `skills/engineering-skill-author` folder using the target host's documented skill flow.
 
 Invoke it with a focused request:
 
@@ -66,12 +105,6 @@ Use $engineering-skill-author to review this skill package without modifying it.
 
 Use the [spec-first-tdd skill](skills/spec-first-tdd/SKILL.md) for coding requests. It turns the request into a proportionate spec with acceptance checks before implementation, then uses a red-green-refactor loop for behavior changes. It carries Arnel’s preferences for small diffs, existing conventions, preserved unrelated work, and honest verification reports. The skill is guidance; it does not replace higher-priority instructions, repository rules, or task-specific authorization.
 
-Install this skill to Codex with:
-
-```bash
-npx skills@latest add . --global --agent codex --skill spec-first-tdd
-```
-
 ```text
 Use $spec-first-tdd to implement the requested behavior.
 ```
@@ -79,12 +112,6 @@ Use $spec-first-tdd to implement the requested behavior.
 ## Token-efficient coding
 
 Use [token-efficient-coding](skills/token-efficient-coding/SKILL.md) to reduce repeated searches, oversized tool results, and unnecessary context retention while preserving the investigation needed for a correct solution. On first use in a codebase, it creates or extends a source-linked `docs/CODEBASE_MAP.md`; after meaningful code changes and before session handoff, it refreshes that map. It explicitly considers relevant MCP tools and schemas as part of the efficiency decision; it does not optimize token count by skipping useful sources, checks, or domain knowledge.
-
-Install this skill to Codex with:
-
-```bash
-npx skills@latest add . --global --agent codex --skill token-efficient-coding
-```
 
 ```text
 Use $token-efficient-coding to investigate and implement this task efficiently.
@@ -94,12 +121,6 @@ Use $token-efficient-coding to investigate and implement this task efficiently.
 
 Use [Hiroqt Concise Communication](skills/hiroqt-concise-communication/SKILL.md) for compact answers and progress updates that retain technical details, evidence, and uncertainty. It covers response wording; use Token-Efficient Coding for search, tool-output, and context overhead.
 
-Install this skill to Codex with:
-
-```bash
-npx skills@latest add . --global --agent codex --skill hiroqt-concise-communication
-```
-
 Invoke it with `$hiroqt-concise-communication`, or ask for `/concise lite`, `/concise full`, or `/concise ultra`. `/concise off` returns to the host's normal response style. Commands and aliases work only when the host exposes the installed skill; they do not configure host commands by themselves.
 
 The Engineering Skill Author package includes its template, evaluation reference, and optional Codex UI metadata; it has no custom executable helpers. Hiroqt Frontend Craft includes scoped references and a read-only static HTML inspector. Follow each target host’s discovery and invocation rules; portable metadata does not guarantee identical behavior across products.
@@ -107,12 +128,6 @@ The Engineering Skill Author package includes its template, evaluation reference
 ## Frontend design and production checks
 
 Use [Hiroqt Frontend Craft](skills/hiroqt-frontend-craft/SKILL.md) for new web surfaces, redesigns, visual critiques, or frontend implementation. It prioritizes product-fit visual direction, useful icons and motion, practical accessibility, responsive inspection, technical SEO for public pages, and measured performance guidance. Familiar patterns are critique signals, not blanket bans.
-
-Install it to Codex with:
-
-```bash
-npx skills@latest add . --global --agent codex --skill hiroqt-frontend-craft
-```
 
 For static or server-rendered HTML, the packaged inspector can be run with `python3 skills/hiroqt-frontend-craft/scripts/inspect_html.py <html-file-or-directory>`. It checks a small set of markup signals; browser interaction, visual quality, accessibility, and field performance still need appropriate project-level validation.
 
