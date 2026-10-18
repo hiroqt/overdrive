@@ -1,32 +1,30 @@
-# Yhel's (hiroqt) Agent Engineering Toolkit
+# Overdrive
 
-Global Codex instructions and a focused skill-authoring toolkit for adaptive engineering workflows, security, AI evaluation, and durable project context.
+**Hiroqt’s portable AI coding-agent toolkit.** Overdrive combines six focused skills with shared engineering guidance for maintainable code, product-fit frontend work, efficient exploration, and evidence-based delivery.
 
 ## Contents
 
-| File | Purpose |
-| --- | --- |
-| [AGENTS.md](AGENTS.md) | Global engineering defaults, permissions, delegation, harnesses, and private project memory |
-| [SKILLS.md](SKILLS.md) | Skill-writing standard, the 30-point release checklist, and evaluation guidance |
-| [Forge](skills/forge/SKILL.md) | Installable skill for creating, revising, or reviewing engineering skills |
-| [Assert](skills/assert/SKILL.md) | Personalized coding workflow: specify behavior, then implement test-first |
-| [Spec template](skills/assert/assets/spec-template.md) | Lightweight SDD artifact for multi-part changes without an existing spec |
-| [Assert evaluation guide](skills/assert/references/evaluation.md) | Proposed selection and behavior cases for validating the coding workflow |
-| [All skill evaluation summaries](SKILLS.md#evaluation-summaries-for-every-skill) | [D] deterministic, [J] LLM-as-a-judge, and [H] human evaluation conventions for every package |
-| [Prune](skills/prune/SKILL.md) | Reduce avoidable context and tool-output overhead without limiting useful investigation |
-| [Signal](skills/signal/SKILL.md) | Concise coding-agent replies with evidence, technical detail, and safety clarity preserved |
-| [Refactor](skills/refactor/SKILL.md) | Discover each repository stack and improve its components, modules, helpers, and boundaries safely |
-| [Refactor E2E results](docs/refactor-validation.md) | Paired Codex CLI results for refactoring, API and secret protection, and dynamic React/C#/Rust/Python/monorepo inventories |
-| [Render](skills/render/SKILL.md) | Product-first visual design, codebase-level design review, WCAG 2.0/2.2 version-aware accessibility, SEO, and production workflow |
-| [Laws of UX guide](skills/render/references/laws-of-ux.md) | Practical notes on applying 30 UX concepts, with cautions and a direct source link for each concept |
-| [Frontend inspection script](skills/render/scripts/inspect_html.py) | Dependency-free static checks for rendered HTML metadata and basic link, button, and form label signals |
-| [Frontend skill brief and validation](docs/render-validation.md) | Scope, decisions, and package verification status |
-| [Current codebase map](docs/CODEBASE_MAP.md) | Source-linked guide to this toolkit repository’s instructions, packages, and validation boundaries |
-| [Signal validation](docs/signal-validation.md) | In-session behavioral probes, outcomes, and evaluation limits |
-| [Skill E2E benchmark results](docs/skills-e2e-benchmark-results.md) | Actual run outcomes, usage telemetry, and limitations |
-| [Cross-agent installability results](docs/cross-agent-skill-installability-results.md) | E2E installation and package-resource verification across supported agents |
-| [Skill template](skills/forge/assets/SKILL.template.md) | Adaptable starting point for a new skill |
-| [Evaluation protocol](skills/forge/references/evaluation.md) | Separate discovery and execution testing with evidence records |
+| Area | Name | Purpose |
+| --- | --- | --- |
+| Toolkit guide | [Engineering instructions](AGENTS.md) | Shared workflow, permissions, verification, and context guidance |
+| Toolkit guide | [Skill handbook](SKILLS.md) | Authoring standard, release checklist, and evaluation guidance |
+| Overdrive skill | [Forge](skills/forge/SKILL.md) | Create, revise, and review focused engineering skills |
+| Overdrive skill | [Refactor](skills/refactor/SKILL.md) | Map repository-specific structures and improve maintainability safely |
+| Overdrive skill | [Signal](skills/signal/SKILL.md) | Communicate concisely while preserving technical detail and evidence |
+| Overdrive skill | [Render](skills/render/SKILL.md) | Craft product-fit frontend experiences and verify production quality |
+| Overdrive skill | [Assert](skills/assert/SKILL.md) | Specify behavior, then implement test-first |
+| Overdrive skill | [Prune](skills/prune/SKILL.md) | Reduce avoidable search, output, and context overhead |
+| Frontend reference | [Laws of UX](skills/render/references/laws-of-ux.md) | Practical notes and source links for 30 UX concepts |
+| Frontend tool | [HTML inspector](skills/render/scripts/inspect_html.py) | Dependency-free checks for selected HTML metadata and control-label signals |
+| Codebase guide | [Codebase map](docs/CODEBASE_MAP.md) | Source-linked navigation for this repository |
+| Validation record | [Skill benchmark](docs/skills-e2e-benchmark-results.md) | Recorded paired outcomes, telemetry, and limits |
+| Validation record | [Cross-agent installation](docs/cross-agent-skill-installability-results.md) | Recorded installation paths and package-copy checks |
+| Validation record | [Refactor E2E](docs/refactor-validation.md) | Stack inventory, API-boundary, and sensitive-file evidence |
+| Validation record | [Render E2E](docs/render-validation.md) | Frontend review scope, design-choice probe, and evidence limits |
+| Validation record | [Signal probes](docs/signal-validation.md) | Response probes and evaluation limits |
+| Skill resources | [Forge template](skills/forge/assets/SKILL.template.md) · [evaluation protocol](skills/forge/references/evaluation.md) | Starter files for authoring and evaluating skills |
+| Skill resources | [Assert spec template](skills/assert/assets/spec-template.md) · [evaluation guide](skills/assert/references/evaluation.md) | Lightweight specification and behavior cases |
+| Evaluation guide | [All-skill evaluation summaries](SKILLS.md#evaluation-summaries-for-every-skill) | Deterministic, judge-based, and human evaluation conventions |
 
 ## Global instructions
 
@@ -42,9 +40,9 @@ Read [SKILLS.md](SKILLS.md) when creating or reviewing a capability. It distingu
 
 `SKILLS.md` is a handbook. It is not an installable skill and should not be pasted into every skill’s entrypoint. Each installable capability lives in its own folder with an exact `SKILL.md` filename.
 
-## Overdrive skill collection
+## The Overdrive skills
 
-Overdrive is the collection name. The six installable packages keep the standard `skills/<name>/SKILL.md` layout:
+Overdrive is the name of this six-skill collection. Each package is independently installable and follows the standard `skills/<name>/SKILL.md` layout:
 
 ```text
 skills/
