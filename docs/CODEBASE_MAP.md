@@ -5,8 +5,8 @@
 ## Identity and status
 
 - **Project:** Arnel’s Agent Engineering Toolkit, a documentation and installable-skill repository.
-- **Last verified:** 2026-10-18.
-- **Revision / working tree:** seven skill package IDs use the portable `skills/<name>/` layout. Refactor, Assert, Render, Prune, and Forge require code-grounded comment conflict handling; Verify dispatches independent feature unit tests concurrently, shares a run summary before real app E2E, and stores unit and E2E evidence in separate result folders. Local benchmark harness and fixtures remain ignored.
+- **Last verified:** 2026-10-19.
+- **Revision / working tree:** eight skill package IDs use the portable `skills/<name>/` layout. Guard adds approval-gated AI-assisted security review across eight threat families; Verify dispatches independent feature unit tests concurrently, shares a run summary before real app E2E, and stores unit and E2E evidence in separate result folders. Local benchmark harness and fixtures remain ignored.
 - **Primary instructions:** [AGENTS.md](../AGENTS.md).
 
 ## Purpose and architecture
@@ -18,6 +18,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 | Global workflow and permissions | Engineering defaults, SDD/TDD, token/context efficiency, documentation refresh, verification and side-effect boundaries | [AGENTS.md](../AGENTS.md) |
 | Skill authoring standard | Package structure, trigger design, validation and behavioral evaluation expectations | [SKILLS.md](../SKILLS.md) |
 | Skill authoring capability | Create, revise, or review focused engineering skills, including source-grounded handling of comments in code-related skills | [Forge](../skills/forge/SKILL.md) |
+| AI-assisted application security review | Read the repository before judging; inspect eight threat families, rank evidence-based findings, and require explicit approval before changing reviewed application files or environments | [Guard](../skills/guard/SKILL.md), [threat review](../skills/guard/references/threat-review.md), [evaluation](../skills/guard/references/evaluation.md) |
 | Spec-first coding workflow | Specify behavior before code, then test-first implementation; verify comment claims against code and contracts | [Assert](../skills/assert/SKILL.md) |
 | Parallel unit-first application verification | Dispatch isolated feature unit suites concurrently, save and share an aggregate before E2E, then prove the integrated app journey with browser/MCP evidence; separate run folders hold unit summaries and E2E artifacts | [Verify](../skills/verify/SKILL.md), [evaluation](../skills/verify/references/evaluation.md) |
 | Prune workflow | Targeted retrieval, MCP consideration, bounded outputs, source inspection beyond comment matches, and persistent codebase map maintenance | [Prune](../skills/prune/SKILL.md) |
@@ -29,6 +30,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 ## Entrypoints and boundaries
 
 - Repository overview, skill usage, and install examples: [README.md](../README.md).
+- Guard's threat-specific checks and proposed evaluation cases are in `skills/guard/references/`; the behavioral evaluation is proposed and has not been run.
 - Animated interactive installer: [scripts/install_skills.py](../scripts/install_skills.py); real project/global install runs and terminal banner capture: [cross-agent installability results](cross-agent-skill-installability-results.md).
 - Authoring guide and package checklist: [SKILLS.md](../SKILLS.md).
 - Installable capabilities live in `skills/<name>/SKILL.md`; optional Codex UI metadata is in that package’s `agents/openai.yaml`.

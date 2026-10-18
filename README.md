@@ -1,6 +1,6 @@
 # Overdrive
 
-**Hiroqt’s portable AI coding-agent toolkit: source-grounded, stack-aware, test-first, and built for product-fit interfaces.** Overdrive combines seven focused skills with shared guidance for maintainable code, efficient exploration, and evidence-based delivery.
+**Hiroqt’s portable AI coding-agent toolkit: source-grounded, stack-aware, test-first, and built for product-fit interfaces.** Overdrive combines eight focused skills with shared guidance for maintainable code, efficient exploration, and evidence-based delivery.
 
 ## Contents
 
@@ -15,6 +15,7 @@
 | Overdrive skill | [Assert](skills/assert/SKILL.md) | Specify behavior, then implement test-first |
 | Overdrive skill | [Prune](skills/prune/SKILL.md) | Reduce avoidable search, output, and context overhead |
 | Overdrive skill | [Verify](skills/verify/SKILL.md) | Run feature-level unit tests concurrently through swarm, summarize results, then prove the overall app flow end to end |
+| Overdrive skill | [Guard](skills/guard/SKILL.md) | Audit AI-assisted code for security flaws and require approval before repository changes |
 
 ## Global instructions
 
@@ -32,7 +33,7 @@ Read [SKILLS.md](SKILLS.md) when creating or reviewing a capability. It distingu
 
 ## The Overdrive skills
 
-Overdrive is the name of this seven-skill collection. Each package is independently installable and follows the standard `skills/<name>/SKILL.md` layout:
+Overdrive is the name of this eight-skill collection. Each package is independently installable and follows the standard `skills/<name>/SKILL.md` layout:
 
 ```text
 skills/
@@ -42,10 +43,11 @@ skills/
 ├── render/    # product-fit frontend craft
 ├── assert/    # specification-first, test-first coding
 ├── prune/     # efficient repository and context exploration
-└── verify/    # parallel feature unit tests, summaries, and real app E2E proof
+├── verify/    # parallel feature unit tests, summaries, and real app E2E proof
+└── guard/     # AI-assisted code security review and approval-gated remediation
 ```
 
-The package IDs and invocation names are `forge`, `refactor`, `signal`, `render`, `assert`, `prune`, and `verify`. Existing installations under the previous IDs do not migrate automatically; remove any old copies from the target agent before using the renamed package.
+The package IDs and invocation names are `forge`, `refactor`, `signal`, `render`, `assert`, `prune`, `verify`, and `guard`. Existing installations under previous IDs do not migrate automatically; remove any old copies from the target agent before using the renamed package.
 
 ## What makes Overdrive different
 
@@ -54,6 +56,7 @@ Overdrive is built to keep agents grounded in the real codebase and the user's a
 | Bottleneck | Overdrive response | Skill |
 | --- | --- | --- |
 | A stale comment dictates a new implementation | Treat comments as claims. Trace the symbol, callers, tests/contracts, maintained docs, supported APIs, and local patterns. Follow verified architecture and project standards over stale or deprecated recipes; preserve proven domain and safety constraints, and correct stale comments when appropriate. | [Refactor](skills/refactor/SKILL.md), [Assert](skills/assert/SKILL.md), [Render](skills/render/SKILL.md), [Prune](skills/prune/SKILL.md) |
+| An AI repair removes safeguards to make an error disappear | Inspect the repository and diff first; flag removed access checks, validation, TLS verification, safe error handling, rate limits, or policy controls; rank findings and require explicit approval before edits. Review authorization, exposed secrets, dependencies, infrastructure, business rules, AI endpoints, and audit evidence. | [Guard](skills/guard/SKILL.md) |
 | A refactor assumes every repository uses the same stack | Identify languages and frameworks from project files, then map real entrypoints, components, services, types, helpers, tests, and package boundaries before proposing a bounded improvement. | [Refactor](skills/refactor/SKILL.md) |
 | Code is written before the behavior is clear | Define observable acceptance first, then use test-first implementation and report only checks that actually ran. | [Assert](skills/assert/SKILL.md) |
 | Test results are serial, fragmented, or confused with app proof | Dispatch independent feature unit suites concurrently, save and share their aggregate before E2E, then verify the integrated user journey. | [Verify](skills/verify/SKILL.md) |
@@ -153,6 +156,16 @@ Use [Verify](skills/verify/SKILL.md) when you need evidence that changed functio
 
 ```text
 Use $verify to test every changed feature concurrently through swarm, share the unit summary, then launch the app and prove the overall user flow in a browser.
+```
+
+## Guard: AI-assisted application security
+
+Use [Guard](skills/guard/SKILL.md) before generating or repairing security-sensitive code, or to review an existing repository. It reads the source and surrounding architecture before judgment, checks eight threat families, and reports High/Medium/Low findings with evidence and confidence. It focuses on disappearing protections during error fixes, broken authorization, exposed secrets, malicious or hallucinated dependencies, uncontrolled infrastructure, business-logic gaps, direct frontend-to-AI abuse, and missing traceability/security verification. It prepares a safe test-mode alternative when a prompt asks to bypass login, and treats suspicious dependency metadata as a signal to investigate rather than proof of malware.
+
+Guard requires explicit user approval before changing reviewed application files or environments. It cannot intercept prompts, scan every generation pass, or enforce edits unless the host provides configured hooks or scanners; it reports those capability limits rather than claiming automatic protection.
+
+```text
+Use $guard to audit this repository's auth, AI endpoints, dependencies, secrets, and deployment config. Report ranked findings; do not edit files until I approve a concrete plan.
 ```
 
 ## Prune: efficient repository exploration
