@@ -1,5 +1,13 @@
 # Hiroqt evaluation cases
 
+## Evaluation summary
+
+- **[D] Deterministic —** Compare required technical payloads in input/output (commands, paths, identifiers, errors, numbers, negation) and record response length and elapsed time where available. This verifies retention and counts, not clarity or correctness by itself.
+- **[J] LLM as a judge —** Grade saved responses for directness, clarity, requested depth, preserved uncertainty/safety, and absence of unsupported compression claims. Record judge model/settings and pass/fail/partial/not-run; model judgment is not ground truth.
+- **[H] Human —** Review whether a reader can act correctly from the response, especially for ambiguity and safety-sensitive requests. Record reviewer disposition; do not infer user comprehension from brevity.
+
+Effectiveness and accuracy need content review; speed needs recorded elapsed time or telemetry. Cases below are proposed until run.
+
 Run these cases when evaluating skill behavior. They are proposals until executed. Record host, model, settings, skill revision, prompt, observed output, and evidence. Test skill selection separately from behavior after explicit invocation.
 
 | Case | Prompt shape | Expected behavior |

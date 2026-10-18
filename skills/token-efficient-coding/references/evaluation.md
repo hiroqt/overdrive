@@ -1,5 +1,13 @@
 # Token-Efficient Coding Evaluation
 
+## Evaluation summary
+
+- **[D] Deterministic —** Capture success/acceptance, exact file and command counts, and available token/tool/latency telemetry for paired runs with identical task, revision, model, settings, and authorization. This supports measured resource and outcome comparisons; missing telemetry stays unknown.
+- **[J] LLM as a judge —** Grade saved artifacts/traces for task success, relevant caller/test/source coverage, evidence retention, and unsupported shortcuts. Record model/settings and pass/fail/partial/not-run; a judge cannot verify telemetry or replace source checks.
+- **[H] Human —** Review whether retrieval remained sufficient for correctness and security, and whether summaries preserved details needed to continue work. Record reviewer disposition; perceived speed alone is not a measured result.
+
+Effectiveness and accuracy must accompany any efficiency claim; speed requires recorded latency or elapsed time. Cases below are proposals until run.
+
 Read this when testing discovery, measuring the effect of this skill, or revising its retrieval and context rules.
 
 ## Evaluation cases

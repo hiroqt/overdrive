@@ -1,5 +1,13 @@
 # Spec-Driven TDD Skill Evaluation
 
+## Evaluation summary
+
+- **[D] Deterministic —** Run fixture repository tests and inspect event order for spec/acceptance → test edit → expected failure → source edit → passing check. This verifies observable TDD sequence and behavior in that fixture, not general correctness. Compare elapsed time only across equivalent runs.
+- **[J] LLM as a judge —** Grade saved diffs/traces for acceptance coverage, meaningful tests, faithful red-green evidence, scope control, and honest limitations. Record model/settings and pass/fail/partial/not-run; the judge cannot replace test output.
+- **[H] Human —** Review whether cases are product-appropriate, edge paths are covered, and the implementation preserves contracts without over-testing. Record reviewer disposition; human review is not a runtime or broad reliability guarantee.
+
+Effectiveness and accuracy come from test outcomes plus artifact review; speed needs comparable elapsed-time/tool telemetry. Cases below are proposals until run.
+
 Read this when validating selection or execution of `spec-first-tdd`, or when revising its workflow.
 
 ## Cases

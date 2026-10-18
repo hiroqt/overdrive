@@ -27,7 +27,7 @@ Produce one reusable skill package that preserves the user's intent and has an o
 2. Write the capability and selection conditions in the description. Add a boundary where neighboring requests could collide. Keep provider-specific metadata separate; verify optional fields against the target host.
 3. When creating a skill, adapt [assets/SKILL.template.md](assets/SKILL.template.md). Replace placeholders and remove inapplicable sections; the template is not a mandatory outline. When revising, retain useful structure and change the smallest affected rule.
 4. Define inspection, decision, action, verification, review, and completion. Use observable criteria and conditional rules; specify fixed sequences only where deviation creates a concrete risk. Derive commands from actual repository/tool interfaces.
-5. Keep shared instructions in SKILL.md. Package necessary references/assets/scripts inside the skill folder; give every reference a loading condition. Add deterministic scripts only when they improve repeatability, and document dependencies, inputs, outputs, exit codes, side effects, and failure behavior.
+5. Keep shared instructions in SKILL.md. Package necessary references/assets/scripts inside the skill folder; give every reference a loading condition. Each skill package must include `references/evaluation.md` with clearly labeled [D] deterministic, [J] LLM-as-a-judge, and [H] human evaluation summaries. Tailor cases and evidence to the skill; distinguish proposed evaluations from executed results. Add deterministic scripts only when they improve repeatability, and document dependencies, inputs, outputs, exit codes, side effects, and failure behavior.
 6. Include the relevant domain invariants: e.g. tenant isolation for backend review, compatibility for migrations, lifecycle for native systems, grounding/tool limits for AI. Reference architecture/specification sources instead of prescribing unrelated business requirements.
 
 ## Constraints and decisions
@@ -51,3 +51,5 @@ Produce one reusable skill package that preserves the user's intent and has an o
 The intended outputs exist, required structural checks pass, applicable behavior checks have evidence or explicit limitations, protected actions remain authorized, and the result has been reviewed.
 
 Report package paths, trigger/scope, changes, checks actually run, pending evaluations, and invocation/install guidance for the verified host. Update the existing private project context with decisions and lessons; keep personal history and sensitive data out of the distributed package. Publish or install only when requested.
+
+Each skill package must provide a concise summary of deterministic, LLM-as-a-judge, and human evaluation in its linked [evaluation guide](references/evaluation.md).

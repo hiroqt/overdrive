@@ -25,6 +25,16 @@ This guide adapts the supplied 30-point checklist to Arnel's engineering workflo
 | `assets/` | Templates or files used in generated deliverables | Copy/adapt when the task requires them |
 | Architecture, requirements, private `CONTEXT.md` | Product design, acceptance, and resumable task history | Follow repository/global pointers; verify freshness |
 
+## Evaluation summaries for every skill
+
+Every installable `skills/<name>/` package must include `references/evaluation.md`, linked from its `SKILL.md`. Begin that reference with a compact summary using these distinct indicators:
+
+- **[D] Deterministic:** reproducible checks with explicit pass/fail rules, such as tests, schema/package validation, or measured counters. State what the check proves and its limits.
+- **[J] LLM as a judge:** a rubric applied to saved outputs or traces, with task-specific criteria and pass/fail/partial/not-run outcomes. Keep judge model/settings and known subjectivity visible; do not treat a judge score as ground truth.
+- **[H] Human evaluation:** review by a person using observable criteria, with cases requiring judgment and a place to record disposition. Do not imply this occurred unless a reviewer actually did it.
+
+Summarize each method's cases, evidence, and relevance to effectiveness, accuracy, and speed where measurable. Speed means recorded elapsed time or tool/runtime telemetry, not an impression. Mark proposed/not-run evaluations separately from executed results. These are three complementary lenses, not interchangeable proof; avoid inventing a script, score, benchmark, or result when none exists.
+
 `SKILLS.md` is not a discovered skill entrypoint and does not install or activate skills. A real skill needs its own directory and an exact `SKILL.md` filename. See the [Agent Skills specification](https://agentskills.io/specification).
 
 ## 1. Design one capability

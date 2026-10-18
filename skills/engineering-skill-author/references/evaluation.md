@@ -1,5 +1,13 @@
 # Skill Evaluation Protocol
 
+## Evaluation summary
+
+- **[D] Deterministic —** Validate frontmatter, folder/name agreement, resources, links, and scripts; execute scripts against success and failure fixtures. This catches packaging and repeatable behavior defects, but does not establish good skill selection or judgment quality. Track completion time only when a comparable run records it.
+- **[J] LLM as a judge —** Grade saved create/revise/review outputs against scope, trigger fit, correctness, evidence, and forbidden-side-effect criteria. Report pass/fail/partial/not-run and judge model/settings; judge scores are subjective and do not prove actual host discovery.
+- **[H] Human —** Review ambiguous and adversarial cases for appropriate clarification, permission boundaries, maintainability, and usefulness. Record reviewer disposition and concrete evidence; do not report unperformed review as a result.
+
+Effectiveness and accuracy require artifact/action evidence; speed requires recorded elapsed time or tool telemetry. The cases below are proposed until run.
+
 Read this when evaluating a new/revised skill, investigating discovery errors, or checking whether a change improves execution. Use synthetic fixtures and isolated writable workspaces; production services and publication are outside evaluation scope unless separately authorized.
 
 ## Select cases before expanding instructions

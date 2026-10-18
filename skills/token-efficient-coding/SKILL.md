@@ -54,5 +54,6 @@ Complete the requested coding work with less avoidable context processing while 
 ## Optional evaluation guide
 
 For a controlled evaluation or a revision to these rules, read [references/evaluation.md](references/evaluation.md). The cases are proposals until run and recorded.
+The guide summarizes deterministic [D], LLM-as-a-judge [J], and human [H] evaluations separately.
 
 For creating or refreshing the persistent repository map, read [references/codebase-map-maintenance.md](references/codebase-map-maintenance.md); use the packaged [map template](assets/CODEBASE_MAP.template.md) as a starting point, not a substitute for source inspection.

@@ -51,3 +51,4 @@ If test-first execution was blocked by tooling or policy, do not claim full TDD 
 
 - For a multi-part feature without a suitable existing spec, adapt [assets/spec-template.md](assets/spec-template.md). Do not create a separate artifact for a small change if a concise working checklist is enough.
 - For evaluating or revising this skill, read [references/evaluation.md](references/evaluation.md). Its cases are proposals until executed and recorded.
+- The guide summarizes deterministic [D], LLM-as-a-judge [J], and human [H] evaluations separately.

@@ -80,6 +80,7 @@ Explain the risk, consequence, and required action plainly. Return to the select
 
 - For before-and-after examples, read [assets/response-examples.md](assets/response-examples.md) when calibrating tone or explaining the modes.
 - For selection and behavior checks, read [references/evaluation.md](references/evaluation.md) when evaluating or revising this skill. These cases are proposals until actually run.
+- The guide summarizes deterministic [D], LLM-as-a-judge [J], and human [H] evaluations separately.
 
 ## Done
 
