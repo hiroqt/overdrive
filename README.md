@@ -1,6 +1,6 @@
 # Overdrive
 
-**Hiroqt’s portable AI coding-agent toolkit: source-grounded, stack-aware, test-first, and built for product-fit interfaces.** Overdrive combines six focused skills with shared guidance for maintainable code, efficient exploration, and evidence-based delivery.
+**Hiroqt’s portable AI coding-agent toolkit: source-grounded, stack-aware, test-first, and built for product-fit interfaces.** Overdrive combines seven focused skills with shared guidance for maintainable code, efficient exploration, and evidence-based delivery.
 
 ## Contents
 
@@ -14,6 +14,7 @@
 | Overdrive skill | [Render](skills/render/SKILL.md) | Craft product-fit frontend experiences and verify production quality |
 | Overdrive skill | [Assert](skills/assert/SKILL.md) | Specify behavior, then implement test-first |
 | Overdrive skill | [Prune](skills/prune/SKILL.md) | Reduce avoidable search, output, and context overhead |
+| Overdrive skill | [Verify](skills/verify/SKILL.md) | Run focused unit tests first, then prove the real app flow end to end |
 
 ## Global instructions
 
@@ -31,7 +32,7 @@ Read [SKILLS.md](SKILLS.md) when creating or reviewing a capability. It distingu
 
 ## The Overdrive skills
 
-Overdrive is the name of this six-skill collection. Each package is independently installable and follows the standard `skills/<name>/SKILL.md` layout:
+Overdrive is the name of this seven-skill collection. Each package is independently installable and follows the standard `skills/<name>/SKILL.md` layout:
 
 ```text
 skills/
@@ -40,10 +41,11 @@ skills/
 ├── signal/    # concise, evidence-preserving communication
 ├── render/    # product-fit frontend craft
 ├── assert/    # specification-first, test-first coding
-└── prune/     # efficient repository and context exploration
+├── prune/     # efficient repository and context exploration
+└── verify/    # unit-first validation and real app E2E proof
 ```
 
-The package IDs and invocation names are `forge`, `refactor`, `signal`, `render`, `assert`, and `prune`. Existing installations under the previous IDs do not migrate automatically; remove any old copies from the target agent before using the renamed package.
+The package IDs and invocation names are `forge`, `refactor`, `signal`, `render`, `assert`, `prune`, and `verify`. Existing installations under the previous IDs do not migrate automatically; remove any old copies from the target agent before using the renamed package.
 
 ## What makes Overdrive different
 
@@ -54,6 +56,7 @@ Overdrive is built to keep agents grounded in the real codebase and the user's a
 | A stale comment dictates a new implementation | Treat comments as claims. Trace the symbol, callers, tests/contracts, maintained docs, supported APIs, and local patterns. Follow verified architecture and project standards over stale or deprecated recipes; preserve proven domain and safety constraints, and correct stale comments when appropriate. | [Refactor](skills/refactor/SKILL.md), [Assert](skills/assert/SKILL.md), [Render](skills/render/SKILL.md), [Prune](skills/prune/SKILL.md) |
 | A refactor assumes every repository uses the same stack | Identify languages and frameworks from project files, then map real entrypoints, components, services, types, helpers, tests, and package boundaries before proposing a bounded improvement. | [Refactor](skills/refactor/SKILL.md) |
 | Code is written before the behavior is clear | Define observable acceptance first, then use test-first implementation and report only checks that actually ran. | [Assert](skills/assert/SKILL.md) |
+| A green unit suite is mistaken for proof the app works | Require focused unit coverage first, then launch the app and exercise a real browser or authorized MCP user journey. | [Verify](skills/verify/SKILL.md) |
 | Progress updates bury decisions in filler | Keep communication concise while retaining technical payloads, evidence, uncertainty, and safety details. | [Signal](skills/signal/SKILL.md) |
 | A frontend looks generic or ignores user context | Fit the design to the product, apply relevant Laws of UX concepts, inspect responsive and accessible states, and distinguish source checks from browser evidence. | [Render](skills/render/SKILL.md) |
 | Token saving cuts out useful investigation | Bound searches and tool output while expanding retrieval when evidence, risk, or uncertainty requires it. | [Prune](skills/prune/SKILL.md) |
@@ -71,6 +74,8 @@ Overdrive keeps measured results separate from product claims. The linked record
 - [Cross-agent installation checks](docs/cross-agent-skill-installability-results.md): the recorded CLI runs verified installation paths and copied files, but did not prove that each host automatically selects or follows the skills.
 
 The source-grounded comment policy is newly added and has **not yet had a dedicated behavioral E2E benchmark**. The results above are historical runs from before the package rename and this policy update; see each record for details.
+
+Verify is newly added. Its unit-first sequence, real-app E2E gate, and permission behavior are specified in the skill and evaluation guide, but have not yet been independently behaviorally evaluated.
 
 ## Install skills across coding agents
 
@@ -140,6 +145,14 @@ Use the [assert skill](skills/assert/SKILL.md) for coding requests. It turns the
 
 ```text
 Use $assert to implement the requested behavior.
+```
+
+## Verify: unit tests, then real app E2E
+
+Use [Verify](skills/verify/SKILL.md) when you need evidence that changed functions/features pass focused unit tests and the running app completes a real user journey. For web apps, it requires browser interaction with the running app; mocked API calls, component tests, a successful build, or a health check do not count as E2E proof. It asks before tests involving authenticated accounts, external services, or shared state, and reports incomplete status when a gate fails or permission is unavailable.
+
+```text
+Use $verify to test each changed feature, then launch the app and prove the user flow in a browser.
 ```
 
 ## Prune: efficient repository exploration

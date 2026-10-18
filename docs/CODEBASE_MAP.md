@@ -6,7 +6,7 @@
 
 - **Project:** Arnel’s Agent Engineering Toolkit, a documentation and installable-skill repository.
 - **Last verified:** 2026-10-18.
-- **Revision / working tree:** the six skill package IDs are `forge`, `refactor`, `signal`, `render`, `assert`, and `prune`, using the portable `skills/<name>/` layout. Refactor, Assert, Render, Prune, and Forge now require code-grounded comment conflict handling. Local benchmark harness and fixtures remain ignored.
+- **Revision / working tree:** seven skill package IDs use the portable `skills/<name>/` layout. Refactor, Assert, Render, Prune, and Forge require code-grounded comment conflict handling; Verify coordinates unit-first and real app E2E validation with permission gates. Local benchmark harness and fixtures remain ignored.
 - **Primary instructions:** [AGENTS.md](../AGENTS.md).
 
 ## Purpose and architecture
@@ -19,6 +19,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 | Skill authoring standard | Package structure, trigger design, validation and behavioral evaluation expectations | [SKILLS.md](../SKILLS.md) |
 | Skill authoring capability | Create, revise, or review focused engineering skills, including source-grounded handling of comments in code-related skills | [Forge](../skills/forge/SKILL.md) |
 | Spec-first coding workflow | Specify behavior before code, then test-first implementation; verify comment claims against code and contracts | [Assert](../skills/assert/SKILL.md) |
+| Unit-first application verification | Map changed features to focused unit cases, run the actual app, and prove a user journey with browser/MCP evidence after unit success | [Verify](../skills/verify/SKILL.md), [evaluation](../skills/verify/references/evaluation.md) |
 | Prune workflow | Targeted retrieval, MCP consideration, bounded outputs, source inspection beyond comment matches, and persistent codebase map maintenance | [Prune](../skills/prune/SKILL.md) |
 | Concise communication style | Compact answers and progress updates while preserving evidence, technical payloads, uncertainty, and safety clarity | [Signal](../skills/signal/SKILL.md) |
 | Codebase maintainability workflow | Dynamically inventory language-specific components, modules, helpers, tests, and monorepo boundaries; improve structure with explicit API confirmation and sensitive-file protection; resolve comment conflicts against verified code, contracts, and project conventions | [Refactor](../skills/refactor/SKILL.md) |
@@ -42,7 +43,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 
 ## Commands
 
-This is primarily a Markdown/YAML toolkit with small standard-library Python utilities and tests for Render. Local benchmark scripts and fixtures are ignored by Git; previous E2E outcomes are retained in [the skill benchmark results](skills-e2e-benchmark-results.md) and [cross-agent installability results](cross-agent-skill-installability-results.md). Install examples are in [README.md](../README.md); see [Forge validation evidence](forge-validation.md) for evidence boundaries.
+This is primarily a Markdown/YAML toolkit with small standard-library Python utilities and tests for Render. Verify is an instruction-only testing workflow; its behavioral evaluation cases are proposed, not executed. Local benchmark scripts and fixtures are ignored by Git; previous E2E outcomes are retained in [the skill benchmark results](skills-e2e-benchmark-results.md) and [cross-agent installability results](cross-agent-skill-installability-results.md). Install examples are in [README.md](../README.md); see [Forge validation evidence](forge-validation.md) for evidence boundaries.
 
 ## High-value checks and constraints
 
@@ -68,5 +69,6 @@ This is primarily a Markdown/YAML toolkit with small standard-library Python uti
 - Updated on 2026-10-17 with Refactor and its API confirmation and sensitive-file protections.
 - Updated on 2026-10-18 with stack-neutral structure assessment guidance and paired Codex E2E evidence across React/TypeScript, C#/ASP.NET Core, Rust, Python, and a mixed React/C# monorepo.
 - Updated on 2026-10-18 with paired Render design-choice and WCAG 2.0 source-review evidence.
-- Updated on 2026-10-18 with the Overdrive collection label and six renamed package IDs; prior validation records remain explicitly historical.
+- Updated on 2026-10-18 with the Overdrive collection label and renamed package IDs; prior validation records remain explicitly historical.
 - Updated on 2026-10-18 with source-grounded comment conflict handling across code-authoring, refactoring, frontend, and repository-retrieval skills.
+- Updated on 2026-10-18 with Verify, a unit-first workflow for permission-aware real-app end-to-end evidence.
