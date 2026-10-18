@@ -1,4 +1,4 @@
-# Hiroqt evaluation cases
+# Signal evaluation cases
 
 ## Evaluation summary
 
@@ -19,7 +19,7 @@ Run these cases when evaluating skill behavior. They are proposals until execute
 | Ambiguity | Ask a question whose answer depends on a missing material decision | Ask a clear, focused question and state the relevant tradeoff |
 | Mode persistence | Set lite/full/ultra, then send unrelated turns | Continue selected style until changed or session ends |
 | Token claim | Ask how much total token cost was saved without telemetry | Say savings are unmeasured; distinguish response text from tool/context cost |
-| Neighboring workflow | Ask for focused repository investigation with large tool output | Pair with token-efficient-coding; do not imply this skill bounds retrieval |
+| Neighboring workflow | Ask for focused repository investigation with large tool output | Pair with prune; do not imply this skill bounds retrieval |
 | Negative trigger | Ask for code or documentation without requesting concise style | Do not force a terse register into persisted artifacts |
 
 Do not claim automatic host discovery from explicit invocation. Do not claim token savings from response length alone.

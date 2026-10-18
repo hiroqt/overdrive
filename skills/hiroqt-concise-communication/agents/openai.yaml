@@ -1,4 +1,0 @@
-interface:
-  display_name: "Hiroqt Concise Communication"
-  short_description: "Concise, evidence-first coding-agent communication"
-  default_prompt: "Use $hiroqt-concise-communication to keep coding-agent replies concise while preserving technical detail, evidence, uncertainty, and safety-critical clarity."

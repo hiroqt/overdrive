@@ -1,0 +1,4 @@
+interface:
+  display_name: "Signal"
+  short_description: "Concise, evidence-first coding-agent communication"
+  default_prompt: "Use $signal to keep coding-agent replies concise while preserving technical detail, evidence, uncertainty, and safety-critical clarity."

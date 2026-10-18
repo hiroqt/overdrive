@@ -1,4 +1,6 @@
-# Hiroqt Concise Communication validation
+# Signal validation
+
+This validation record predates the package rename. Its recorded probes used the previous package ID; no behavioral E2E was rerun under the new ID.
 
 ## Result
 
@@ -10,7 +12,7 @@ This is a direct, single-session behavior check, not a blind or independent eval
 
 - **Host:** Codex conversation.
 - **Model:** GPT-6 family; exact serving snapshot and decoding settings were not exposed.
-- **Skill:** `skills/hiroqt-concise-communication/SKILL.md`, read and applied explicitly to synthetic prompts in this conversation.
+- **Skill:** `skills/signal/SKILL.md`, read and applied explicitly to synthetic prompts in this conversation.
 - **Base revision:** `94bb1b2`; the skill and this record are uncommitted working-tree files.
 - **Method:** For each prompt below, generate an answer while applying the skill and inspect the output against the acceptance points. This is author-run and not blinded.
 
@@ -78,7 +80,7 @@ This is a direct, single-session behavior check, not a blind or independent eval
 - Cross-turn mode persistence in a fresh session, other modes across separate host sessions, or consistency across repeated runs/models.
 - Blind or independent scoring. The author generated and assessed the examples.
 - Baseline comparison, provider token telemetry, total cost, or token savings.
-- Whether the `/concise` aliases are registered by a target host; the skill describes them but does not configure commands.
+- Whether the `/signal` aliases are registered by a target host; the skill describes them but does not configure commands.
 
 ## Structural checks
 
