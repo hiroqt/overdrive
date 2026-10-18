@@ -1,0 +1,4 @@
+interface:
+  display_name: "Verify"
+  short_description: "Unit tests first, real end-to-end proof second"
+  default_prompt: "Use $verify to run focused unit tests first, then prove the app's real user flow end to end with clear evidence and permission gates."
