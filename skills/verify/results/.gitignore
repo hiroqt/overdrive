@@ -1,0 +1,3 @@
+# Keep generated run evidence local unless a user explicitly asks to commit it.
+/feature-summaries/*/
+/e2e/*/

@@ -1,4 +1,4 @@
 interface:
   display_name: "Verify"
-  short_description: "Unit tests first, real end-to-end proof second"
-  default_prompt: "Use $verify to run focused unit tests first, then prove the app's real user flow end to end with clear evidence and permission gates."
+  short_description: "Parallel unit tests, then real end-to-end proof"
+  default_prompt: "Use $verify to run each feature's unit tests in parallel through the swarm, summarize their results, then prove the overall app flow end to end with evidence and permission gates."
