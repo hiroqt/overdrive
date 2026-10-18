@@ -58,7 +58,7 @@ For example, a **migration-review** skill can identify compatibility risks and p
 ## 2. Package for the target host
 
 ```text
-engineering-skill-author/
+forge/
 ├── SKILL.md
 ├── agents/openai.yaml          # Optional Codex UI metadata
 ├── assets/SKILL.template.md     # A template used to create another skill
@@ -186,7 +186,7 @@ Build a small case set before expanding the instructions:
 
 Record prompt, fixture, model/settings, skill revision, expected behavior, observed selection/actions, loaded resources, results, and evidence path. Track selection errors separately from output defects. Use successful/unsuccessful checks as evidence; small samples do not justify claims of reliability across every model or host.
 
-Behavioral evaluation may be manual or implemented in the actual harness. Do not invent a test-runner command or mark scenarios as executed when only written. The bundled [evaluation protocol](skills/engineering-skill-author/references/evaluation.md) gives practical cases for the authoring skill.
+Behavioral evaluation may be manual or implemented in the actual harness. Do not invent a test-runner command or mark scenarios as executed when only written. The bundled [evaluation protocol](skills/forge/references/evaluation.md) gives practical cases for the authoring skill.
 
 ## 9. Release checklist
 
@@ -233,4 +233,4 @@ Report the artifact paths, trigger/scope, checks actually run, known limitations
 
 After meaningful use, record a concise lesson in the project's private `CONTEXT.md`: observed failure, evidence, proposed correction, and validation status. Improve the smallest affected rule/check; do not autonomously rewrite global permissions, retain transcripts, or copy confidential data into the skill. Re-evaluate affected cases after changes and keep an explicit revision identity.
 
-For a new skill, adapt the [authoring template](skills/engineering-skill-author/assets/SKILL.template.md) and remove inapplicable sections. The [installable authoring skill](skills/engineering-skill-author/SKILL.md) applies this process without loading this entire handbook on every task.
+For a new skill, adapt the [authoring template](skills/forge/assets/SKILL.template.md) and remove inapplicable sections. The [installable authoring skill](skills/forge/SKILL.md) applies this process without loading this entire handbook on every task.

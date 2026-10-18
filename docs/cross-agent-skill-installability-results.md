@@ -1,5 +1,7 @@
 # Cross-agent skill installability E2E
 
+These installation runs predate the package rename and exercised five packages under their previous IDs. The renamed package paths and IDs have not been reinstalled or checked in this rename task.
+
 ## Outcome
 
 Passed: all five installable skill packages were installed by the Vercel Skills CLI into six isolated project workspaces and every source package file was present and byte-identical in its target folder.
