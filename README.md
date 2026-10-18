@@ -12,9 +12,12 @@ Global Codex instructions and a focused skill-authoring toolkit for adaptive eng
 | [Spec-First TDD](skills/spec-first-tdd/SKILL.md) | Personalized coding workflow: specify behavior, then implement test-first |
 | [Spec template](skills/spec-first-tdd/assets/spec-template.md) | Lightweight SDD artifact for multi-part changes without an existing spec |
 | [Spec-First TDD evaluation guide](skills/spec-first-tdd/references/evaluation.md) | Proposed selection and behavior cases for validating the coding workflow |
+| [All skill evaluation summaries](SKILLS.md#evaluation-summaries-for-every-skill) | [D] deterministic, [J] LLM-as-a-judge, and [H] human evaluation conventions for every package |
 | [Token-Efficient Coding](skills/token-efficient-coding/SKILL.md) | Reduce avoidable context and tool-output overhead without limiting useful investigation |
 | [Hiroqt Concise Communication](skills/hiroqt-concise-communication/SKILL.md) | Concise coding-agent replies with evidence, technical detail, and safety clarity preserved |
-| [Hiroqt Frontend Craft](skills/hiroqt-frontend-craft/SKILL.md) | Product-first visual design, interaction, accessibility, SEO, and production workflow |
+| [Hiroqt Codebase Evolution](skills/hiroqt-codebase-evolution/SKILL.md) | Discover each repository stack and improve its components, modules, helpers, and boundaries safely |
+| [Hiroqt Codebase Evolution E2E results](docs/hiroqt-codebase-evolution-validation.md) | Paired Codex CLI results for refactoring, API and secret protection, and dynamic React/C#/Rust/Python/monorepo inventories |
+| [Hiroqt Frontend Craft](skills/hiroqt-frontend-craft/SKILL.md) | Product-first visual design, codebase-level design review, WCAG 2.0/2.2 version-aware accessibility, SEO, and production workflow |
 | [Laws of UX guide](skills/hiroqt-frontend-craft/references/laws-of-ux.md) | Practical notes on applying 30 UX concepts, with cautions and a direct source link for each concept |
 | [Frontend inspection script](skills/hiroqt-frontend-craft/scripts/inspect_html.py) | Dependency-free static checks for rendered HTML metadata and basic link, button, and form label signals |
 | [Frontend skill brief and validation](docs/frontend-craft-validation.md) | Scope, decisions, and package verification status |
@@ -115,6 +118,14 @@ Use [token-efficient-coding](skills/token-efficient-coding/SKILL.md) to reduce r
 
 ```text
 Use $token-efficient-coding to investigate and implement this task efficiently.
+```
+
+## Codebase structure and maintainability
+
+Use [Hiroqt Codebase Evolution](skills/hiroqt-codebase-evolution/SKILL.md) to identify each repository's languages/frameworks and map the structures they actually use: composition roots and entrypoints, UI/domain components, contracts and types, state and services, data adapters, helpers/extensions, and tests. Examples include React components/hooks/services, C# projects/DI/controllers/domain types/extensions, Rust crates/modules/traits/helpers, Python packages/classes/protocols, and equivalent constructs in other stacks. For monorepos, it maps each app/package separately and traces boundaries between them. It makes incremental, evidence-based maintainability improvements while preserving behavior and local conventions. Sensitive files such as `.env` files stay protected; API or contract restructuring needs your explicit confirmation. Each invocation reassesses the current codebase; the skill does not run continuously in the background.
+
+```text
+Use $hiroqt-codebase-evolution to assess this repository and make the next safe, high-value maintainability improvement.
 ```
 
 ## Concise communication
