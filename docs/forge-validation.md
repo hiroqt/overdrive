@@ -1,4 +1,6 @@
-# Engineering Skill Author — Validation Record
+# Forge — Validation Record
+
+This validation record predates the package rename. Its recorded checks used the previous package ID; no behavioral E2E was rerun under the new ID.
 
 Date: 2026-10-06 (Asia/Manila).
 
@@ -10,7 +12,7 @@ Skill entrypoint SHA-256: `266e22464bce3aef6b57e0e355a4ee9c3353aa3b2c9f50993ed79
 | --- | --- | --- |
 | Bundled skill-creator validator | Pass | Parsed frontmatter and checked required format/scaffold constraints |
 | Additional package checks | Pass | YAML parser checked names/limits and Codex UI prompt; all local Markdown resource links resolved |
-| Installer discovery | Pass | `npx --yes skills@latest add ./work/github-agents --list` found exactly `engineering-skill-author`; no installation performed |
+| Installer discovery | Pass | `npx --yes skills@latest add ./work/github-agents --list` found exactly `forge`; no installation performed |
 | Independent document review | No actionable findings | Reviewed handbook, package, README, and consistency with global agreements |
 | Metadata-only selection probe | Expected boundaries observed | Six requests separated authoring, installation, frontend implementation, migration review, and ambiguity; this was a simulation, not host automatic discovery |
 | Isolated explicit authoring invocation | Pass for the supplied task | Independent worker created a focused API-contract-review package from synthetic OpenAPI conventions, with local reporting and read-only boundaries |
@@ -29,4 +31,4 @@ The generated package preserved compatibility review and server/tenant authoriza
 - Other planned adversarial, partial-failure, and review-only cases in the evaluation protocol.
 - Substantive execution of the newly generated API-contract-review skill: empty paths and no baseline cannot exercise compatibility or authorization changes.
 
-This record establishes structural checks and one explicit authoring exercise. It does not establish broad reliability, security guarantees, or measured performance improvement. Use the [evaluation protocol](../skills/engineering-skill-author/references/evaluation.md) to add evidence from actual use.
+This record establishes structural checks and one explicit authoring exercise. It does not establish broad reliability, security guarantees, or measured performance improvement. Use the [evaluation protocol](../skills/forge/references/evaluation.md) to add evidence from actual use.

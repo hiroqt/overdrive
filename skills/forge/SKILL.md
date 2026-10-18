@@ -1,5 +1,5 @@
 ---
-name: engineering-skill-author
+name: forge
 description: >-
   Create, revise, or review focused engineering agent skills with precise
   triggers, repository-aware workflows, bounded permissions, and evidence-based
@@ -8,7 +8,7 @@ description: >-
   installing unrelated third-party skills.
 ---
 
-# Engineering Skill Author
+# Forge
 
 ## Outcome and scope
 

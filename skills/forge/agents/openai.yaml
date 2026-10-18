@@ -1,0 +1,4 @@
+interface:
+  display_name: "Forge"
+  short_description: "Create and review focused engineering skills"
+  default_prompt: "Use $forge to create or review a focused engineering skill with explicit verification."
