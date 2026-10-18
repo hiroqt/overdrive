@@ -1,5 +1,5 @@
 ---
-name: hiroqt-frontend-craft
+name: render
 description: >-
   Design, implement, redesign, or review web frontends with a clear product-fit
   visual direction, distinctive composition, polished interactions, and
@@ -9,7 +9,7 @@ description: >-
   the existing stack and brand; excludes backend-only and native-app work.
 ---
 
-# Hiroqt Frontend Craft
+# Render
 
 ## Outcome
 

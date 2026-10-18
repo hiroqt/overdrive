@@ -1,4 +1,0 @@
-interface:
-  display_name: "Hiroqt Frontend Craft"
-  short_description: "Distinctive, accessible, production-checked web UI"
-  default_prompt: "Use $hiroqt-frontend-craft to design or improve this web interface with a product-fit visual direction and verified responsive, accessibility, performance, and SEO checks."

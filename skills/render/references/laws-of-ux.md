@@ -1,6 +1,6 @@
 # Laws of UX: concept notes for frontend craft
 
-This guide translates the 30 concepts currently listed on [Laws of UX](https://lawsofux.com/) into practical frontend design prompts. Use it during Hiroqt Frontend Craft's UX pass: inspect the user's task, select only relevant concepts, turn them into specific interface decisions, and check the result against the task and available evidence.
+This guide translates the 30 concepts currently listed on [Laws of UX](https://lawsofux.com/) into practical frontend design prompts. Use it during Render's UX pass: inspect the user's task, select only relevant concepts, turn them into specific interface decisions, and check the result against the task and available evidence.
 
 These concepts are heuristics and descriptions of tendencies. They are not deterministic laws, accessibility standards, or substitutes for usability research. A principle should never override user intent, accessibility, safety, data integrity, or the product's actual requirements. Each section ends with a direct link to its Laws of UX concept page, where examples, origins, and further reading are maintained.
 
@@ -304,7 +304,7 @@ These concepts are heuristics and descriptions of tendencies. They are not deter
 
 **Supporting link:** [Zeigarnik Effect — Laws of UX](https://lawsofux.com/zeigarnik-effect/)
 
-## Apply the concepts in Hiroqt Frontend Craft
+## Apply the concepts in Render
 
 For each frontend task:
 

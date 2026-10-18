@@ -1,0 +1,4 @@
+interface:
+  display_name: "Render"
+  short_description: "Distinctive, accessible, production-checked web UI"
+  default_prompt: "Use $render to design or improve this web interface with a product-fit visual direction and verified responsive, accessibility, performance, and SEO checks."

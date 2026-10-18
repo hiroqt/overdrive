@@ -1,4 +1,4 @@
-# Hiroqt Frontend Craft Evaluation
+# Render Evaluation
 
 ## Evaluation summary
 
@@ -14,8 +14,8 @@ Read this when checking that the skill is selected for relevant tasks and that i
 
 | Request | Expected routing |
 | --- | --- |
-| New marketing page or public website | Select Hiroqt Frontend Craft |
-| Dashboard visual refinement | Select Hiroqt Frontend Craft, emphasize operational clarity and responsive/accessibility checks |
+| New marketing page or public website | Select Render |
+| Dashboard visual refinement | Select Render, emphasize operational clarity and responsive/accessibility checks |
 | Backend-only API work | Do not select |
 | Pure SEO audit with no UI change | Route to SEO capability; this skill may assist only if rendering/metadata implementation is requested |
 | Native Flutter screen | Do not force web patterns; use native UI capability |
