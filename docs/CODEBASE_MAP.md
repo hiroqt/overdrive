@@ -6,7 +6,7 @@
 
 - **Project:** Arnel’s Agent Engineering Toolkit, a documentation and installable-skill repository.
 - **Last verified:** 2026-10-18.
-- **Revision / working tree:** seven skill package IDs use the portable `skills/<name>/` layout. Refactor, Assert, Render, Prune, and Forge require code-grounded comment conflict handling; Verify coordinates unit-first and real app E2E validation with permission gates. Local benchmark harness and fixtures remain ignored.
+- **Revision / working tree:** seven skill package IDs use the portable `skills/<name>/` layout. Refactor, Assert, Render, Prune, and Forge require code-grounded comment conflict handling; Verify dispatches independent feature unit tests concurrently, shares a run summary before real app E2E, and stores unit and E2E evidence in separate result folders. Local benchmark harness and fixtures remain ignored.
 - **Primary instructions:** [AGENTS.md](../AGENTS.md).
 
 ## Purpose and architecture
@@ -19,7 +19,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 | Skill authoring standard | Package structure, trigger design, validation and behavioral evaluation expectations | [SKILLS.md](../SKILLS.md) |
 | Skill authoring capability | Create, revise, or review focused engineering skills, including source-grounded handling of comments in code-related skills | [Forge](../skills/forge/SKILL.md) |
 | Spec-first coding workflow | Specify behavior before code, then test-first implementation; verify comment claims against code and contracts | [Assert](../skills/assert/SKILL.md) |
-| Unit-first application verification | Map changed features to focused unit cases, run the actual app, and prove a user journey with browser/MCP evidence after unit success | [Verify](../skills/verify/SKILL.md), [evaluation](../skills/verify/references/evaluation.md) |
+| Parallel unit-first application verification | Dispatch isolated feature unit suites concurrently, save and share an aggregate before E2E, then prove the integrated app journey with browser/MCP evidence; separate run folders hold unit summaries and E2E artifacts | [Verify](../skills/verify/SKILL.md), [evaluation](../skills/verify/references/evaluation.md) |
 | Prune workflow | Targeted retrieval, MCP consideration, bounded outputs, source inspection beyond comment matches, and persistent codebase map maintenance | [Prune](../skills/prune/SKILL.md) |
 | Concise communication style | Compact answers and progress updates while preserving evidence, technical payloads, uncertainty, and safety clarity | [Signal](../skills/signal/SKILL.md) |
 | Codebase maintainability workflow | Dynamically inventory language-specific components, modules, helpers, tests, and monorepo boundaries; improve structure with explicit API confirmation and sensitive-file protection; resolve comment conflicts against verified code, contracts, and project conventions | [Refactor](../skills/refactor/SKILL.md) |
@@ -72,3 +72,4 @@ This is primarily a Markdown/YAML toolkit with small standard-library Python uti
 - Updated on 2026-10-18 with the Overdrive collection label and renamed package IDs; prior validation records remain explicitly historical.
 - Updated on 2026-10-18 with source-grounded comment conflict handling across code-authoring, refactoring, frontend, and repository-retrieval skills.
 - Updated on 2026-10-18 with Verify, a unit-first workflow for permission-aware real-app end-to-end evidence.
+- Updated on 2026-10-18 with Verify's concurrent swarm unit phase, pre-E2E aggregate summary, and separate feature-summary and E2E result folders.
