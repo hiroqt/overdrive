@@ -6,25 +6,14 @@
 
 | Area | Name | Purpose |
 | --- | --- | --- |
-| Toolkit guide | [Engineering instructions](AGENTS.md) | Shared workflow, permissions, verification, and context guidance |
-| Toolkit guide | [Skill handbook](SKILLS.md) | Authoring standard, release checklist, and evaluation guidance |
+| Toolkit | [Engineering instructions](AGENTS.md) | Shared workflow, permissions, verification, and context guidance |
+| Toolkit | [Skill handbook](SKILLS.md) | Skill-authoring standard, release checklist, and evaluation guidance |
 | Overdrive skill | [Forge](skills/forge/SKILL.md) | Create, revise, and review focused engineering skills |
 | Overdrive skill | [Refactor](skills/refactor/SKILL.md) | Map repository-specific structures and improve maintainability safely |
 | Overdrive skill | [Signal](skills/signal/SKILL.md) | Communicate concisely while preserving technical detail and evidence |
 | Overdrive skill | [Render](skills/render/SKILL.md) | Craft product-fit frontend experiences and verify production quality |
 | Overdrive skill | [Assert](skills/assert/SKILL.md) | Specify behavior, then implement test-first |
 | Overdrive skill | [Prune](skills/prune/SKILL.md) | Reduce avoidable search, output, and context overhead |
-| Frontend reference | [Laws of UX](skills/render/references/laws-of-ux.md) | Practical notes and source links for 30 UX concepts |
-| Frontend tool | [HTML inspector](skills/render/scripts/inspect_html.py) | Dependency-free checks for selected HTML metadata and control-label signals |
-| Codebase guide | [Codebase map](docs/CODEBASE_MAP.md) | Source-linked navigation for this repository |
-| Validation record | [Skill benchmark](docs/skills-e2e-benchmark-results.md) | Recorded paired outcomes, telemetry, and limits |
-| Validation record | [Cross-agent installation](docs/cross-agent-skill-installability-results.md) | Recorded installation paths and package-copy checks |
-| Validation record | [Refactor E2E](docs/refactor-validation.md) | Stack inventory, API-boundary, and sensitive-file evidence |
-| Validation record | [Render E2E](docs/render-validation.md) | Frontend review scope, design-choice probe, and evidence limits |
-| Validation record | [Signal probes](docs/signal-validation.md) | Response probes and evaluation limits |
-| Skill resources | [Forge template](skills/forge/assets/SKILL.template.md) · [evaluation protocol](skills/forge/references/evaluation.md) | Starter files for authoring and evaluating skills |
-| Skill resources | [Assert spec template](skills/assert/assets/spec-template.md) · [evaluation guide](skills/assert/references/evaluation.md) | Lightweight specification and behavior cases |
-| Evaluation guide | [All-skill evaluation summaries](SKILLS.md#evaluation-summaries-for-every-skill) | Deterministic, judge-based, and human evaluation conventions |
 
 ## Global instructions
 
