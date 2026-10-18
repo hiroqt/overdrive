@@ -6,7 +6,7 @@
 
 - **Project:** Arnel’s Agent Engineering Toolkit, a documentation and installable-skill repository.
 - **Last verified:** 2026-10-18.
-- **Revision / working tree:** base revision `0ff28cb`; this change renames the six skill package IDs to `forge`, `refactor`, `signal`, `render`, `assert`, and `prune`, retaining the portable `skills/<name>/` layout. Local benchmark harness and fixtures remain ignored.
+- **Revision / working tree:** the six skill package IDs are `forge`, `refactor`, `signal`, `render`, `assert`, and `prune`, using the portable `skills/<name>/` layout. Refactor, Assert, Render, Prune, and Forge now require code-grounded comment conflict handling. Local benchmark harness and fixtures remain ignored.
 - **Primary instructions:** [AGENTS.md](../AGENTS.md).
 
 ## Purpose and architecture
@@ -17,13 +17,13 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 | --- | --- | --- |
 | Global workflow and permissions | Engineering defaults, SDD/TDD, token/context efficiency, documentation refresh, verification and side-effect boundaries | [AGENTS.md](../AGENTS.md) |
 | Skill authoring standard | Package structure, trigger design, validation and behavioral evaluation expectations | [SKILLS.md](../SKILLS.md) |
-| Skill authoring capability | Create, revise, or review focused engineering skills | [Forge](../skills/forge/SKILL.md) |
-| Spec-first coding workflow | Specify behavior before code, then test-first implementation | [Assert](../skills/assert/SKILL.md) |
-| Prune workflow | Targeted retrieval, MCP consideration, bounded outputs, and persistent codebase map maintenance | [Prune](../skills/prune/SKILL.md) |
+| Skill authoring capability | Create, revise, or review focused engineering skills, including source-grounded handling of comments in code-related skills | [Forge](../skills/forge/SKILL.md) |
+| Spec-first coding workflow | Specify behavior before code, then test-first implementation; verify comment claims against code and contracts | [Assert](../skills/assert/SKILL.md) |
+| Prune workflow | Targeted retrieval, MCP consideration, bounded outputs, source inspection beyond comment matches, and persistent codebase map maintenance | [Prune](../skills/prune/SKILL.md) |
 | Concise communication style | Compact answers and progress updates while preserving evidence, technical payloads, uncertainty, and safety clarity | [Signal](../skills/signal/SKILL.md) |
-| Codebase maintainability workflow | Dynamically inventory language-specific components, modules, helpers, tests, and monorepo boundaries; incrementally improve structure with explicit API restructuring confirmation and sensitive-file protection | [Refactor](../skills/refactor/SKILL.md) |
+| Codebase maintainability workflow | Dynamically inventory language-specific components, modules, helpers, tests, and monorepo boundaries; improve structure with explicit API confirmation and sensitive-file protection; resolve comment conflicts against verified code, contracts, and project conventions | [Refactor](../skills/refactor/SKILL.md) |
 | Refactor E2E evidence | Paired Codex control/treatment results for refactoring, API approval, sensitive-file protection, and React/C#/Rust/Python/mixed-monorepo structure assessment | [Validation results](refactor-validation.md) |
-| Frontend design workflow | Hiroqt’s product-first visual direction, whole-codebase existing-design review and user choice, purposeful motion, semantic icon use, WCAG-version-aware accessibility, responsive checks, technical SEO, static HTML inspection, and applied UX concepts | [Render](../skills/render/SKILL.md), [Production quality](../skills/render/references/production-quality.md), [Laws of UX guide](../skills/render/references/laws-of-ux.md) |
+| Frontend design workflow | Hiroqt’s product-first visual direction, whole-codebase existing-design review and user choice, source-grounded comment handling, purposeful motion, semantic icon use, WCAG-version-aware accessibility, responsive checks, technical SEO, static HTML inspection, and applied UX concepts | [Render](../skills/render/SKILL.md), [Production quality](../skills/render/references/production-quality.md), [Laws of UX guide](../skills/render/references/laws-of-ux.md) |
 
 ## Entrypoints and boundaries
 
@@ -69,3 +69,4 @@ This is primarily a Markdown/YAML toolkit with small standard-library Python uti
 - Updated on 2026-10-18 with stack-neutral structure assessment guidance and paired Codex E2E evidence across React/TypeScript, C#/ASP.NET Core, Rust, Python, and a mixed React/C# monorepo.
 - Updated on 2026-10-18 with paired Render design-choice and WCAG 2.0 source-review evidence.
 - Updated on 2026-10-18 with the Overdrive collection label and six renamed package IDs; prior validation records remain explicitly historical.
+- Updated on 2026-10-18 with source-grounded comment conflict handling across code-authoring, refactoring, frontend, and repository-retrieval skills.
