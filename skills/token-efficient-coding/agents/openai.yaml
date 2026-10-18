@@ -1,4 +1,0 @@
-interface:
-  display_name: "Token-Efficient Coding"
-  short_description: "Reduce avoidable context overhead without losing evidence"
-  default_prompt: "Use $token-efficient-coding to complete this task efficiently while preserving relevant tools, sources, checks, and evidence."

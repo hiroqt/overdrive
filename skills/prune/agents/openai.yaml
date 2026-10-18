@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prune"
+  short_description: "Reduce avoidable context overhead without losing evidence"
+  default_prompt: "Use $prune to complete this task efficiently while preserving relevant tools, sources, checks, and evidence."

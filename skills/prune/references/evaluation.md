@@ -1,4 +1,4 @@
-# Token-Efficient Coding Evaluation
+# Prune Evaluation
 
 ## Evaluation summary
 

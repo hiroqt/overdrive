@@ -1,6 +1,6 @@
 # Codebase Map Maintenance
 
-Read this when using `token-efficient-coding` in a code repository, especially on first use, when no map exists, or after architecture, commands, interfaces, or important constraints change.
+Read this when using `prune` in a code repository, especially on first use, when no map exists, or after architecture, commands, interfaces, or important constraints change.
 
 ## Path and discovery
 

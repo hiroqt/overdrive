@@ -1,5 +1,5 @@
 ---
-name: token-efficient-coding
+name: prune
 description: >-
   Reduce avoidable token and context overhead during coding tasks through
   targeted repository exploration, bounded tool output, selective context
@@ -8,7 +8,7 @@ description: >-
   task success and do not skip relevant knowledge, tools, checks, or evidence.
 ---
 
-# Token-Efficient Coding
+# Prune
 
 ## Outcome
 

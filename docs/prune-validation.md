@@ -1,8 +1,10 @@
-# Token-Efficient Coding Skill Validation
+# Prune Skill Validation
+
+This validation record predates the package rename. Its recorded checks used the previous package ID; no behavioral E2E was rerun under the new ID.
 
 ## Package and intent
 
-- Skill: `skills/token-efficient-coding/SKILL.md`
+- Skill: `skills/prune/SKILL.md`
 - Supporting files: `assets/CODEBASE_MAP.template.md`, `references/codebase-map-maintenance.md`, and `references/evaluation.md`
 - Purpose: reduce repeated exploration, oversized outputs, unnecessary schema/context loading, and stale history while preserving useful knowledge and task success.
 - User-supplied research is treated as motivation and a list of hypotheses, not as independently verified evidence. No numerical findings or universal tool rankings are asserted by this skill.
@@ -29,4 +31,4 @@ The skill creates or refreshes a concise, source-linked `docs/CODEBASE_MAP.md` i
 
 ## Behavioral evaluation status
 
-Not run. Proposed cases are documented in `skills/token-efficient-coding/references/evaluation.md`. Automatic host discovery, measured token savings, and comparative task success remain unverified.
+Not run. Proposed cases are documented in `skills/prune/references/evaluation.md`. Automatic host discovery, measured token savings, and comparative task success remain unverified.
