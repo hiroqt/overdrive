@@ -1,4 +1,4 @@
-# Spec-Driven TDD Skill Evaluation
+# Assert Skill Evaluation
 
 ## Evaluation summary
 
@@ -8,7 +8,7 @@
 
 Effectiveness and accuracy come from test outcomes plus artifact review; speed needs comparable elapsed-time/tool telemetry. Cases below are proposals until run.
 
-Read this when validating selection or execution of `spec-first-tdd`, or when revising its workflow.
+Read this when validating selection or execution of `assert`, or when revising its workflow.
 
 ## Cases
 

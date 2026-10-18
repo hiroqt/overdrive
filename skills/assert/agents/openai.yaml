@@ -1,0 +1,4 @@
+interface:
+  display_name: "Assert"
+  short_description: "Specify behavior, then implement test-first"
+  default_prompt: "Use $assert to plan and implement this coding task with a concise spec and test-first verification."

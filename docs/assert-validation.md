@@ -1,10 +1,12 @@
-# Spec-Driven TDD Skill Validation
+# Assert Skill Validation
+
+This validation record predates the package rename. Its recorded checks used the previous package ID; no behavioral E2E was rerun under the new ID.
 
 ## Package reviewed
 
-- Skill: `skills/spec-first-tdd/SKILL.md` (renamed from `spec-driven-tdd-engineering` for clearer routing)
+- Skill: `skills/assert/SKILL.md` (renamed from `spec-driven-tdd-engineering` for clearer routing)
 - Supporting files: `agents/openai.yaml`, `assets/spec-template.md`, and `references/evaluation.md`
-- Existing skill checked for overlap: `skills/engineering-skill-author/SKILL.md`
+- Existing skill checked for overlap: `skills/forge/SKILL.md`
 - Intended trigger: coding requests that change software behavior, including features, bug fixes, and refactors.
 - Boundary: review-only, explanation-only, and documentation-only work does not select this workflow.
 
@@ -25,7 +27,7 @@
 
 ## Behavioral evaluation status
 
-Not run. Planned probes are also documented in `skills/spec-first-tdd/references/evaluation.md`:
+Not run. Planned probes are also documented in `skills/assert/references/evaluation.md`:
 
 | Case | Expected behavior |
 | --- | --- |

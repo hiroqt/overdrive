@@ -1,5 +1,5 @@
 ---
-name: spec-first-tdd
+name: assert
 description: >-
   Plan and implement software changes using a proportionate written
   specification followed by test-first development. Use for feature work,
@@ -7,7 +7,7 @@ description: >-
   review-only, explanation-only, and documentation-only requests.
 ---
 
-# Spec-First TDD
+# Assert
 
 ## Outcome
 
