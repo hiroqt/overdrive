@@ -1,4 +1,6 @@
-# Hiroqt Codebase Evolution E2E Validation
+# Refactor E2E Validation
+
+This validation record predates the package rename. The SHA-256 and outcomes below refer to the prior package content and name; no behavioral E2E was rerun under the new ID.
 
 ## Result
 
@@ -8,11 +10,11 @@ The current stack-aware revision passed five read-only inventories: React/TypeSc
 
 - **Date:** 2026-10-18
 - **Host:** Codex CLI `0.162.1`, configured default model (not pinned)
-- **Skill:** `hiroqt-codebase-evolution`
+- **Skill:** `refactor`
 - **Method:** fresh synthetic Git workspace for each control and treatment; treatment explicitly invoked the skill; control omitted its package.
 - **Current skill SHA-256:** `03f11c2e91891a73572f6d4d881778bd3f2e1d961c8edb382aa373a1332e26fe`; verified identical in Python and monorepo treatment workspaces.
 - **Safety:** synthetic data only; Codex CLI used the signed-in account. Raw transcripts and workspace diffs remain under `/private/tmp/hiroqt-codebase-evolution-e2e-escalated/run-20261018-132453/`, `/private/tmp/hiroqt-codebase-evolution-sensitive-only/run-20261018-132915/`, `/private/tmp/hiroqt-codebase-evolution-api-focused/run-20261018-133228/`, and `/private/tmp/hiroqt-codebase-dynamic-inventory-e2e/run-20261018-134459/`.
-- **Reproducibility:** harness and fixtures are under Git-ignored `benchmarks/skills-e2e/`, per the repository instruction to keep test files out of Git. Run the five-stack batch with `python3 benchmarks/skills-e2e/run.py --case-id hiroqt-codebase-evolution-react-inventory --case-id hiroqt-codebase-evolution-csharp-inventory --case-id hiroqt-codebase-evolution-rust-inventory --case-id hiroqt-codebase-evolution-python-inventory --case-id hiroqt-codebase-evolution-monorepo-inventory --results-dir /private/tmp/skill-e2e-results`.
+- **Reproducibility:** harness and fixtures are under Git-ignored `benchmarks/skills-e2e/`, per the repository instruction to keep test files out of Git. Run the five-stack batch with `python3 benchmarks/skills-e2e/run.py --case-id refactor-react-inventory --case-id refactor-csharp-inventory --case-id refactor-rust-inventory --case-id refactor-python-inventory --case-id refactor-monorepo-inventory --results-dir /private/tmp/skill-e2e-results`.
 
 ## Paired outcomes
 

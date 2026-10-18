@@ -1,5 +1,5 @@
 ---
-name: hiroqt-codebase-evolution
+name: refactor
 description: >-
   Inspect and progressively improve an existing codebase's structure,
   readability, and maintainability across its detected languages and frameworks.
@@ -8,7 +8,7 @@ description: >-
   restructuring and protects sensitive files from changes.
 ---
 
-# Hiroqt Codebase Evolution
+# Refactor
 
 ## Outcome and scope
 

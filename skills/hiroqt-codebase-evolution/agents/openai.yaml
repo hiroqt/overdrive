@@ -1,4 +1,0 @@
-interface:
-  display_name: "Hiroqt Codebase Evolution"
-  short_description: "Map and improve code structure across detected stacks"
-  default_prompt: "Use $hiroqt-codebase-evolution to identify this repository's languages, frameworks, components, modules, and helpers, then make the next evidence-based maintainability improvement. Preserve behavior, protect sensitive files, and ask before API restructuring."
