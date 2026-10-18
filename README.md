@@ -1,6 +1,6 @@
 # Overdrive
 
-**Hiroqt’s portable AI coding-agent toolkit.** Overdrive combines six focused skills with shared engineering guidance for maintainable code, product-fit frontend work, efficient exploration, and evidence-based delivery.
+**Hiroqt’s portable AI coding-agent toolkit: source-grounded, stack-aware, test-first, and built for product-fit interfaces.** Overdrive combines six focused skills with shared guidance for maintainable code, efficient exploration, and evidence-based delivery.
 
 ## Contents
 
@@ -45,6 +45,33 @@ skills/
 
 The package IDs and invocation names are `forge`, `refactor`, `signal`, `render`, `assert`, and `prune`. Existing installations under the previous IDs do not migrate automatically; remove any old copies from the target agent before using the renamed package.
 
+## What makes Overdrive different
+
+Overdrive is built to keep agents grounded in the real codebase and the user's actual requirements. Its skills reinforce each other across discovery, implementation, and review:
+
+| Bottleneck | Overdrive response | Skill |
+| --- | --- | --- |
+| A stale comment dictates a new implementation | Treat comments as claims. Trace the symbol, callers, tests/contracts, maintained docs, supported APIs, and local patterns. Follow verified architecture and project standards over stale or deprecated recipes; preserve proven domain and safety constraints, and correct stale comments when appropriate. | [Refactor](skills/refactor/SKILL.md), [Assert](skills/assert/SKILL.md), [Render](skills/render/SKILL.md), [Prune](skills/prune/SKILL.md) |
+| A refactor assumes every repository uses the same stack | Identify languages and frameworks from project files, then map real entrypoints, components, services, types, helpers, tests, and package boundaries before proposing a bounded improvement. | [Refactor](skills/refactor/SKILL.md) |
+| Code is written before the behavior is clear | Define observable acceptance first, then use test-first implementation and report only checks that actually ran. | [Assert](skills/assert/SKILL.md) |
+| Progress updates bury decisions in filler | Keep communication concise while retaining technical payloads, evidence, uncertainty, and safety details. | [Signal](skills/signal/SKILL.md) |
+| A frontend looks generic or ignores user context | Fit the design to the product, apply relevant Laws of UX concepts, inspect responsive and accessible states, and distinguish source checks from browser evidence. | [Render](skills/render/SKILL.md) |
+| Token saving cuts out useful investigation | Bound searches and tool output while expanding retrieval when evidence, risk, or uncertainty requires it. | [Prune](skills/prune/SKILL.md) |
+| New skills make unsupported quality claims | Define triggers, boundaries, verification, and evaluation evidence before packaging a reusable workflow. | [Forge](skills/forge/SKILL.md) |
+
+This is **comment-aware, code-first guidance**, not a rule to ignore comments. Comments can document valid constraints; agents verify them against the implementation and other authoritative project evidence before relying on them.
+
+## Evidence behind the workflows
+
+Overdrive keeps measured results separate from product claims. The linked records describe the exact setup and limitations:
+
+- [Paired skill benchmark](docs/skills-e2e-benchmark-results.md): the recorded run passed all five treatment cases; four controls also passed and one passed only with its skill. It was one unblinded Codex run with explicit skill invocation, so it does not establish broad reliability or automatic routing.
+- [Refactor stack evaluation](docs/refactor-validation.md): the synthetic React/TypeScript, C#/ASP.NET Core, Rust, Python, and mixed-monorepo treatment cases passed 5/5; controls passed 4/5. Each stack used a small fixture, so this is evidence for those cases, not every codebase.
+- [Render design-review evaluation](docs/render-validation.md): treatment passed the deterministic design-choice and WCAG 2.0 review checks while control missed the design-choice check. The fixture had no runnable browser, so this is not proof of rendered UI or accessibility conformance.
+- [Cross-agent installation checks](docs/cross-agent-skill-installability-results.md): the recorded CLI runs verified installation paths and copied files, but did not prove that each host automatically selects or follows the skills.
+
+The source-grounded comment policy is newly added and has **not yet had a dedicated behavioral E2E benchmark**. The results above are historical runs from before the package rename and this policy update; see each record for details.
+
 ## Install skills across coding agents
 
 Installable folders under [`skills/`](skills/) use the open [Agent Skills format](https://agentskills.io/specification): each contains `SKILL.md` metadata and instructions, with optional bundled references, scripts, or assets. The [Vercel Skills CLI](https://github.com/vercel-labs/skills) installs packages into host-specific directories. A shared format makes packages portable; discovery, activation, slash commands, script execution, and permissions still depend on each host and version.
@@ -52,7 +79,7 @@ Installable folders under [`skills/`](skills/) use the open [Agent Skills format
 This repository is private. Authenticate with GitHub CLI, clone the skill source once, then run the installer from the root of the project where you want to use the skills. It shows an animated Hiroqt wordmark, asks whether to install to that project or your user-wide agent folders, then displays the destination and agent list for confirmation. It installs all skill packages to Claude Code, Codex, Gemini CLI, Google Antigravity, Cursor, and Kiro CLI.
 
 ```bash
-gh repo clone hiroqt/agents.md ~/hiroqt-skills
+gh repo clone hiroqt/overdrive ~/hiroqt-skills
 cd /path/to/your/project
 python3 ~/hiroqt-skills/scripts/install_skills.py
 ```
