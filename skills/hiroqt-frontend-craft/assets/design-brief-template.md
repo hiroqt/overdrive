@@ -8,6 +8,9 @@
 
 ## Design direction
 
+- Existing frontend reviewed across routes, shared components, styles/tokens, and representative states:
+- Direction decision (when existing design is coherent and free of material AI-template patterns): continue/refine existing / explore new:
+- Evidence for the recommendation and user choice:
 - User effect or tone:
 - Visual hierarchy:
 - Palette, typography, imagery, and materials grounded in existing brand or brief:
@@ -23,6 +26,7 @@
 ## Acceptance checks
 
 - [ ] The primary task and next action are clear.
+- [ ] Existing design direction was assessed across the frontend codebase before offering a redesign recommendation.
 - [ ] The visual direction is coherent and fits the product.
 - [ ] Required interaction, loading, empty, error, and success states work.
 - [ ] Relevant viewport, keyboard, focus, and reduced-motion paths are checked.

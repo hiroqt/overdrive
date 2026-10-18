@@ -5,8 +5,10 @@ Read this when a request includes production readiness, a public launch, accessi
 ## Accessibility
 
 - Use native HTML semantics and controls first. Associate labels and instructions with fields; expose names, roles, values, errors, and status updates to assistive technology.
+- Use [WCAG 2.0](https://www.w3.org/TR/WCAG20/) as the normative reference when the project, contract, or user explicitly requires WCAG 2.0. Otherwise follow the currently applicable WCAG version for the project. Do not label a WCAG 2.0 review as WCAG 2.2 (or vice versa).
+- For a WCAG 2.0 Level AA review, assess all applicable Level A and AA success criteria across the complete page flows and states, not just the changed component. In particular verify text alternatives, captions where media requires them, semantic structure and relationships, keyboard access and visible focus, sufficient text/non-text contrast, resize/text-spacing/reflow behavior, understandable labels and errors, predictable navigation, accessible name/role/value and status messages, and error identification/suggestions. Use the official normative criteria and techniques; this summary is a navigation aid, not a substitute for the full standard.
 - Verify logical keyboard order, visible focus, keyboard operation, contrast, zoom/reflow, and non-color status cues.
-- Target the applicable WCAG 2.2 AA success criteria for the project. Automated checks cover only a subset; review keyboard and screen-reader paths where supported.
+- Automated checks cover only a subset; manually review keyboard paths and screen-reader output where supported. Record criteria checked, pages/states, tools, results, and exceptions; do not claim WCAG conformance from a scanner or partial sample.
 - Test motion alternatives under `prefers-reduced-motion`. Do not remove useful state feedback as a shortcut.
 - Use meaningful alternative text for informative images and empty `alt` for decorative images.
 

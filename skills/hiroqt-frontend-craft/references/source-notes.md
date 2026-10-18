@@ -5,7 +5,8 @@ Read this when applying standards or explaining what the workflow has and has no
 ## Checkable standards
 
 - [Agent Skills specification](https://agentskills.io/specification): portable package/frontmatter conventions and progressive disclosure.
-- [WCAG 2.2](https://www.w3.org/TR/WCAG22/): normative accessibility success criteria.
+- [WCAG 2.0](https://www.w3.org/TR/WCAG20/): normative success criteria when that version is required.
+- [WCAG 2.2](https://www.w3.org/TR/WCAG22/): newer normative success criteria when applicable; do not conflate versions.
 - [Google Search Central SEO Starter Guide](https://developers.google.com/search/docs/fundamentals/seo-starter-guide): search discovery, useful content, links, titles/descriptions, and image guidance.
 - [web.dev Web Vitals](https://web.dev/articles/vitals): current Core Web Vitals metrics and field thresholds.
 

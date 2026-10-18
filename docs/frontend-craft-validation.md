@@ -38,6 +38,16 @@ The package is structurally validated; automatic discovery and cross-model consi
 - Whether the personalized workflow improves UI quality across products and models.
 - Production accessibility conformance, rendered UI quality, search visibility, or Core Web Vitals for any particular site.
 
+### Frontend design-choice and WCAG 2.0 E2E — 2026-10-18
+
+- Added a paired synthetic case, `hiroqt-frontend-craft-design-choice-wcag20`, to the local skill E2E harness. The fixture contains two route components, a shared header, and design tokens. It requests a next design improvement without telling the agent to ask a design-direction question, and asks for a WCAG 2.0 Level AA assessment. It is review-only.
+- Run: Codex CLI 0.162.1, run ID `run-20261018-135616`; raw transcripts, final responses, and deterministic report are in `/private/tmp/frontend-craft-e2e-final/run-20261018-135616/`.
+- Result: control **failed** the design-choice check; explicitly invoked Frontend Craft treatment **passed** all deterministic checks. Treatment cited all four fixture files, found no clear generic AI-template signals (while disclosing missing runtime context), requested a choice between refining and exploring a new direction before dependent design work, outlined WCAG 2.0 Level A and AA assessment across complete pages/processes, avoided claiming conformance, and made no workspace edits.
+- Elapsed time was 36.41 seconds (control) and 38.05 seconds (treatment). One trial does not support a general speed or reliability claim, and these times are not a performance comparison.
+- The synthetic repository has no runnable app or browser. This verifies source-review behavior and honest WCAG evidence boundaries; it does not verify rendered UI, assistive-technology behavior, or WCAG conformance. Automatic host discovery remains untested.
+
+Harness regression tests: `python3 -m unittest benchmarks/skills-e2e/test_run.py -v` — 12 passed. `git diff --check` passed.
+
 ### Source references checked
 
 - [Agent Skills specification](https://agentskills.io/specification)
