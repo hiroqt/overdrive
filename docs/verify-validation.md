@@ -2,6 +2,8 @@
 
 ## Current-ID refresh — 2026-10-19
 
+The `skills/verify/results/` paths below are historical artifacts from this run. Current instructions default to OS temporary storage and remove run evidence after reporting; persistent sanitized evidence may be kept under `.overdrive/verify/results/` when required by user or project policy.
+
 - **Revision:** `f70b28e0f946f10f458419f6375d59445ebe7f85`.
 - **Current package:** `skills/verify/`; SHA-256 `c82bcc44ce6548426aaf1c101b39a5e62343c245ea9e9f7fba1f8b8af6af954c`.
 - **Unit phase:** two independent Node test groups ran as concurrent isolated processes and overlapped: 4/4 assertions passed. The shared aggregate was saved before browser E2E at `skills/verify/results/feature-summaries/20261019-current-id/summary.md`.

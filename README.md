@@ -164,7 +164,7 @@ Use $assert to implement the requested behavior.
 
 ## Verify: unit tests, then real app E2E
 
-Use [Verify](skills/verify/SKILL.md) for focused feature tests followed by a real user journey. It prefers swarm workers, but falls back to test-runner or isolated-process parallelism; if safe concurrency is unavailable, it can run serially with that limitation reported. It saves per-feature results and shares the aggregate before E2E. Web E2E uses a browser on the running app; API checks, mocks, builds, and health checks are not UI proof. It requests approval for authenticated accounts, external services, and shared state. See the [executed evaluation](docs/verify-validation.md) for one synthetic run and its limits.
+Use [Verify](skills/verify/SKILL.md) for focused feature tests followed by a real user journey. It prefers swarm workers, but falls back to test-runner or isolated-process parallelism; if safe concurrency is unavailable, it can run serially with that limitation reported. It saves per-feature results in OS temporary storage by default, shares the aggregate before E2E, and removes run artifacts after reporting. Persistent sanitized evidence can go in `.overdrive/verify/results/` when user or project policy requires it. Web E2E uses a browser on the running app; API checks, mocks, builds, and health checks are not UI proof. It requests approval for authenticated accounts, external services, and shared state. See the [executed evaluation](docs/verify-validation.md) for one synthetic run and its limits.
 
 ```text
 Use $verify to test changed features in parallel where safe, share the unit summary, then prove the running app's user flow in a browser.

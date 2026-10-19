@@ -24,6 +24,8 @@ This was a single agent following the skill, not an automatic-discovery or cross
 
 ## Reproduction record
 
+The run paths below are historical artifacts created before the current temporary-directory default. For new runs, follow `SKILL.md`: use OS temporary storage and clean it after reporting, unless persistent evidence is requested or required by project policy.
+
 - Fixture: `/private/tmp/overdrive-verify-eval` (synthetic note-list app; no external services or user data).
 - Revision: repository HEAD `7e213be108b77cb52815ea29c189b7d20cc97828` plus the Verify skill edit in the working tree; final skill SHA-256 `c82bcc44ce6548426aaf1c101b39a5e62343c245ea9e9f7fba1f8b8af6af954c`.
 - Unit commands: `node --test --test-reporter=tap test/title.test.mjs` and `node --test --test-reporter=tap test/notes.test.mjs`; each passed 2/2. Their recorded time intervals overlap. Local feature artifacts are under `skills/verify/results/feature-summaries/20261019-ns-verify/`.
