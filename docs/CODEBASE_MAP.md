@@ -6,7 +6,7 @@
 
 - **Project:** Arnel’s Agent Engineering Toolkit, a documentation and installable-skill repository.
 - **Last verified:** 2026-10-19.
-- **Revision / working tree:** eight skill package IDs use the portable `skills/<name>/` layout. Guard adds approval-gated AI-assisted security review across eight threat families. Verify prefers concurrent feature checks, supports safe non-swarm and disclosed serial fallbacks, shares a summary before real app E2E, and stores evidence in separate result folders. Synthetic evaluation passed for the no-swarm sequence; a separate worker dispatch did not demonstrate overlapping execution. Cross-host behavior remains untested.
+- **Revision / working tree:** eight skill package IDs use the portable `skills/<name>/` layout. Current-ID synthetic evaluations cover six paired cases, focused Guard checks, Verify’s concurrent unit/browser-E2E sequence, and a Codex-only automatic-routing probe. Guard judge/human evaluation is still pending; Signal routing was not observed; other hosts were not tested for selection.
 - **Primary instructions:** [AGENTS.md](../AGENTS.md).
 
 ## Purpose and architecture
@@ -18,6 +18,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 | Global workflow and permissions | Engineering defaults, SDD/TDD, token/context efficiency, documentation refresh, verification and side-effect boundaries | [AGENTS.md](../AGENTS.md) |
 | Skill authoring standard | Package structure, trigger design, validation and behavioral evaluation expectations | [SKILLS.md](../SKILLS.md) |
 | Automated package quality | Required skill metadata/names, source Markdown links, evaluation labels, README catalog coverage, and CI workflow | [checker](../scripts/check_skill_packages.py), [checker tests](../scripts/tests/test_package_quality.py), [GitHub Actions](../.github/workflows/package-quality.yml) |
+| Current-ID skill evaluations | Paired execution cases, Guard security fixture, Verify browser flow, and separate host-routing evidence | [paired benchmark](skills-e2e-benchmark-results.md), [Guard evaluation](../skills/guard/references/evaluation.md), [Verify evaluation](verify-validation.md), [routing probe](automatic-routing-validation.md) |
 | Skill authoring capability | Create, revise, or review focused engineering skills, including source-grounded handling of comments in code-related skills | [Forge](../skills/forge/SKILL.md) |
 | AI-assisted application security review | Read the repository before judging; inspect eight threat families, rank evidence-based findings, and require explicit approval before changing reviewed application files or environments | [Guard](../skills/guard/SKILL.md), [threat review](../skills/guard/references/threat-review.md), [evaluation](../skills/guard/references/evaluation.md) |
 | Spec-first coding workflow | Specify behavior before code, then test-first implementation; verify comment claims against code and contracts | [Assert](../skills/assert/SKILL.md) |
@@ -31,7 +32,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 ## Entrypoints and boundaries
 
 - Repository overview, skill usage, and install examples: [README.md](../README.md).
-- Guard's threat-specific checks and proposed evaluation cases are in `skills/guard/references/`; the behavioral evaluation is proposed and has not been run.
+- Guard's threat-specific checks and evaluation cases are in `skills/guard/references/`; one current-ID synthetic deterministic case ran, while independent judge/human review and other threat families remain open.
 - Animated interactive installer: [scripts/install_skills.py](../scripts/install_skills.py); real project/global install runs and terminal banner capture: [cross-agent installability results](cross-agent-skill-installability-results.md).
 - Authoring guide and package checklist: [SKILLS.md](../SKILLS.md).
 - Installable capabilities live in `skills/<name>/SKILL.md`; optional Codex UI metadata is in that package’s `agents/openai.yaml`.
@@ -40,13 +41,13 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 - Refactor discovers and maps each language/framework's real constructs—entrypoints, components, contracts, collaborators, helpers, and tests—and traces dependency direction before improving structure. Mixed monorepos are assessed per app/package. It requires confirmation before API restructuring and protects sensitive files. It does not imply scheduled or background work.
 - Render no-dependency HTML inspector and fixtures are in `skills/render/scripts/` and `skills/render/tests/`.
 - Evaluation records and package-specific validation notes live in `docs/`, including [Verify's synthetic evaluation](verify-validation.md); isolated subprocesses overlapped, while a separate worker dispatch did not demonstrate swarm concurrency.
-- Actual outcomes from the paired Codex benchmark and cross-agent installation checks are recorded in the [Codex benchmark results](skills-e2e-benchmark-results.md) and [cross-agent installability results](cross-agent-skill-installability-results.md). Local benchmark scripts and synthetic fixtures are excluded by `.gitignore`.
-- [Signal validation](signal-validation.md) records seven in-session behavior probes and separates them from untested host discovery and telemetry claims.
+- Current and historical outcomes from the paired Codex benchmark, cross-agent installation, and one-host routing checks are recorded in the [benchmark results](skills-e2e-benchmark-results.md), [installability results](cross-agent-skill-installability-results.md), and [automatic-routing results](automatic-routing-validation.md). Local benchmark scripts and synthetic fixtures are excluded by `.gitignore`.
+- [Signal validation](signal-validation.md) records seven historical in-session behavior probes and a current paired case; automatic selection was not observed for the realistic concise-summary prompt.
 - Skills provide workflow guidance; they do not install themselves, grant authorization, publish changes, or prove automatic host selection.
 
 ## Commands
 
-Run `python3 -m unittest discover -s scripts/tests -v` and `python3 scripts/check_skill_packages.py` for package self-tests and repository validation; GitHub Actions runs both on pushes and pull requests. The gate checks package structure and documentation links, not skill behavior. Verify remains an instruction-only workflow; the no-swarm synthetic sequence and injected failure paths are recorded, while one dispatched-worker attempt did not demonstrate overlapping execution. Automatic discovery and cross-host behavior remain untested. Local run artifacts are ignored by Git; the concise result is retained in [Verify's evaluation record](verify-validation.md). Previous skill and installability outcomes are in [the benchmark results](skills-e2e-benchmark-results.md) and [cross-agent installability results](cross-agent-skill-installability-results.md).
+Run `python3 -m unittest discover -s scripts/tests -v` and `python3 scripts/check_skill_packages.py` for package self-tests and repository validation; GitHub Actions runs both on pushes and pull requests. The gate checks package structure and documentation links, not skill behavior. The current Verify result includes an actual local browser E2E; a separate worker-dispatch attempt still did not demonstrate swarm overlap. Automatic routing was probed only on Codex CLI. Local run artifacts are ignored by Git; summaries live in the [skill evaluation records](skills-e2e-benchmark-results.md), [Verify record](verify-validation.md), and [automatic-routing report](automatic-routing-validation.md).
 
 ## High-value checks and constraints
 
@@ -54,7 +55,7 @@ Run `python3 -m unittest discover -s scripts/tests -v` and `python3 scripts/chec
 - Keep behavioral skill evaluation distinct from structural validation. Existing records label unrun evaluations rather than presenting them as proof.
 - Do not copy sensitive personal history into distributable skill packages. Review the policy in [AGENTS.md](../AGENTS.md).
 - For Prune’s behavior and validation limits, see [its validation record](prune-validation.md).
-- For Render scope and test evidence, see [its validation record](render-validation.md); automatic skill discovery and cross-model consistency remain unmeasured.
+- For Render scope and test evidence, see [its validation record](render-validation.md); one Codex routing probe is recorded; repeated selection and non-Codex host behavior remain unmeasured.
 - Its 2026-10-18 paired synthetic E2E passed the explicitly invoked design-choice/WCAG 2.0 treatment and failed the control's choice check; see the validation record for fixture scope and limitations.
 - For Refactor's executed control/treatment evidence and limits, see [its E2E validation record](refactor-validation.md).
 
@@ -78,3 +79,4 @@ Run `python3 -m unittest discover -s scripts/tests -v` and `python3 scripts/chec
 - Updated on 2026-10-18 with Verify's concurrent unit phase, pre-E2E aggregate summary, and separate feature-summary and E2E result folders.
 - Updated on 2026-10-19 with safe non-swarm parallel/serial fallbacks, one synthetic browser E2E plus injected unit/startup failure evaluation, and observed worker-dispatch intervals that did not overlap; separate no-swarm host compatibility remains untested.
 - Updated on 2026-10-19 with the Python package-quality checker and push/pull-request workflow.
+- Updated on 2026-10-19 with current package-ID paired, Guard, Verify, installer, and Codex automatic-routing evaluations; Signal selection remains unobserved and other hosts remain untested.

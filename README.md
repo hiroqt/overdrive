@@ -82,14 +82,15 @@ This is **comment-aware, code-first guidance**, not a rule to ignore comments. C
 
 Overdrive keeps measured results separate from product claims. The linked records describe the exact setup and limitations:
 
-- [Paired skill benchmark](docs/skills-e2e-benchmark-results.md): the recorded run passed all five treatment cases; four controls also passed and one passed only with its skill. It was one unblinded Codex run with explicit skill invocation, so it does not establish broad reliability or automatic routing.
+- [Paired skill benchmark](docs/skills-e2e-benchmark-results.md): the current-ID refresh ran six representative pairs. Five treatment cases passed the runner’s full checks; Signal met response constraints but lacked the runner’s activation acknowledgement. One Forge case passed only in treatment; the others showed parity. This is one unblinded Codex CLI run, not broad reliability evidence.
+- [Automatic routing probe](docs/automatic-routing-validation.md): Codex CLI read the intended current entrypoint on 7/8 natural prompts; Signal selection was not observed, Refactor also read Prune, and an unrelated control read no skill. Other hosts were not tested for selection.
 - [Refactor stack evaluation](docs/refactor-validation.md): the synthetic React/TypeScript, C#/ASP.NET Core, Rust, Python, and mixed-monorepo treatment cases passed 5/5; controls passed 4/5. Each stack used a small fixture, so this is evidence for those cases, not every codebase.
 - [Render design-review evaluation](docs/render-validation.md): treatment passed the deterministic design-choice and WCAG 2.0 review checks while control missed the design-choice check. The fixture had no runnable browser, so this is not proof of rendered UI or accessibility conformance.
-- [Cross-agent installation checks](docs/cross-agent-skill-installability-results.md): the recorded CLI runs verified installation paths and copied files, but did not prove that each host automatically selects or follows the skills.
+- [Cross-agent installation checks](docs/cross-agent-skill-installability-results.md): current package IDs copied byte-for-byte to six host target layouts (48 package copies). This confirms installability only; only Codex CLI had a separate automatic-routing probe.
 
-The source-grounded comment policy is newly added and has **not yet had a dedicated behavioral E2E benchmark**. The results above are historical runs from before the package rename and this policy update; see each record for details.
+The source-grounded comment policy is newly added and has **not yet had a dedicated behavioral E2E benchmark**. Earlier per-skill records remain historical unless a current-ID refresh is called out explicitly; see each record for details.
 
-Verify's synthetic workflow evaluation is recorded in [Verify validation](docs/verify-validation.md). It covers overlapping unit subprocesses without swarm, summary-before-E2E ordering, browser persistence, and injected unit/startup failures. A separate worker-dispatch attempt passed both groups but did not show overlapping execution. Separate-host compatibility, automatic discovery, and broad reliability remain untested.
+Verify's synthetic workflow evaluation is recorded in [Verify validation](docs/verify-validation.md). Its current-ID rerun passed overlapping unit subprocesses (4/4), summary-before-E2E ordering, local browser persistence after reload, and the injected unit/startup failure gates. A separate worker-dispatch attempt still did not show overlapping execution. The routing probe selected Verify in Codex CLI; separate-host behavior and broad reliability remain untested.
 
 ## Install skills across coding agents
 
