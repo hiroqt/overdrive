@@ -2,7 +2,7 @@
 
 ## Evaluation summary
 
-- **[D] Deterministic — hand-run fixture evaluation executed:** two feature groups ran concurrently without swarm, their aggregate was shared before a local Firefox E2E, and the saved item persisted after reload. A synthetic unit failure correctly blocked its separate E2E run; an injected startup failure was reported without a browser journey. A separate dispatched-worker check passed both groups but showed no overlap, so it did not prove swarm parallelism. These results cover only the recorded paths.
+- **[D] Deterministic — current package-ID runs executed:** the current `verify` package completed two concurrent unit groups (4/4 assertions), shared the aggregate before a local Chromium E2E, and observed the saved item after reload. The unit-failure and startup-failure gates behaved as required. An earlier dispatched-worker check passed both groups but showed no overlap, so it did not prove swarm parallelism. These results cover only the recorded paths.
 - **[J] LLM as a judge — not run:** no independent judge graded the plan or artifacts.
 - **[H] Human — not run:** no independent human review was performed.
 
@@ -13,13 +13,14 @@ This was a single agent following the skill, not an automatic-discovery or cross
 | Case | Status and evidence |
 | --- | --- |
 | No-swarm full sequence | **PASS, simulated capability profile:** no swarm worker dispatched; two feature commands ran as overlapping isolated subprocesses. Aggregate saved/shared before real browser E2E. Not a separate host compatibility test. |
+| Current package-ID sequence | **PASS, 2026-10-19:** current `verify` SHA recorded in `docs/verify-validation.md`; two groups passed 4/4 and overlapped; Chromium added a note and confirmed it remained after reload. Evidence under `results/feature-summaries/20261019-current-id/` and `results/e2e/20261019-current-id/`. |
 | Dispatched-worker concurrency | **NOT PROVEN:** two workers each passed 2/2, but recorded intervals did not overlap. Local timing record: `skills/verify/results/feature-summaries/20261019-swarm-dispatch/summary.md`. |
 | Real app E2E | **PASS, synthetic local app:** Firefox submitted a note, showed saved state, reloaded, and showed the persisted note. Accessibility state and server requests are recorded. |
 | Unit failure gate | **PASS, expected failure:** synthetic unit command exited 1; its run was marked failed and E2E was not started for that run. |
 | App startup failure | **PASS, injected failure:** synthetic startup command exited 17; status was blocked and browser testing was not attempted. |
 | Authenticated/external/shared-state permission gate | **Not run:** fixture required none of these permissions. |
 | MCP workflow | **Not run:** no MCP-backed app was in scope. |
-| Automatic skill discovery | **Not run:** skill was explicitly followed. |
+| Automatic skill discovery | **Separate probe:** current Verify entrypoint was read for a natural Verify request in one Codex CLI run; see `docs/automatic-routing-validation.md`. This does not establish repeated or cross-host routing. |
 
 ## Reproduction record
 

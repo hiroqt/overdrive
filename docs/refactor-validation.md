@@ -1,10 +1,10 @@
 # Refactor E2E Validation
 
-This validation record predates the package rename. The SHA-256 and outcomes below refer to the prior package content and name; no behavioral E2E was rerun under the new ID.
+The original validation runs below predate the package rename. A current-ID React/TypeScript replay is recorded after the historical results; the earlier C#, Rust, Python, monorepo, API, and sensitive-file outcomes remain historical and were not repeated in that replay.
 
 ## Result
 
-The current stack-aware revision passed five read-only inventories: React/TypeScript, C#/ASP.NET Core, Rust, Python, and a mixed React/C# monorepo. The skill treatment passed all five; controls passed four and missed the C# framework in the mixed-stack case. This is a measured treatment advantage on that one synthetic case, with parity on the other four. Earlier E2E runs, before the stack-aware instructions were added, passed the internal-refactor, API-confirmation, and sensitive-file treatments; the sensitive-file control failed. Results apply to these synthetic tasks and this Codex setup, not automatic discovery, reliability across hosts/models, or long-term maintainability gains.
+The 2026-10-18 pre-rename stack-aware revision passed five read-only inventories: React/TypeScript, C#/ASP.NET Core, Rust, Python, and a mixed React/C# monorepo. The skill treatment passed all five; controls passed four and missed the C# framework in the mixed-stack case. This is a measured treatment advantage on that one synthetic case, with parity on the other four. Earlier E2E runs, before the stack-aware instructions were added, passed the internal-refactor, API-confirmation, and sensitive-file treatments; the sensitive-file control failed. Results apply to these synthetic tasks and this Codex setup, not automatic discovery, reliability across hosts/models, or long-term maintainability gains.
 
 ## Setup
 
@@ -29,9 +29,17 @@ The current stack-aware revision passed five read-only inventories: React/TypeSc
 | Python package structure inventory | Pass | Pass | Both mapped Python CLI, package, protocol, service, JSON adapter, helper, and test with dependency direction. No edits. |
 | Mixed React / C# monorepo inventory | Fail | Pass | Treatment identified both app stacks separately, mapped their entrypoints/components/services, and traced the HTTP boundary. Control missed ASP.NET Core. No edits. |
 
-**Current stack batch:** treatment 5/5 pass; control 4/5 pass, with treatment-only advantage on the mixed-monorepo case. **Prior stack batch:** treatment 3/3 pass; control 3/3 pass. **Prior core batch:** treatment 3/3 pass; control 2/3 pass, with treatment-only advantage on sensitive-file protection. These batches used different revisions and are reported separately.
+**2026-10-18 pre-rename stack batch:** treatment 5/5 pass; control 4/5 pass, with treatment-only advantage on the mixed-monorepo case. **Prior stack batch:** treatment 3/3 pass; control 3/3 pass. **Prior core batch:** treatment 3/3 pass; control 2/3 pass, with treatment-only advantage on sensitive-file protection. These batches used different revisions and are reported separately.
 
 ## Checks and limitations
+
+### Current-ID replay — 2026-10-19
+
+- **Package:** `refactor`; SHA-256 `509ecda6a6d388d95ae2d361f9e97f9c607598cf89eb8df385e9224477665d74`.
+- **Host:** Codex CLI `0.163.0`, default model not pinned; current checkout revision `f70b28e0f946f10f458419f6375d59445ebe7f85`.
+- **Case:** `refactor-react-inventory` in the current paired benchmark, using fresh synthetic workspaces and explicit `$refactor` invocation.
+- **Result:** treatment and control both passed the deterministic React/TypeScript inventory checks. Both cited the main entrypoint, component, hook, service, helper, shared type, and test; explained relationships and reported a structure risk. Neither changed files.
+- **Limit:** this is one representative current-ID case. It does not refresh the five-stack batch, the API approval case, or sensitive-file case above, and does not test automatic selection. Full trace and scorer: `/private/tmp/overdrive-current-paired/run-20261019-205213/`.
 
 - Benchmark harness unit tests: 14 passed, including manifest/fixture coverage for four language ecosystems plus a mixed monorepo, API behavior comparison, and safe handling of a deleted `.env` during grading.
 - Synthetic internal-refactor fixture: 12 tests passed independently for the treatment workspace.

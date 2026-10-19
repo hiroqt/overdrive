@@ -8,6 +8,10 @@
 
 Effectiveness and accuracy come from test outcomes plus artifact review; speed needs comparable elapsed-time/tool telemetry. Cases below are proposals until run.
 
+### Current-ID deterministic evidence — 2026-10-19
+
+The current `assert` package’s isolated slug case passed its red-green order, regression assertion, scoped change, and full test checks. Its control also passed the deterministic checks; this was parity on one fixture. A separate natural bug-fix request caused Codex to read the current Assert entrypoint. See the [paired benchmark](../../../docs/skills-e2e-benchmark-results.md) and [routing record](../../../docs/automatic-routing-validation.md). Independent judge/human review was not run.
+
 Read this when validating selection or execution of `assert`, or when revising its workflow.
 
 ## Cases

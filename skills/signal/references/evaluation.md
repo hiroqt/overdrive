@@ -8,6 +8,10 @@
 
 Effectiveness and accuracy need content review; speed needs recorded elapsed time or telemetry. Cases below are proposed until run.
 
+### Current-ID deterministic evidence — 2026-10-19
+
+The current paired fixture’s response preserved all required payloads and met the word limit, but the benchmark reported treatment failure because no `signal` activation acknowledgement appeared. In a separate natural-request Codex routing probe, the Signal entrypoint was not read or named; the response still met the content constraints. Selection is therefore not observed for this trigger, though Codex exposes no dedicated selection event. See the [paired result](../../../docs/skills-e2e-benchmark-results.md) and [routing result](../../../docs/automatic-routing-validation.md). No judge or human review was run.
+
 Run these cases when evaluating skill behavior. They are proposals until executed. Record host, model, settings, skill revision, prompt, observed output, and evidence. Test skill selection separately from behavior after explicit invocation.
 
 | Case | Prompt shape | Expected behavior |

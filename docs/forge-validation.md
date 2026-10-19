@@ -1,6 +1,6 @@
 # Forge — Validation Record
 
-This validation record predates the package rename. Its recorded checks used the previous package ID; no behavioral E2E was rerun under the new ID.
+The checks in this historical record used the previous package ID. A current-ID paired synthetic replay is recorded in [the current benchmark](skills-e2e-benchmark-results.md).
 
 Date: 2026-10-06 (Asia/Manila).
 

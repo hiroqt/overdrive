@@ -1,8 +1,23 @@
 # Cross-agent skill installability E2E
 
-These installation runs predate the package rename and exercised five packages under their previous IDs. The renamed package paths and IDs have not been reinstalled or checked in this rename task.
+## Current package-ID installability refresh — 2026-10-19
 
-## Outcome
+The current eight package IDs (`assert`, `forge`, `guard`, `prune`, `refactor`, `render`, `signal`, `verify`) were copied into six isolated project workspaces using `npx --yes skills@latest`. Each copied package tree matched the source byte-for-byte.
+
+| Installer target | Result | Destination |
+| --- | ---: | --- |
+| `claude-code` | 8/8 | `.claude/skills/` |
+| `codex` | 8/8 | `.agents/skills/` |
+| `gemini-cli` | 8/8 | `.agents/skills/` |
+| `antigravity` | 8/8 | `.agents/skills/` |
+| `cursor` | 8/8 | `.agents/skills/` |
+| `kiro-cli` | 8/8 | `.kiro/skills/` |
+
+**Total:** 48 package copies and 468 package-file comparisons passed with zero differences. The results are under `/private/tmp/overdrive-current-installability-escalated/`; the `skills@latest` tag was not pinned. This validates installer placement and copied-file integrity only. It does not launch the six hosts or verify discovery, activation, or task behavior. Current Codex CLI automatic-routing observations are recorded separately in [automatic-routing validation](automatic-routing-validation.md).
+
+The historical installation runs below predate the package rename and exercised five packages under their previous IDs. The current-ID installation refresh is recorded above.
+
+## Historical installability outcome (pre-rename)
 
 Passed: all five installable skill packages were installed by the Vercel Skills CLI into six isolated project workspaces and every source package file was present and byte-identical in its target folder.
 
@@ -40,7 +55,7 @@ The CLI wrote to its selected shared roots (`.claude/skills`, `.agents/skills`, 
 
 This validates both scope choices, the confirmation gate, actual package installation, and file integrity. It does not launch the six coding agents or prove each host activates and follows the skills. A separate pseudo-terminal run invoked the actual CLI with a local `npx` stub and confirmed the full cyan-to-violet ANSI wordmark appeared before the scope prompt and installation call. Its captured terminal output and argument checks are at `/private/tmp/hiroqt-terminal-banner-proof-3/summary.json`. The pseudo-terminal verifies emitted terminal sequences; it does not capture how a specific physical terminal renders them.
 
-## What this proves
+## What the historical run proves
 
 The Skills CLI can locate all five repository packages and copy their complete file trees, including references and scripts, to these six target paths. This validates package installability and path mapping for the installer version resolved during this run.
 

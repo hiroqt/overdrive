@@ -8,6 +8,10 @@
 
 Effectiveness and accuracy must accompany any efficiency claim; speed requires recorded latency or elapsed time. Cases below are proposals until run.
 
+### Current-ID deterministic evidence — 2026-10-19
+
+The current `prune` package’s invoice case passed source-path and behavior explanation checks; its control also passed, so this was parity. The current entrypoint was read in the separate natural-request Codex probe. No token-savings result is claimed from the available telemetry. See the [paired benchmark](../../../docs/skills-e2e-benchmark-results.md) and [routing evidence](../../../docs/automatic-routing-validation.md). Judge/human reviews remain not run.
+
 Read this when testing discovery, measuring the effect of this skill, or revising its retrieval and context rules.
 
 ## Evaluation cases

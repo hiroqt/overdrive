@@ -8,6 +8,10 @@
 
 Effectiveness and accuracy require artifact/action evidence; speed requires recorded elapsed time or tool telemetry. The cases below are proposed until run.
 
+### Current-ID deterministic evidence — 2026-10-19
+
+The current `forge` package passed its explicit paired synthetic authoring case; the control failed the usable-trigger/publishing-boundary description check. This is one treatment-only result, not broad effectiveness proof. The unrelated negative-control and automatic-routing results are in [the routing record](../../../docs/automatic-routing-validation.md); judge and human reviews remain not run. Full paired result: [current benchmark](../../../docs/skills-e2e-benchmark-results.md).
+
 Read this when evaluating a new/revised skill, investigating discovery errors, or checking whether a change improves execution. Use synthetic fixtures and isolated writable workspaces; production services and publication are outside evaluation scope unless separately authorized.
 
 ## Select cases before expanding instructions

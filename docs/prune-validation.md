@@ -1,6 +1,6 @@
 # Prune Skill Validation
 
-This validation record predates the package rename. Its recorded checks used the previous package ID; no behavioral E2E was rerun under the new ID.
+The structural checks below are historical. A current-ID paired behavior case is recorded in [the current benchmark](skills-e2e-benchmark-results.md).
 
 ## Package and intent
 

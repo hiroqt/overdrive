@@ -8,6 +8,10 @@
 
 Effectiveness and accuracy rely on behavior checks and diff review; speed requires comparable timed tasks or tool/runtime telemetry. These starter cases are proposals until run.
 
+### Current-ID deterministic evidence — 2026-10-19
+
+The current `refactor` package and its control both passed one React/TypeScript structure inventory case. This was parity on a small synthetic repository, not a rerun of the multi-stack batch. In the separate Codex routing probe the `refactor` entrypoint was read; Prune was also read for the map/retrieval request. See [current results](../../../docs/refactor-validation.md) and [routing evidence](../../../docs/automatic-routing-validation.md). Judge and human reviews remain not run.
+
 ## Cases
 
 | Case | Expected evidence |

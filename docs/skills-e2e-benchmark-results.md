@@ -1,5 +1,25 @@
 # Skill E2E benchmark results
 
+## Current-ID paired refresh — 2026-10-19
+
+- **Revision:** `f70b28e0f946f10f458419f6375d59445ebe7f85`
+- **Host:** Codex CLI `0.163.0`; configured default model, not pinned.
+- **Packages:** current IDs `forge`, `refactor`, `signal`, `render`, `assert`, and `prune`; each treatment copied the package from its current `skills/<id>/` path. Guard and Verify have separate current-ID evaluations below and in their validation records.
+- **Run:** `/private/tmp/overdrive-current-paired/run-20261019-205213/`; one control/treatment pair per task, synthetic fixtures, temporary workspaces.
+
+| Case | Control | Current-ID treatment | Reading |
+| --- | --- | --- | --- |
+| `forge` | Fail | Pass | Treatment-only advantage: generated description included a usable trigger and publishing boundary. |
+| `refactor` (React/TypeScript inventory) | Pass | Pass | Parity on this representative stack case; the other historical stack cases were not rerun here. |
+| `signal` | Pass | Harness fail | All response-content/length assertions passed, but the treatment did not mention `signal`; the runner treats that acknowledgement as activation evidence. Skill loading is therefore unconfirmed for this case. |
+| `render` | Pass | Pass | Parity; static inspector passed, but no browser rendering was performed. |
+| `assert` | Pass | Pass | Parity; test-first order and final tests were observed in both runs. |
+| `prune` | Pass | Pass | Parity; source and map were checked and the answer cited the relevant line. |
+
+The runner reported **5/6 control passes and 5/6 treatment passes** because of the Signal acknowledgement check. Excluding that activation proxy, the task-content/artifact checks passed in all six treatments; that does not prove Signal was loaded. The paired tasks use one unblinded trial each, and the default model was not pinned. See [automatic routing results](automatic-routing-validation.md) for separate current-host selection probes. These results do not establish general reliability or token savings.
+
+## Historical benchmark (pre-rename)
+
 ## Outcome
 
 This run predates the package rename. Package IDs and entrypoint labels below are normalized to current names for navigation; the recorded runs, hashes, and outcomes came from the previous package names and have not been rerun as part of the rename.

@@ -8,6 +8,10 @@
 
 Effectiveness and accuracy require task and rendered evidence; speed requires measured timings. Cases below are proposed until run.
 
+### Current-ID deterministic evidence — 2026-10-19
+
+The current paired signup-page case passed in both control and treatment; the static inspector passed and copy/layout checks were satisfied. This did not include browser rendering. A separate Codex routing probe read the current Render entrypoint for a natural public-signup review request. See the [paired benchmark](../../../docs/skills-e2e-benchmark-results.md) and [routing record](../../../docs/automatic-routing-validation.md). Judge/human review and rendered UI checks for this case remain not run.
+
 Read this when checking that the skill is selected for relevant tasks and that its working preferences improve the delivered interface.
 
 ## Selection cases

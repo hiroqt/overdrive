@@ -1,6 +1,6 @@
 # Signal validation
 
-This validation record predates the package rename. Its recorded probes used the previous package ID; no behavioral E2E was rerun under the new ID.
+The in-session probes below are historical and used the previous package ID. Current-ID behavior and the separate automatic-routing probe are recorded in the [paired benchmark](skills-e2e-benchmark-results.md) and [routing report](automatic-routing-validation.md).
 
 ## Result
 
@@ -74,7 +74,11 @@ This is a direct, single-session behavior check, not a blind or independent eval
 
 **Checks:** Persisted documentation uses clear complete prose rather than fragments.
 
-## Not evaluated
+## Current-ID replay — 2026-10-19
+
+In the current paired fixture, the response preserved every technical payload and stayed within the 45-word limit. The runner marked treatment fail because it did not observe the expected skill-name acknowledgement; no skill entrypoint read was visible. A separate natural-request Codex probe also produced the concise, correct summary without reading or naming the Signal entrypoint. This is a routing miss/unknown for that request, not a content failure; Codex exposes no dedicated skill-selection event to distinguish hidden context from non-selection. Current package SHA-256: `9c9b591a86c21d5e40ee2b42eb3bf3717ae0c86b7b0a16e56df23762779b715d`.
+
+## Not evaluated in the historical in-session probe
 
 - Automatic skill selection or host discovery. The skill was applied explicitly in this conversation; it was not installed or invoked through a host skill command.
 - Cross-turn mode persistence in a fresh session, other modes across separate host sessions, or consistency across repeated runs/models.

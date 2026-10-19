@@ -1,5 +1,16 @@
 # Verify skill evaluation record
 
+## Current-ID refresh — 2026-10-19
+
+- **Revision:** `f70b28e0f946f10f458419f6375d59445ebe7f85`.
+- **Current package:** `skills/verify/`; SHA-256 `c82bcc44ce6548426aaf1c101b39a5e62343c245ea9e9f7fba1f8b8af6af954c`.
+- **Unit phase:** two independent Node test groups ran as concurrent isolated processes and overlapped: 4/4 assertions passed. The shared aggregate was saved before browser E2E at `skills/verify/results/feature-summaries/20261019-current-id/summary.md`.
+- **Failure gates:** an injected unit test exited 1 and its E2E was skipped; an injected startup command exited 17 and no browser journey was attempted. Summaries are under the same run's `unit-failure-gate/` and `skills/verify/results/e2e/20261019-current-id/startup-failure/` folders.
+- **Real local E2E:** the synthetic note app was served at `127.0.0.1:8766` and exercised using cached Playwright 1.63.0 with headless Chromium. The browser added `Current Verify evaluation note`, showed `Note saved`, reloaded, and displayed the note again. Both document/script requests returned HTTP 200 before and after reload. Screenshot and machine-readable result: `skills/verify/results/e2e/20261019-current-id/browser.png` and `browser-result.json`.
+- **Execution boundary:** Codex followed the current Verify procedure directly; the app, tests, server, and browser profile were synthetic/local. This validates the recorded path only. It does not prove automatic selection, swarm overlap, cross-host support, persistent backend storage, or broad reliability. The current Verify evaluation guide retains [J] and [H] as not run.
+
+The complete current-ID record complements the earlier sequence and failure-path run below. The earlier dispatched-worker timing still did not prove swarm overlap.
+
 **Date:** 2026-10-19
 **Scope:** One synthetic local web app; this agent explicitly followed the skill. Automatic discovery, independent judging, and human review were not tested.
 
