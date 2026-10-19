@@ -17,6 +17,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 | --- | --- | --- |
 | Global workflow and permissions | Engineering defaults, SDD/TDD, token/context efficiency, documentation refresh, verification and side-effect boundaries | [AGENTS.md](../AGENTS.md) |
 | Skill authoring standard | Package structure, trigger design, validation and behavioral evaluation expectations | [SKILLS.md](../SKILLS.md) |
+| Automated package quality | Required skill metadata/names, source Markdown links, evaluation labels, README catalog coverage, and CI workflow | [checker](../scripts/check_skill_packages.py), [checker tests](../scripts/tests/test_package_quality.py), [GitHub Actions](../.github/workflows/package-quality.yml) |
 | Skill authoring capability | Create, revise, or review focused engineering skills, including source-grounded handling of comments in code-related skills | [Forge](../skills/forge/SKILL.md) |
 | AI-assisted application security review | Read the repository before judging; inspect eight threat families, rank evidence-based findings, and require explicit approval before changing reviewed application files or environments | [Guard](../skills/guard/SKILL.md), [threat review](../skills/guard/references/threat-review.md), [evaluation](../skills/guard/references/evaluation.md) |
 | Spec-first coding workflow | Specify behavior before code, then test-first implementation; verify comment claims against code and contracts | [Assert](../skills/assert/SKILL.md) |
@@ -45,11 +46,11 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 
 ## Commands
 
-This is primarily a Markdown/YAML toolkit with small standard-library Python utilities and tests for Render. Verify is an instruction-only workflow; the no-swarm synthetic sequence and injected failure paths are recorded, while one dispatched-worker attempt did not demonstrate overlapping execution. Automatic discovery and cross-host behavior remain untested. Local run artifacts are ignored by Git; the concise result is retained in [Verify's evaluation record](verify-validation.md). Previous skill and installability outcomes are in [the benchmark results](skills-e2e-benchmark-results.md) and [cross-agent installability results](cross-agent-skill-installability-results.md).
+Run `python3 -m unittest discover -s scripts/tests -v` and `python3 scripts/check_skill_packages.py` for package self-tests and repository validation; GitHub Actions runs both on pushes and pull requests. The gate checks package structure and documentation links, not skill behavior. Verify remains an instruction-only workflow; the no-swarm synthetic sequence and injected failure paths are recorded, while one dispatched-worker attempt did not demonstrate overlapping execution. Automatic discovery and cross-host behavior remain untested. Local run artifacts are ignored by Git; the concise result is retained in [Verify's evaluation record](verify-validation.md). Previous skill and installability outcomes are in [the benchmark results](skills-e2e-benchmark-results.md) and [cross-agent installability results](cross-agent-skill-installability-results.md).
 
 ## High-value checks and constraints
 
-- Check skill frontmatter, folder/name agreement, resource links, and placeholders; validate local Markdown links and run `git diff --check` after documentation changes.
+- The package-quality gate checks skill names/frontmatter, local links, required evaluation labels, and README catalog coverage; run `git diff --check` after documentation changes.
 - Keep behavioral skill evaluation distinct from structural validation. Existing records label unrun evaluations rather than presenting them as proof.
 - Do not copy sensitive personal history into distributable skill packages. Review the policy in [AGENTS.md](../AGENTS.md).
 - For Prune’s behavior and validation limits, see [its validation record](prune-validation.md).
@@ -76,3 +77,4 @@ This is primarily a Markdown/YAML toolkit with small standard-library Python uti
 - Updated on 2026-10-18 with Verify, a unit-first workflow for permission-aware real-app end-to-end evidence.
 - Updated on 2026-10-18 with Verify's concurrent unit phase, pre-E2E aggregate summary, and separate feature-summary and E2E result folders.
 - Updated on 2026-10-19 with safe non-swarm parallel/serial fallbacks, one synthetic browser E2E plus injected unit/startup failure evaluation, and observed worker-dispatch intervals that did not overlap; separate no-swarm host compatibility remains untested.
+- Updated on 2026-10-19 with the Python package-quality checker and push/pull-request workflow.

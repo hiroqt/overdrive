@@ -225,6 +225,8 @@ Use this condensed version of the supplied 30-point checklist. “Not applicable
 | 29 | Revisions address observed failures; obsolete rules are retired |
 | 30 | Purpose, trigger, procedure, forbidden actions, and success are easy to find |
 
+The repository package gate automates a subset of these checks: skill directories and entrypoints, required `name`/`description` metadata and documented length limits, local Markdown links, evaluation summary entries, and README Contents coverage. It does not parse every optional frontmatter field as full YAML. Run `python3 -m unittest discover -s scripts/tests -v` and `python3 scripts/check_skill_packages.py`; [GitHub Actions](.github/workflows/package-quality.yml) runs both on pushes and pull requests. Evaluation labels identify categories only; this gate does not prove evaluations ran, skill behavior is effective, or application E2E passed.
+
 ## 10. Definition of done and maintenance
 
 A skill is ready for its intended use when its contract is settled, packaging and resources are valid, appropriate behavior checks have evidence, protected side effects stay within authorization, and the final result has been reviewed. If behavior testing is unavailable, label it **structurally validated; behavioral evaluation pending**, rather than claiming evaluated performance.

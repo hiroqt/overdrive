@@ -31,6 +31,17 @@ Read [SKILLS.md](SKILLS.md) when creating or reviewing a capability. It distingu
 
 `SKILLS.md` is a handbook. It is not an installable skill and should not be pasted into every skill’s entrypoint. Each installable capability lives in its own folder with an exact `SKILL.md` filename.
 
+## Validate skill packages
+
+Run the repository package check and its focused tests with Python 3:
+
+```bash
+python3 -m unittest discover -s scripts/tests -v
+python3 scripts/check_skill_packages.py
+```
+
+The checker validates each skill directory has a `SKILL.md`, required `name` and `description` fields and their documented limits, optional `compatibility` length, local Markdown link targets, `[D]`/`[J]`/`[H]` evaluation summary entries, and coverage in this README’s Contents catalog. These labels indicate documented evaluation categories; they do not mean a case ran or passed. [GitHub Actions](.github/workflows/package-quality.yml) runs both commands on pushes and pull requests. Require the `validate` status check in branch protection if it should block merges. This is a packaging check; it does not replace behavioral evaluation or E2E testing.
+
 ## The Overdrive skills
 
 Overdrive is the name of this eight-skill collection. Each package is independently installable and follows the standard `skills/<name>/SKILL.md` layout:
