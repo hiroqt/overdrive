@@ -6,7 +6,7 @@
 
 - **Project:** Arnel’s Agent Engineering Toolkit, a documentation and installable-skill repository.
 - **Last verified:** 2026-10-19.
-- **Revision / working tree:** eight skill package IDs use the portable `skills/<name>/` layout. Guard adds approval-gated AI-assisted security review across eight threat families; Verify dispatches independent feature unit tests concurrently, shares a run summary before real app E2E, and stores unit and E2E evidence in separate result folders. Local benchmark harness and fixtures remain ignored.
+- **Revision / working tree:** eight skill package IDs use the portable `skills/<name>/` layout. Guard adds approval-gated AI-assisted security review across eight threat families. Verify prefers concurrent feature checks, supports safe non-swarm and disclosed serial fallbacks, shares a summary before real app E2E, and stores evidence in separate result folders. Synthetic evaluation passed for the no-swarm sequence; a separate worker dispatch did not demonstrate overlapping execution. Cross-host behavior remains untested.
 - **Primary instructions:** [AGENTS.md](../AGENTS.md).
 
 ## Purpose and architecture
@@ -20,7 +20,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 | Skill authoring capability | Create, revise, or review focused engineering skills, including source-grounded handling of comments in code-related skills | [Forge](../skills/forge/SKILL.md) |
 | AI-assisted application security review | Read the repository before judging; inspect eight threat families, rank evidence-based findings, and require explicit approval before changing reviewed application files or environments | [Guard](../skills/guard/SKILL.md), [threat review](../skills/guard/references/threat-review.md), [evaluation](../skills/guard/references/evaluation.md) |
 | Spec-first coding workflow | Specify behavior before code, then test-first implementation; verify comment claims against code and contracts | [Assert](../skills/assert/SKILL.md) |
-| Parallel unit-first application verification | Dispatch isolated feature unit suites concurrently, save and share an aggregate before E2E, then prove the integrated app journey with browser/MCP evidence; separate run folders hold unit summaries and E2E artifacts | [Verify](../skills/verify/SKILL.md), [evaluation](../skills/verify/references/evaluation.md) |
+| Unit-first application verification | Prefer concurrent feature tests with safe non-swarm fallbacks; save/share aggregate before E2E, then prove the integrated journey with browser/MCP evidence | [Verify](../skills/verify/SKILL.md), [evaluation](../skills/verify/references/evaluation.md), [executed evaluation](verify-validation.md) |
 | Prune workflow | Targeted retrieval, MCP consideration, bounded outputs, source inspection beyond comment matches, and persistent codebase map maintenance | [Prune](../skills/prune/SKILL.md) |
 | Concise communication style | Compact answers and progress updates while preserving evidence, technical payloads, uncertainty, and safety clarity | [Signal](../skills/signal/SKILL.md) |
 | Codebase maintainability workflow | Dynamically inventory language-specific components, modules, helpers, tests, and monorepo boundaries; improve structure with explicit API confirmation and sensitive-file protection; resolve comment conflicts against verified code, contracts, and project conventions | [Refactor](../skills/refactor/SKILL.md) |
@@ -38,14 +38,14 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 - Concise response style and tool/context efficiency are separate capabilities; the former must not suppress useful retrieval, verification, or exact evidence.
 - Refactor discovers and maps each language/framework's real constructs—entrypoints, components, contracts, collaborators, helpers, and tests—and traces dependency direction before improving structure. Mixed monorepos are assessed per app/package. It requires confirmation before API restructuring and protects sensitive files. It does not imply scheduled or background work.
 - Render no-dependency HTML inspector and fixtures are in `skills/render/scripts/` and `skills/render/tests/`.
-- Evaluation records and package-specific validation notes live in `docs/`.
+- Evaluation records and package-specific validation notes live in `docs/`, including [Verify's synthetic evaluation](verify-validation.md); isolated subprocesses overlapped, while a separate worker dispatch did not demonstrate swarm concurrency.
 - Actual outcomes from the paired Codex benchmark and cross-agent installation checks are recorded in the [Codex benchmark results](skills-e2e-benchmark-results.md) and [cross-agent installability results](cross-agent-skill-installability-results.md). Local benchmark scripts and synthetic fixtures are excluded by `.gitignore`.
 - [Signal validation](signal-validation.md) records seven in-session behavior probes and separates them from untested host discovery and telemetry claims.
 - Skills provide workflow guidance; they do not install themselves, grant authorization, publish changes, or prove automatic host selection.
 
 ## Commands
 
-This is primarily a Markdown/YAML toolkit with small standard-library Python utilities and tests for Render. Verify is an instruction-only testing workflow; its behavioral evaluation cases are proposed, not executed. Local benchmark scripts and fixtures are ignored by Git; previous E2E outcomes are retained in [the skill benchmark results](skills-e2e-benchmark-results.md) and [cross-agent installability results](cross-agent-skill-installability-results.md). Install examples are in [README.md](../README.md); see [Forge validation evidence](forge-validation.md) for evidence boundaries.
+This is primarily a Markdown/YAML toolkit with small standard-library Python utilities and tests for Render. Verify is an instruction-only workflow; the no-swarm synthetic sequence and injected failure paths are recorded, while one dispatched-worker attempt did not demonstrate overlapping execution. Automatic discovery and cross-host behavior remain untested. Local run artifacts are ignored by Git; the concise result is retained in [Verify's evaluation record](verify-validation.md). Previous skill and installability outcomes are in [the benchmark results](skills-e2e-benchmark-results.md) and [cross-agent installability results](cross-agent-skill-installability-results.md).
 
 ## High-value checks and constraints
 
@@ -74,4 +74,5 @@ This is primarily a Markdown/YAML toolkit with small standard-library Python uti
 - Updated on 2026-10-18 with the Overdrive collection label and renamed package IDs; prior validation records remain explicitly historical.
 - Updated on 2026-10-18 with source-grounded comment conflict handling across code-authoring, refactoring, frontend, and repository-retrieval skills.
 - Updated on 2026-10-18 with Verify, a unit-first workflow for permission-aware real-app end-to-end evidence.
-- Updated on 2026-10-18 with Verify's concurrent swarm unit phase, pre-E2E aggregate summary, and separate feature-summary and E2E result folders.
+- Updated on 2026-10-18 with Verify's concurrent unit phase, pre-E2E aggregate summary, and separate feature-summary and E2E result folders.
+- Updated on 2026-10-19 with safe non-swarm parallel/serial fallbacks, one synthetic browser E2E plus injected unit/startup failure evaluation, and observed worker-dispatch intervals that did not overlap; separate no-swarm host compatibility remains untested.

@@ -1,27 +1,34 @@
-# Verify Evaluation
+# Verify evaluation
 
 ## Evaluation summary
 
-- **[D] Deterministic —** Inspect saved test logs and browser traces/screenshots for per-function or per-feature unit coverage, concurrent swarm worker starts, unit-pass → aggregate-summary → E2E event order, app startup, and a real user-flow assertion. Pass only when every applicable gate passes; this proves the recorded fixture/workflow, not broad reliability.
-- **[J] LLM as a judge —** Grade the saved plan and artifacts for coverage mapping, faithful parallel dispatch and sequencing, separate feature/E2E result folders, use of a real UI for web E2E, permission handling, and honest reporting. Record judge model/settings and pass/fail/partial/not-run; judgment does not replace runtime evidence.
-- **[H] Human —** Review whether the unit boundaries and end-to-end journey match user-visible behavior, whether test actions were authorized and isolated, and whether the evidence supports the claims. Record reviewer disposition; do not claim review unless it occurred.
+- **[D] Deterministic — hand-run fixture evaluation executed:** two feature groups ran concurrently without swarm, their aggregate was shared before a local Firefox E2E, and the saved item persisted after reload. A synthetic unit failure correctly blocked its separate E2E run; an injected startup failure was reported without a browser journey. A separate dispatched-worker check passed both groups but showed no overlap, so it did not prove swarm parallelism. These results cover only the recorded paths.
+- **[J] LLM as a judge — not run:** no independent judge graded the plan or artifacts.
+- **[H] Human — not run:** no independent human review was performed.
 
-The cases below are proposals, not executed results. A speed comparison requires equivalent tasks and recorded elapsed time or tool/runtime telemetry.
+This was a single agent following the skill, not an automatic-discovery or cross-host study. The repository-level record is `docs/verify-validation.md` when available. Do not generalize it to other agents, projects, or test runners. Speed improvement was not evaluated.
 
-## Cases
+## Evaluated cases
 
-| Case | Expected evidence |
+| Case | Status and evidence |
 | --- | --- |
-| Swarm unit tests then summary | Independent feature workers start concurrently against the same revision, use isolated resources, and save one evidence folder per feature; the aggregate is shared before E2E |
-| Unit then overall web E2E | Every changed function/feature maps to focused passing unit cases; only afterward the app starts and a real browser completes the integrated user flow; E2E evidence is stored separately |
-| Unit failure | E2E is not started; failure and next action are reported |
-| App fails to start | Unit results remain recorded; E2E is blocked and no app-run claim is made |
-| Browser UI feature | Browser navigates the running app, interacts as a user, and observes the expected visible result; API-only checks do not count as E2E |
-| MCP integration | The exact target and actions are authorized; the real MCP path runs against approved test data and its returned user-visible state is verified |
-| Permission denied | No authenticated, external, or shared-state test occurs; status is incomplete with the approval boundary stated |
-| Misleading green signal | A passing build, health check, mock, or component test is not reported as a passed user journey |
-| Non-behavioral documentation | Application unit/E2E gates are marked not applicable with a scope-based reason |
+| No-swarm full sequence | **PASS, simulated capability profile:** no swarm worker dispatched; two feature commands ran as overlapping isolated subprocesses. Aggregate saved/shared before real browser E2E. Not a separate host compatibility test. |
+| Dispatched-worker concurrency | **NOT PROVEN:** two workers each passed 2/2, but recorded intervals did not overlap. Local timing record: `skills/verify/results/feature-summaries/20261019-swarm-dispatch/summary.md`. |
+| Real app E2E | **PASS, synthetic local app:** Firefox submitted a note, showed saved state, reloaded, and showed the persisted note. Accessibility state and server requests are recorded. |
+| Unit failure gate | **PASS, expected failure:** synthetic unit command exited 1; its run was marked failed and E2E was not started for that run. |
+| App startup failure | **PASS, injected failure:** synthetic startup command exited 17; status was blocked and browser testing was not attempted. |
+| Authenticated/external/shared-state permission gate | **Not run:** fixture required none of these permissions. |
+| MCP workflow | **Not run:** no MCP-backed app was in scope. |
+| Automatic skill discovery | **Not run:** skill was explicitly followed. |
 
-## Execution record
+## Reproduction record
 
-For each case, preserve the prompt, repository revision, target environment, permission granted, unit coverage map, concurrent worker start/results, commands and outcomes, unit-summary-before-E2E event order, result folder paths, browser/MCP evidence, result, and limitations. Use synthetic data and isolated environments. Never place credentials or private user data in artifacts.
+- Fixture: `/private/tmp/overdrive-verify-eval` (synthetic note-list app; no external services or user data).
+- Revision: repository HEAD `7e213be108b77cb52815ea29c189b7d20cc97828` plus the Verify skill edit in the working tree; final skill SHA-256 `c82bcc44ce6548426aaf1c101b39a5e62343c245ea9e9f7fba1f8b8af6af954c`.
+- Unit commands: `node --test --test-reporter=tap test/title.test.mjs` and `node --test --test-reporter=tap test/notes.test.mjs`; each passed 2/2. Their recorded time intervals overlap. Local feature artifacts are under `skills/verify/results/feature-summaries/20261019-ns-verify/`.
+- Aggregate: the run summary was saved and shared before E2E. Generated run folders are ignored by Git; the repository-level outcome is summarized in `docs/verify-validation.md` when available.
+- E2E: `python3 -m http.server 8765 --bind 127.0.0.1`; Firefox via CUA at `http://127.0.0.1:8765/`; note creation and reload persistence observed. Local evidence is under `skills/verify/results/e2e/20261019-ns-verify/`.
+- Failure runs: local artifacts are under `skills/verify/results/feature-summaries/20261019-unit-failure-gate/` and `skills/verify/results/e2e/20261019-unit-failure-gate/`; injected startup failure is under `skills/verify/results/e2e/20261019-startup-failure/`.
+- The first local server attempt was blocked by sandbox socket policy; it started after an explicit local-only permission grant. This was an environment restriction, not an application failure.
+
+Future evaluation should use an independent agent and at least one host without swarm support. Preserve the event order, target revision, commands, exit codes, execution mode, and UI evidence for every run. Proposed cases are not results.
