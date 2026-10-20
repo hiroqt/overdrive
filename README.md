@@ -1,6 +1,6 @@
 # Overdrive
 
-**Hiroqt’s portable AI coding-agent toolkit: source-grounded, stack-aware, test-first, and built for product-fit interfaces.** Overdrive combines eight focused skills with shared guidance for maintainable code, efficient exploration, and evidence-based delivery.
+**Hiroqt’s portable AI coding-agent toolkit: source-grounded, stack-aware, test-first, and built for product-fit interfaces.** Overdrive combines nine focused skills with shared guidance for maintainable code, efficient exploration, and evidence-based delivery.
 
 ## Contents
 
@@ -16,6 +16,7 @@
 | Overdrive skill | [Prune](skills/prune/SKILL.md) | Reduce avoidable search, output, and context overhead |
 | Overdrive skill | [Verify](skills/verify/SKILL.md) | Run feature-level unit tests with safe parallel fallbacks, share results, then prove the overall app flow end to end |
 | Overdrive skill | [Guard](skills/guard/SKILL.md) | Audit AI-assisted code for security flaws and require approval before repository changes |
+| Overdrive skill | [Trace](skills/trace/SKILL.md) | Map a codebase for new developers and trace agent/LLM failures across its system planes |
 
 ## Global instructions
 
@@ -44,7 +45,7 @@ The checker validates each skill directory has a `SKILL.md`, required `name` and
 
 ## The Overdrive skills
 
-Overdrive is the name of this eight-skill collection. Each package is independently installable and follows the standard `skills/<name>/SKILL.md` layout:
+Overdrive is the name of this nine-skill collection. Each package is independently installable and follows the standard `skills/<name>/SKILL.md` layout:
 
 ```text
 skills/
@@ -55,10 +56,11 @@ skills/
 ├── assert/    # specification-first, test-first coding
 ├── prune/     # efficient repository and context exploration
 ├── verify/    # feature unit tests with safe parallel fallbacks and real app E2E proof
-└── guard/     # AI-assisted code security review and approval-gated remediation
+├── guard/     # AI-assisted code security review and approval-gated remediation
+└── trace/      # newcomer codebase map and agent-system diagnosis
 ```
 
-The package IDs and invocation names are `forge`, `refactor`, `signal`, `render`, `assert`, `prune`, `verify`, and `guard`. Existing installations under previous IDs do not migrate automatically; remove any old copies from the target agent before using the renamed package.
+The package IDs and invocation names are `forge`, `refactor`, `signal`, `render`, `assert`, `prune`, `verify`, `guard`, and `trace`. Existing installations under previous IDs do not migrate automatically; remove any old copies from the target agent before using the renamed package.
 
 ## What makes Overdrive different
 
@@ -194,6 +196,16 @@ Use [Refactor](skills/refactor/SKILL.md) to identify each repository's languages
 
 ```text
 Use $refactor to assess this repository and make the next safe, high-value maintainability improvement.
+```
+
+## Trace: map a codebase and diagnose agent behavior
+
+Use [Trace](skills/trace/SKILL.md) when an agent/LLM feature misbehaves at an unknown layer or before release. It gives a new developer a source-linked map of the repository, then follows one representative request through the relevant host, prompt/context, model/orchestration, tool, response, data, and operations boundaries. Its broader [system map](skills/trace/references/agent-stack.md) groups conditional checkpoints into six planes and retains every label supplied in the original request.
+
+The workflow is read-only by default. It starts with a fast representative path and expands when evidence or risk points elsewhere; it does not claim to inspect every file or guarantee runtime correctness. The source list described as 12 layers contains 14 labels; “ArCs” remains undefined. Use Refactor for approved structural changes and Guard for security findings.
+
+```text
+Use $trace to map this codebase for a new developer and trace one failing LLM request. Rank findings, cite source evidence, and propose code-first fixes without editing.
 ```
 
 ## Signal: concise communication
