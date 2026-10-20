@@ -1,0 +1,4 @@
+interface:
+  display_name: "Trace"
+  short_description: "Trace agent behavior across its codebase"
+  default_prompt: "Use $trace to map this codebase for a new developer and trace one representative agent request through its system planes. Return source-linked, severity-ranked findings and code-first fixes; keep the audit read-only."
