@@ -15,6 +15,7 @@ const PACKAGE_NAME = 'overdrive';
 const ROUTER_SKILL = 'overdrive';
 const MARKETPLACE_NAME = 'local-repo';
 const NAME_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const BANNER_COLORS = ['38;5;51', '38;5;45', '38;5;81', '38;5;117', '38;5;141', '38;5;213'];
 
 export const HOSTS = [
   { id: 'claude-code', label: 'Claude Code (IDE + CLI)' },
@@ -73,6 +74,70 @@ async function availableSkills(skillsRoot) {
     }
   }
   return names.sort();
+}
+
+async function pathType(target) {
+  try {
+    const info = await lstat(target);
+    if (info.isDirectory()) return 'directory';
+    if (info.isFile()) return 'file';
+    return null;
+  } catch (error) {
+    if (error.code === 'ENOENT') return null;
+    throw error;
+  }
+}
+
+export async function detectHosts(projectRoot) {
+  const hints = new Map();
+  const add = (id, reason) => {
+    if (!hints.has(id)) hints.set(id, reason);
+  };
+  const directoryMarkers = [
+    ['claude-code', '.claude/'],
+    ['codex', '.codex/'],
+    ['codex', '.agents/skills/'],
+    ['codex', '.agents/plugins/marketplace.json'],
+    ['kiro', '.kiro/'],
+    ['grok', '.grok/'],
+  ];
+
+  for (const [id, relative] of directoryMarkers) {
+    const type = await pathType(path.join(projectRoot, relative));
+    if (type && (relative.endsWith('/') ? type === 'directory' : type === 'file')) add(id, relative);
+  }
+
+  const pluginsRoot = path.join(projectRoot, '.agents/plugins');
+  if (await pathType(pluginsRoot) === 'directory') {
+    const entries = await readdir(pluginsRoot, { withFileTypes: true });
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue;
+      const manifestPath = path.join(pluginsRoot, entry.name, 'plugin.json');
+      if (await pathType(manifestPath) !== 'file') continue;
+      try {
+        const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+        if (typeof manifest.$schema === 'string' && manifest.$schema.startsWith('https://antigravity.google/schemas/')) {
+          add('antigravity', `.agents/plugins/${entry.name}/plugin.json`);
+          break;
+        }
+      } catch {
+        // Ignore malformed plugin metadata; detection is advisory and must not block installation.
+      }
+    }
+  }
+
+  return HOSTS.filter(({ id }) => hints.has(id)).map(({ id }) => ({ id, reason: hints.get(id) }));
+}
+
+export async function showBanner(stream = process.stdout, { color, delayMs = 45, env = process.env } = {}) {
+  const useColor = color ?? Boolean(stream.isTTY && !('NO_COLOR' in env) && env.TERM !== 'dumb');
+  const wordmark = 'HIROQT';
+  for (let index = 0; index < wordmark.length; index += 1) {
+    const character = wordmark[index];
+    stream.write(useColor ? `\u001b[${BANNER_COLORS[index]}m${character}\u001b[0m` : character);
+    if (useColor && delayMs > 0) await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+  stream.write('\nOVERDRIVE SKILLS INSTALLER\n\n');
 }
 
 function addBundle(bundles, destination, manifestPath, manifest, hostId, safetyRoot) {
@@ -616,13 +681,14 @@ function parseArguments(args) {
   return options;
 }
 
-async function askSelection(question, label, choices, { defaultAll = false } = {}) {
+async function askSelection(question, label, choices, { defaultAll = false, defaultIds = [] } = {}) {
   const valid = new Set(choices.map(({ id }) => id));
   const choiceList = choices.map(({ id, label: name }) => `  ${id}${name ? ` — ${name}` : ''}`).join('\n');
   while (true) {
-    const suffix = defaultAll ? ' or press Enter for all' : '';
+    const suffix = defaultAll ? ' or press Enter for all' : defaultIds.length ? ' or press Enter to accept detected hosts' : '';
     const answer = (await question(`${label}\n${choiceList}\nEnter comma-separated IDs${suffix}: `)).trim();
     if (!answer && defaultAll) return [...valid];
+    if (!answer && defaultIds.length) return [...defaultIds];
     const selected = [...new Set(answer.split(',').map((value) => value.trim()).filter(Boolean))];
     const invalid = selected.filter((value) => !valid.has(value));
     if (selected.length && !invalid.length && !selected.includes('all')) return selected;
@@ -655,7 +721,10 @@ async function promptInstall(options) {
   };
 
   try {
-    process.stdout.write('Overdrive Agent Skills Installer\n\n');
+    await showBanner();
+    const homeDir = process.env.HOME || process.env.USERPROFILE || os.homedir();
+    const cwd = process.cwd();
+    const codexHome = process.env.CODEX_HOME ? path.resolve(process.env.CODEX_HOME) : path.join(homeDir, '.codex');
     let scope = options.scope;
     while (!scope) {
       const answer = (await question('Install scope: 1) This project [default]  2) Global user install: ')).trim().toLowerCase();
@@ -664,9 +733,17 @@ async function promptInstall(options) {
       else process.stdout.write('Choose 1 for this project or 2 for global.\n');
     }
 
-    const hostIds = options.hostIds.length
-      ? options.hostIds
-      : await askSelection(question, 'Choose host(s):', HOSTS);
+    let hostIds = options.hostIds;
+    if (!hostIds.length) {
+      const detected = await detectHosts(cwd);
+      if (detected.length) {
+        process.stdout.write(`Detected project host hints: ${detected.map(({ id }) => id).join(', ')}\n`);
+        for (const { id, reason } of detected) process.stdout.write(`  ${id} from ${reason}\n`);
+      }
+      hostIds = await askSelection(question, 'Choose host(s):', HOSTS, {
+        defaultIds: detected.map(({ id }) => id),
+      });
+    }
     const skillNames = options.skillNames.length
       ? options.skillNames
       : await askSelection(question, 'Skills:', skillChoices, { defaultAll: true });
@@ -681,9 +758,6 @@ async function promptInstall(options) {
       antigravitySurface = antigravitySurface[0];
     }
 
-    const homeDir = process.env.HOME || process.env.USERPROFILE || os.homedir();
-    const cwd = process.cwd();
-    const codexHome = process.env.CODEX_HOME ? path.resolve(process.env.CODEX_HOME) : path.join(homeDir, '.codex');
     const plan = await prepareInstall({ scope, hostIds, skillNames, cwd, homeDir, codexHome, antigravitySurface });
     process.stdout.write(`\nScope: ${scope} (${path.resolve(scope === 'project' ? cwd : homeDir)})\n`);
     process.stdout.write(`Hosts: ${hostIds.join(', ')}\nSkills: ${skillNames.join(', ')}\nRouter: ${ROUTER_SKILL} (included automatically)\n`);

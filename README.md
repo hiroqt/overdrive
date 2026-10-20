@@ -118,13 +118,13 @@ Verify's synthetic workflow evaluation is recorded in [Verify validation](docs/v
 
 Installable folders under [`skills/`](skills/) use the open [Agent Skills format](https://agentskills.io/specification): each contains `SKILL.md` metadata and instructions, with optional references, scripts, or assets. Overdrive's npm CLI creates the selected host's documented plugin/Power bundle or flat-skill layout. Discovery, activation, commands, script execution, and permissions still depend on each host and version.
 
-After the package is released to npm, run the installer from the project where you want the skills, or choose global scope for your user account:
+Run the installer from the project where you want the skills, or choose global scope for your user account:
 
 ```bash
 npx @hiroqt/overdrive install
 ```
 
-Requires Node.js 18 or newer and npm. The installer defaults to project scope and all ten domain skills, but always asks you to choose at least one host. It includes the `overdrive` router automatically. Pass `--host` one or more times (or use comma-separated IDs); use `--scope` and `--skill` to script the other selections:
+Requires Node.js 18 or newer and npm. Project scope is preselected; choose global explicitly. The installer scans project markers and suggests likely hosts, but asks you to confirm or replace that selection. Press Enter at the skill prompt to select all ten domain skills. The `overdrive` router is always included. Pass `--host` one or more times (or use comma-separated IDs); use `--scope` and `--skill` to set scripted selections:
 
 ```bash
 npx @hiroqt/overdrive install --host antigravity --skill assert
@@ -148,7 +148,9 @@ Selected host layouts and invocation:
 
 Each native form invokes the same router instructions and installed-skill filter; direct per-skill commands remain available. Claude's directory plugin therefore uses the namespaced `/overdrive:overdrive` router and `/overdrive:<skill>` direct commands. Codex's IDE uses flat skills and Codex's CLI uses a grouped plugin. Kiro's project skills use `/<skill>` commands; its global Power does not promise slash aliases. Antigravity's project plugin folder is shared by its IDE and CLI, and Grok accepts plugin-provided slash-command skills. Global Antigravity writes only the selected surface(s). Non-Codex bundles omit Codex-only `agents/openai.yaml` metadata. An explicit router invocation does not prove ambient automatic selection.
 
-The previous Python source-checkout installer remains at `scripts/install_skills.py` for existing clones. New installs should use npm.
+Host detection is a project-marker heuristic, not a claim about which IDE window is active. For example, `.claude/`, `.codex/`, `.kiro/`, and `.grok/` suggest their matching hosts; `.agents/skills/` suggests Codex IDE; a native Antigravity `plugin.json` suggests Antigravity. You confirm the host list before the destination preview and final confirmation.
+
+The npm terminal restores the cyan-to-violet `HIROQT` wordmark from the earlier installer. Color and the short type-on animation appear only in an interactive color terminal; `NO_COLOR`, dumb terminals, and redirected output stay plain.
 
 ### Recorded installation checks
 

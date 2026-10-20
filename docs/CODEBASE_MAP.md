@@ -18,7 +18,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 | Global workflow and permissions | Engineering defaults, SDD/TDD, token/context efficiency, documentation refresh, verification and side-effect boundaries | [AGENTS.md](../AGENTS.md) |
 | Skill authoring standard | Package structure, trigger design, validation and behavioral evaluation expectations | [SKILLS.md](../SKILLS.md) |
 | Automated package quality | Required skill metadata/names, source Markdown links, evaluation labels, README catalog coverage, and CI workflow | [checker](../scripts/check_skill_packages.py), [checker tests](../scripts/tests/test_package_quality.py), [GitHub Actions](../.github/workflows/package-quality.yml) |
-| npm skill installer | Interactive project/global, host, and skill selection; host-specific destinations; collision-safe full-folder copies | [specification](npm-installable-skills-spec.md), [CLI](../bin/overdrive.js), [package metadata](../package.json), [Node tests](../scripts/tests/installer.test.js) |
+| npm skill installer | Interactive project/global selection, marker-based host suggestions, the animated TTY wordmark, host-specific destinations, and collision-safe copies | [specification](npm-installable-skills-spec.md), [CLI](../bin/overdrive.js), [package metadata](../package.json), [Node tests](../scripts/tests/installer.test.js) |
 | Current-ID skill evaluations | Paired execution cases, Guard security fixture, Verify browser flow, and separate host-routing evidence | [paired benchmark](skills-e2e-benchmark-results.md), [Guard evaluation](../skills/guard/references/evaluation.md), [Verify evaluation](verify-validation.md), [routing probe](automatic-routing-validation.md) |
 | Skill authoring capability | Create, revise, or review focused engineering skills, including source-grounded handling of comments in code-related skills | [Forge](../skills/forge/SKILL.md) |
 | AI-assisted application security review | Read the repository before judging; inspect eight threat families, rank evidence-based findings, and require explicit approval before changing reviewed application files or environments | [Guard](../skills/guard/SKILL.md), [threat review](../skills/guard/references/threat-review.md), [evaluation](../skills/guard/references/evaluation.md) |
@@ -36,7 +36,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 
 - Repository overview, skill usage, and install examples: [README.md](../README.md).
 - Guard's threat-specific checks and evaluation cases are in `skills/guard/references/`; one current-ID synthetic deterministic case ran, while independent judge/human review and other threat families remain open.
-- npm installer: [package command](../bin/overdrive.js) and its [specification](npm-installable-skills-spec.md). The prior Python source-checkout installer remains at [scripts/install_skills.py](../scripts/install_skills.py).
+- npm installer: [package command](../bin/overdrive.js) and [specification](npm-installable-skills-spec.md). The public npm package is `@hiroqt/overdrive`; the old Python installer has been retired while Python remains for package-validation scripts.
 - Authoring guide and package checklist: [SKILLS.md](../SKILLS.md).
 - Installable capabilities live in `skills/<name>/SKILL.md`; optional Codex UI metadata is in that package’s `agents/openai.yaml`.
 - Every skill package includes a linked `references/evaluation.md` with distinct [D] deterministic, [J] LLM-as-a-judge, and [H] human evaluation summaries; see [the authoring standard](../SKILLS.md#evaluation-summaries-for-every-skill).
@@ -53,7 +53,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 
 ## Commands
 
-Run `npm test`, `npm pack --dry-run`, `python3 -m unittest discover -s scripts/tests -v`, and `python3 scripts/check_skill_packages.py` for installer and package checks; GitHub Actions runs them on pushes and pull requests. The Node tests verify host paths/manifests, selection, copying, Codex marketplace/TOML registration and CLI activation, collisions, and Claude's plugin namespace. They do not establish activation on every host. Live evidence covers all ten direct skills and one automatic `/overdrive` selection in Antigravity CLI, all-ten skill listing plus `/assert` in Antigravity IDE, and Codex plugin-cache activation. A post-activation Codex response remains unverified because the isolated test home had no credentials. Final local validation passed 21 Node tests, 13 Python tests, the 11-package/265-link checker, a 56-entry pack dry-run, and `git diff --check`. Local run artifacts are ignored by Git. See the [cross-agent results](cross-agent-skill-installability-results.md), [skill evaluation records](skills-e2e-benchmark-results.md), [Verify record](verify-validation.md), and [automatic-routing report](automatic-routing-validation.md).
+Run `npm test`, `npm pack --dry-run`, `python3 -m unittest discover -s scripts/tests -v`, and `python3 scripts/check_skill_packages.py` for installer and package checks; GitHub Actions runs them on pushes and pull requests. The Node tests verify terminal color fallback, marker suggestions, host paths/manifests, selection, copying, Codex marketplace/TOML registration and activation, collisions, and Claude's plugin namespace. Marker matches are suggestions, not proof of the active IDE. Installer E2E evidence, publication verification, and current host limitations are in the [cross-agent results](cross-agent-skill-installability-results.md).
 
 ## High-value checks and constraints
 
@@ -76,7 +76,7 @@ Run `npm test`, `npm pack --dry-run`, `python3 -m unittest discover -s scripts/t
 - Updated on 2026-10-15 with the paired Codex CLI skill benchmark and actual five-skill results.
 - Updated on 2026-10-16 with individual Laws of UX application notes and concept links in the Render reference.
 - Updated on 2026-10-17 with host-specific Agent Skills installation guidance and cross-agent installability E2E.
-- Updated on 2026-10-17 with the animated, interactive Hiroqt installer and actual project/global E2E runs.
+- Updated on 2026-10-21 with the npm installer, interactive cyan-to-violet wordmark, project marker suggestions, and public package verification; the legacy Python installer was retired.
 - Updated on 2026-10-17 to exclude local benchmark scripts and fixtures from Git while retaining recorded outcomes.
 - Updated on 2026-10-17 with Refactor and its API confirmation and sensitive-file protections.
 - Updated on 2026-10-18 with stack-neutral structure assessment guidance and paired Codex E2E evidence across React/TypeScript, C#/ASP.NET Core, Rust, Python, and a mixed React/C# monorepo.
