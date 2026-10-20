@@ -6,54 +6,84 @@
 </p>
 
 <p align="center">
-  <a href="#quick-start">Quick start</a> ·
-  <a href="#skills">Skills</a> ·
-  <a href="#host-support">Host support</a> ·
+  <a href="#install-and-use-by-host">Install by host</a> ·
+  <a href="#contents">Contents</a> ·
   <a href="#evidence">Evidence</a>
 </p>
 
-## Quick start
+## Install and use by host
 
-Run the installer from the project where you want the skills:
+The examples below install into the current project and explicitly select one host. The installer asks which skills to include; press Enter to select all ten. The `overdrive` task router is always included, destinations are previewed before writing, and existing skills are skipped. Add `--scope global` to install for your user, or `--skill assert,review` to select specific domain skills. There is no separate initialization step.
 
-```bash
-npx @hiroqt/overdrive install
-```
+The published package is currently `@hiroqt/overdrive`. This repository has been renamed to `overdrive-skills`, which is not published yet; use `npx overdrive-skills install` after that package is released. Node.js 18+ and npm are required. Interactive color terminals show the cyan-to-violet `HIROQT` wordmark; `NO_COLOR`, `TERM=dumb`, and redirected output stay plain.
 
-> **npm package status:** `@hiroqt/overdrive` is the current published package. This repository now uses the name `overdrive-skills`, which is not published yet. After its release, the command will be `npx overdrive-skills install`.
-
-Requires Node.js 18+ and npm. There is no separate Overdrive initialization step: select your host and skills, confirm the preview, then invoke them using that host’s native command. Reload the host if it does not pick up newly installed skills.
-
-The interactive installer defaults to project scope, suggests hosts from project markers, and asks you to confirm every selection and destination before writing. Press Enter at the skill picker to choose all ten domain skills; the `overdrive` router is always included. Existing destinations are skipped. The installer does not update or uninstall skills.
-
-Interactive color terminals show the cyan-to-violet `HIROQT` wordmark; `NO_COLOR`, `TERM=dumb`, and redirected output stay plain.
-
-For scripted installs, choose hosts explicitly:
+### Claude Code (IDE and CLI)
 
 ```bash
-npx @hiroqt/overdrive install --host antigravity --skill assert
-npx @hiroqt/overdrive install --scope global --host antigravity --surface cli
+npx @hiroqt/overdrive install --host claude-code
 ```
 
-Host IDs: `claude-code`, `codex`, `kiro`, `antigravity`, `grok`. Use `--scope project|global`, repeatable or comma-separated `--host` and `--skill` values, and `--surface ide|cli|both` for global Antigravity.
+Project bundle: `.claude/skills/overdrive/`; global bundle: `~/.claude/skills/overdrive/`.
 
-## Use Overdrive
+In an already-open session, run `/reload-plugins`. Route a task with `/overdrive:overdrive <task>` or invoke a skill directly, for example `/overdrive:assert <task>`. Claude Code namespaces plugin skills with the plugin name. See [Claude Code plugin docs](https://code.claude.com/docs/en/plugins/create).
 
-Give the router a task to choose one primary skill, or name a skill to select it directly:
+### Codex (IDE and CLI)
 
-```text
-/overdrive Add request validation to this API endpoint
-/overdrive assert Add request validation to this API endpoint
+```bash
+npx @hiroqt/overdrive install --host codex
 ```
 
-These examples use slash-command syntax; Claude Code prefixes the router with its plugin namespace, while Codex uses `$overdrive`. The router adapts to the current request, repository instructions, stack, and available checks. It only considers skills installed in that bundle, may suggest one useful handoff, and does not chain skills automatically. See [Host support](#host-support) for exact commands.
+Project install: CLI plugin in `.codex/plugins/overdrive/` and IDE skills in `.agents/skills/`. Global CLI plugin follows `$CODEX_HOME`; global IDE skills go to `~/.agents/skills/`.
 
-## Skills
+The installer registers and activates the Codex CLI plugin when `codex` is available; otherwise, it prints the activation command to run after installing the CLI. Start a new Codex session after CLI activation. In Codex chat, use `$overdrive <task>` to route or `$assert <task>` to invoke a skill directly; `/skills` lists available skills. Restart Codex if new skills do not appear. See [Codex skills](https://developers.openai.com/codex/skills) and [plugins](https://developers.openai.com/codex/plugins).
+
+### Kiro (IDE and CLI)
+
+```bash
+npx @hiroqt/overdrive install --host kiro
+```
+
+Project skills: `.kiro/skills/`; global Power: `~/.kiro/powers/overdrive/`.
+
+Open the project in Kiro IDE, or start a Kiro CLI V3 session from the project with `kiro-cli --v3`. Project skills are slash commands: `/overdrive <task>` routes a task and `/<skill> <task>` invokes a specific skill, such as `/assert <task>`. For a global install, add `--scope global`; this installs an Overdrive Power. In Kiro CLI V3, use `/powers` to check installed Powers. Global Power slash aliases are not guaranteed. See [Kiro Agent Skills](https://kiro.dev/docs/skills/) and [CLI slash commands](https://kiro.dev/docs/reference/slash-commands/).
+
+### Antigravity IDE and CLI
+
+```bash
+npx @hiroqt/overdrive install --host antigravity
+```
+
+Project plugin: `.agents/plugins/overdrive/`. Global IDE and CLI installs use `~/.gemini/config/plugins/overdrive/` and `~/.gemini/antigravity-cli/plugins/overdrive/`, respectively.
+
+The project plugin is shared by Antigravity IDE and CLI. In the IDE, open the project and check **Customizations → Skills** in the agent panel; invoke `/overdrive <task>` or a direct skill such as `/assert <task>`. In the CLI, start `agy`, use `/skills` to inspect available skills, then route with `/overdrive <task>` or invoke a plugin skill with its native `/overdrive:<skill>` name, such as `/overdrive:assert <task>`.
+
+For a global install, choose the target surface explicitly:
+
+```bash
+npx @hiroqt/overdrive install --scope global --host antigravity --surface ide
+```
+
+Use `--surface cli` or `--surface both` for the CLI or both surfaces. See [Antigravity Agent Skills](https://www.antigravity.google/docs/skills?tab=ide) and [CLI commands](https://www.antigravity.google/docs/cli/reference/).
+
+### Grok Build CLI
+
+```bash
+npx @hiroqt/overdrive install --host grok
+```
+
+Project plugin: `.grok/plugins/overdrive/`; global plugin: `~/.grok/plugins/overdrive/`.
+
+From the project root, run `grok inspect` to check discovered skills and plugins, then start `grok`. Use `/overdrive <task>` to route or `/<skill> <task>` to invoke a skill directly, such as `/assert <task>`. See [Grok Build](https://docs.x.ai/build/overview) and [skills, plugins, and marketplaces](https://docs.x.ai/build/features/skills-plugins-marketplaces).
+
+Overdrive adapts to the current task, repository instructions, stack, and available checks. The router only considers installed skills, selects one primary skill, and may suggest a useful handoff without automatically chaining skills. Host command syntax differs; use the examples above for each host.
+
+## Contents
 
 The router is installed automatically. Choose any domain skills; each package follows the [Agent Skills format](https://agentskills.io/specification) and includes its `SKILL.md` plus supporting references, scripts, or assets.
 
 | Skill | Use it to… |
 | --- | --- |
+| [Overdrive](skills/overdrive/SKILL.md) | Route a task to the best matching installed skill. |
 | [Forge](skills/forge/SKILL.md) | Create, improve, or review reusable agent skills. |
 | [Refactor](skills/refactor/SKILL.md) | Map real project structure and make safe maintainability changes. |
 | [Signal](skills/signal/SKILL.md) | Write concise updates without losing evidence or technical detail. |
@@ -64,27 +94,6 @@ The router is installed automatically. Choose any domain skills; each package fo
 | [Review](skills/review/SKILL.md) | Trace changes and report concrete, source-verified findings. |
 | [Guard](skills/guard/SKILL.md) | Audit AI-assisted code for security risks and unsafe changes. |
 | [Trace](skills/trace/SKILL.md) | Map a codebase or diagnose an agent/LLM failure across its system. |
-
-## Host support
-
-Project installs are local to a repository; global installs use the host's user-level location. Codex CLI and Codex IDE use different package layouts. Kiro's global Power is activated contextually and does not promise slash aliases.
-
-<details>
-<summary>Show install paths and native commands</summary>
-
-| Host / surface | Project install | Global install | Router / direct skill |
-| --- | --- | --- | --- |
-| Claude Code IDE/CLI | `.claude/skills/overdrive/` | `~/.claude/skills/overdrive/` | `/overdrive:overdrive` / `/overdrive:<skill>` |
-| Codex CLI | `.codex/plugins/overdrive/` plus local marketplace registration | `$CODEX_HOME/plugins/overdrive/` (default `~/.codex`) | `$overdrive` / `$<skill>`; `/skills` lists skills |
-| Codex IDE | `.agents/skills/<skill>/` | `~/.agents/skills/<skill>/` | `$overdrive` / `$<skill>`; `/skills` lists skills |
-| Kiro IDE/CLI | `.kiro/skills/<skill>/` | `~/.kiro/powers/overdrive/` | Project: `/overdrive` / `/<skill>`; global Power: contextual activation |
-| Antigravity IDE | `.agents/plugins/overdrive/` | `~/.gemini/config/plugins/overdrive/` | `/overdrive` / `/<skill>` |
-| Antigravity CLI | `.agents/plugins/overdrive/` | `~/.gemini/antigravity-cli/plugins/overdrive/` | `/overdrive` / `/<skill>` |
-| Grok Build CLI | `.grok/plugins/overdrive/` | `~/.grok/plugins/overdrive/` | `/overdrive` / `/<skill>` |
-
-For Codex CLI, the installer previews and registers the selected local marketplace before activating the plugin. A marker match is only a suggestion; it does not detect which IDE window is active. Non-Codex bundles omit Codex-only metadata. See the [npm installer specification](docs/npm-installable-skills-spec.md) for registration and host details.
-
-</details>
 
 ## Evidence
 
