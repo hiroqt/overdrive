@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review"
+  short_description: "Review code changes with verified cases"
+  default_prompt: "Use $review to review the named change read-only. Trace changed behavior through callers, data flow, tests, README, and deployment assumptions. Report only verified findings with a concrete case and the smallest fix."

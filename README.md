@@ -1,6 +1,6 @@
 # Overdrive
 
-**Hiroqt’s portable AI coding-agent toolkit: source-grounded, stack-aware, test-first, and built for product-fit interfaces.** Overdrive combines nine focused skills with shared guidance for maintainable code, efficient exploration, and evidence-based delivery.
+**Hiroqt’s portable AI coding-agent toolkit: source-grounded, stack-aware, test-first, and built for product-fit interfaces.** Overdrive combines ten focused skills with shared guidance for maintainable code, efficient exploration, and evidence-based delivery.
 
 ## Contents
 
@@ -15,6 +15,7 @@
 | Overdrive skill | [Assert](skills/assert/SKILL.md) | Specify behavior, then implement test-first |
 | Overdrive skill | [Prune](skills/prune/SKILL.md) | Reduce avoidable search, output, and context overhead |
 | Overdrive skill | [Verify](skills/verify/SKILL.md) | Run feature-level unit tests with safe parallel fallbacks, share results, then prove the overall app flow end to end |
+| Overdrive skill | [Review](skills/review/SKILL.md) | Trace changes through callers and data flow; report only concrete, verified findings |
 | Overdrive skill | [Guard](skills/guard/SKILL.md) | Audit AI-assisted code for security flaws and require approval before repository changes |
 | Overdrive skill | [Trace](skills/trace/SKILL.md) | Map a codebase for new developers and trace agent/LLM failures across its system planes |
 
@@ -45,7 +46,7 @@ The checker validates each skill directory has a `SKILL.md`, required `name` and
 
 ## The Overdrive skills
 
-Overdrive is the name of this nine-skill collection. Each package is independently installable and follows the standard `skills/<name>/SKILL.md` layout:
+Overdrive is the name of this ten-skill collection. Each package is independently installable and follows the standard `skills/<name>/SKILL.md` layout:
 
 ```text
 skills/
@@ -56,11 +57,12 @@ skills/
 ├── assert/    # specification-first, test-first coding
 ├── prune/     # efficient repository and context exploration
 ├── verify/    # feature unit tests with safe parallel fallbacks and real app E2E proof
+├── review/    # read-only code review with concrete, source-verified cases
 ├── guard/     # AI-assisted code security review and approval-gated remediation
 └── trace/      # newcomer codebase map and agent-system diagnosis
 ```
 
-The package IDs and invocation names are `forge`, `refactor`, `signal`, `render`, `assert`, `prune`, `verify`, `guard`, and `trace`. Existing installations under previous IDs do not migrate automatically; remove any old copies from the target agent before using the renamed package.
+The package IDs and invocation names are `forge`, `refactor`, `signal`, `render`, `assert`, `prune`, `verify`, `review`, `guard`, and `trace`. Existing installations under previous IDs do not migrate automatically; remove any old copies from the target agent before using the renamed package.
 
 ## What makes Overdrive different
 
@@ -71,6 +73,7 @@ Overdrive is built to keep agents grounded in the real codebase and the user's a
 | A stale comment dictates a new implementation | Treat comments as claims. Trace the symbol, callers, tests/contracts, maintained docs, supported APIs, and local patterns. Follow verified architecture and project standards over stale or deprecated recipes; preserve proven domain and safety constraints, and correct stale comments when appropriate. | [Refactor](skills/refactor/SKILL.md), [Assert](skills/assert/SKILL.md), [Render](skills/render/SKILL.md), [Prune](skills/prune/SKILL.md) |
 | An AI repair removes safeguards to make an error disappear | Inspect the repository and diff first; flag removed access checks, validation, TLS verification, safe error handling, rate limits, or policy controls; rank findings and require explicit approval before edits. Review authorization, exposed secrets, dependencies, infrastructure, business rules, AI endpoints, and audit evidence. | [Guard](skills/guard/SKILL.md) |
 | A refactor assumes every repository uses the same stack | Identify languages and frameworks from project files, then map real entrypoints, components, services, types, helpers, tests, and package boundaries before proposing a bounded improvement. | [Refactor](skills/refactor/SKILL.md) |
+| Code reviews report plausible but unverified concerns | Trace changed behavior through callers, important callees, tests, README, and deployment assumptions; require one concrete trigger and outcome per finding. | [Review](skills/review/SKILL.md) |
 | Code is written before the behavior is clear | Define observable acceptance first, then use test-first implementation and report only checks that actually ran. | [Assert](skills/assert/SKILL.md) |
 | Test results are serial, fragmented, or confused with app proof | Run independent feature suites concurrently when safe; disclose serial fallback, share the aggregate before E2E, then verify the user journey. | [Verify](skills/verify/SKILL.md) |
 | Progress updates bury decisions in filler | Keep communication concise while retaining technical payloads, evidence, uncertainty, and safety details. | [Signal](skills/signal/SKILL.md) |
@@ -170,6 +173,16 @@ Use [Verify](skills/verify/SKILL.md) for focused feature tests followed by a rea
 
 ```text
 Use $verify to test changed features in parallel where safe, share the unit summary, then prove the running app's user flow in a browser.
+```
+
+## Review: concrete, read-only code review
+
+Use [Review](skills/review/SKILL.md) for a named branch, pull request, commit, or files. If no target is named, it identifies uncommitted changes first, then the latest commit if the tree is clean. Its Change-to-Outcome Trace follows changed behavior through discoverable callers, relevant callees, data/state writes, tests, README, and deployment assumptions. Every finding needs a checked path and a concrete trigger that produces a bad result; vague concerns and style preferences are omitted.
+
+Review is read-only and uses targeted local inspection rather than agent swarms or broad tool discovery. Its output starts with a short change summary, states the assumed load, then groups continuously numbered findings as Must fix, Should fix, and Nice to have. Every finding explains the code's role, the trigger and impact, the smallest fix, and the consequence of skipping it. Use Guard for a dedicated security audit, Trace for whole-agent architecture mapping, and Verify for test execution.
+
+```text
+Use $review on the current branch. Read the changed code and callers, follow the data flow, state the load assumption, and report only findings with a concrete case. Do not edit files.
 ```
 
 ## Guard: AI-assisted application security

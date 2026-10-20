@@ -6,7 +6,7 @@
 
 - **Project:** Arnel’s Agent Engineering Toolkit, a documentation and installable-skill repository.
 - **Last verified:** 2026-10-20.
-- **Revision / working tree:** nine skill package IDs use the portable `skills/<name>/` layout. Current-ID synthetic evaluations cover six paired cases, focused Guard checks, Verify’s concurrent unit/browser-E2E sequence, and a Codex-only automatic-routing probe. Trace evaluation cases are proposed, not run. Guard judge/human evaluation is still pending; Signal routing was not observed; other hosts were not tested for selection.
+- **Revision / working tree:** ten skill package IDs use the portable `skills/<name>/` layout. Current-ID synthetic evaluations cover six paired cases, focused Guard checks, Verify’s concurrent unit/browser-E2E sequence, and a Codex-only automatic-routing probe. Review and Trace evaluation cases are proposed, not run. Guard judge/human evaluation is still pending; Signal routing was not observed; other hosts were not tested for selection.
 - **Primary instructions:** [AGENTS.md](../AGENTS.md).
 
 ## Purpose and architecture
@@ -27,6 +27,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 | Concise communication style | Compact answers and progress updates while preserving evidence, technical payloads, uncertainty, and safety clarity | [Signal](../skills/signal/SKILL.md) |
 | Codebase maintainability workflow | Dynamically inventory language-specific components, modules, helpers, tests, and monorepo boundaries; improve structure with explicit API confirmation and sensitive-file protection; resolve comment conflicts against verified code, contracts, and project conventions | [Refactor](../skills/refactor/SKILL.md) |
 | Agent/LLM architecture audit | Source-linked newcomer map plus fast, evidence-led trace across six conditional system planes spanning host, context, orchestration, tools, delivery, data, and operations; read-only reports with ranked fixes | [Trace](../skills/trace/SKILL.md), [system map](../skills/trace/references/agent-stack.md), [proposed evaluation](../skills/trace/references/evaluation.md) |
+| Code-change review | Read-only change-to-outcome trace across diffs, callers, relevant callees, tests, README, and deployment assumptions; findings require a concrete trigger, bad outcome, and smallest fix | [Review](../skills/review/SKILL.md), [proposed evaluation](../skills/review/references/evaluation.md) |
 | Refactor E2E evidence | Paired Codex control/treatment results for refactoring, API approval, sensitive-file protection, and React/C#/Rust/Python/mixed-monorepo structure assessment | [Validation results](refactor-validation.md) |
 | Frontend design workflow | Hiroqt’s product-first visual direction, whole-codebase existing-design review and user choice, source-grounded comment handling, purposeful motion, semantic icon use, WCAG-version-aware accessibility, responsive checks, technical SEO, static HTML inspection, and applied UX concepts | [Render](../skills/render/SKILL.md), [Production quality](../skills/render/references/production-quality.md), [Laws of UX guide](../skills/render/references/laws-of-ux.md) |
 
@@ -41,6 +42,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 - Concise response style and tool/context efficiency are separate capabilities; the former must not suppress useful retrieval, verification, or exact evidence.
 - Refactor discovers and maps each language/framework's real constructs—entrypoints, components, contracts, collaborators, helpers, and tests—and traces dependency direction before improving structure. Mixed monorepos are assessed per app/package. It requires confirmation before API restructuring and protects sensitive files. It does not imply scheduled or background work.
 - Trace maps the repository for a new developer, then follows one representative agent request through relevant checkpoints in six system planes. Its map retains all 14 supplied labels and adds conditional host, product, identity, data, model, orchestration, tool, output, operations, evaluation, and release checkpoints. “ArCs” remains undefined; behavioral evaluation is proposed, not run.
+- Review uses a read-only Change-to-Outcome Trace: identify the requested diff, inspect changed code and discoverable callers/callees, follow a concrete input through state and output, and verify each finding's trigger before reporting it. It states an evidenced load assumption and uses concise, numbered severity groups. Behavioral evaluation is proposed, not run.
 - Render no-dependency HTML inspector and fixtures are in `skills/render/scripts/` and `skills/render/tests/`.
 - Evaluation records and package-specific validation notes live in `docs/`, including [Verify's synthetic evaluation](verify-validation.md); isolated subprocesses overlapped, while a separate worker dispatch did not demonstrate swarm concurrency.
 - Verify writes new run evidence to OS temporary storage by default, cleans it after reporting, and uses `.overdrive/verify/results/` only when persistent project evidence is required; see [Verify's workflow](../skills/verify/SKILL.md).
@@ -62,6 +64,7 @@ Run `python3 -m unittest discover -s scripts/tests -v` and `python3 scripts/chec
 - Its 2026-10-18 paired synthetic E2E passed the explicitly invoked design-choice/WCAG 2.0 treatment and failed the control's choice check; see the validation record for fixture scope and limitations.
 - For Refactor's executed control/treatment evidence and limits, see [its E2E validation record](refactor-validation.md).
 - Trace's deterministic, judge, and human cases are proposals; no behavioral run or automatic-routing check is claimed.
+- Review's deterministic, judge, and human cases are proposals; no behavioral run or automatic-routing check is claimed.
 
 ## Update notes
 
@@ -85,3 +88,4 @@ Run `python3 -m unittest discover -s scripts/tests -v` and `python3 scripts/chec
 - Updated on 2026-10-19 with the Python package-quality checker and push/pull-request workflow.
 - Updated on 2026-10-19 with current package-ID paired, Guard, Verify, installer, and Codex automatic-routing evaluations; Signal selection remains unobserved and other hosts remain untested.
 - Updated on 2026-10-20 by renaming Agent Architecture Audit to Trace and expanding its layer checklist into six conditional system planes; proposed evaluation cases remain unrun.
+- Updated on 2026-10-20 with Review, a read-only change-to-outcome process, concrete-finding output, and proposed evaluations; no behavioral evaluation has run.
