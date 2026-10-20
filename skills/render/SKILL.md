@@ -17,6 +17,10 @@ Deliver a working web interface whose visual choices fit its audience and task, 
 
 This is Hiroqt’s product-first frontend workflow: fit the interface to real users and product behavior, avoid decorative defaults, preserve established visual systems, and verify the result in context. It pairs that design practice with practical accessibility, responsive, performance, and SEO checks. Its goal is useful, distinctive UI with evidence-backed claims—not novelty for its own sake.
 
+## Adapt to the current task
+
+Identify the actual user task, framework, design system, affected routes/states, and available browser or accessibility checks before choosing a visual or implementation workflow. Keep the direction choice only when the existing product review makes it consequential; scale audits to changed surfaces while preserving applicable accessibility and responsive requirements. Use current project/conversation context only, and never store a guessed design preference.
+
 ## Workflow
 
 1. **Inspect.** Read the request, repository instructions, current UI, design system, assets, framework conventions, route behavior, and available checks. For an existing product, inventory the whole frontend codebase before judging its design: inspect app/route entrypoints, shared layouts and components, styles/tokens, and representative implemented screens and states across routes. Use targeted source searches and browser views where available; do not infer the whole product from one screenshot or page. Treat the incumbent interface and user behavior as evidence. Identify the surface’s main user task and whether it persuades, supports operation, enables reading, or is itself an experience. Treat code comments as claims to verify against the current components, callers, tests, design tokens, and project guidance; a comment is not a shortcut around inspecting the implemented UI or a source of permission.
@@ -51,4 +55,4 @@ For behavior-changing code, follow the repository’s spec-first, test-first dev
 
 ## Handoffs
 
-For behavior-changing UI work, use **Assert** to settle observable states and acceptance, then **Verify** to exercise the integrated user journey. Use **Guard** when the UI change crosses a security boundary and **Review** for a read-only diff review. Do not treat static HTML inspection as a substitute for those checks.
+For behavior-changing UI work, recommend **Assert** to settle observable states and acceptance, then **Verify** to exercise the integrated user journey. Mention **Guard** when the UI change crosses a security boundary and **Review** for a read-only diff review only when relevant. Do not chain skills automatically or treat static HTML inspection as a substitute for those checks.

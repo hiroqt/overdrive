@@ -14,6 +14,10 @@ description: >-
 
 Complete the requested coding work with less avoidable context processing while preserving correctness, task success, security, and useful exploration. Optimize the whole agent trajectory: tool definitions, calls, returned output, repeated input context, retries, and verification all contribute. A short command output is not a success if it hides the information needed to solve the task.
 
+## Adapt to the current task
+
+Choose searches, source reads, MCP tools, and output bounds from the repository map, task uncertainty, and risk. Start narrowly, then widen whenever callers, trust boundaries, or conflicting evidence require it; preserve enough context to support the result. Use available tools only when their task value is positive, and keep all adaptation within the current session/repository.
+
 ## Workflow
 
 1. **Inspect the task and environment.** Identify the requested behavior, acceptance evidence, active instructions, repository state, likely source areas, and relevant available tools. Read the minimum authority documents needed to establish constraints; do not omit a relevant source just to reduce initial context.
@@ -61,4 +65,4 @@ For creating or refreshing the persistent repository map, read [references/codeb
 
 ## Handoffs
 
-After discovery, hand off according to the task: **Assert** for behavior-changing implementation, **Review** for read-only change analysis, **Guard** for security, **Trace** for an unknown agent/LLM path, or **Refactor** for a maintainability change. Preserve the verified map and paths; do not imply the next skill ran.
+After discovery, mention a handoff only when distinct work remains: **Assert** for behavior-changing implementation, **Review** for read-only change analysis, **Guard** for security, **Trace** for an unknown agent/LLM path, or **Refactor** for a maintainability change. Preserve the verified map and paths; do not chain automatically or imply the next skill ran.

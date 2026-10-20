@@ -1,0 +1,4 @@
+interface:
+  display_name: "Overdrive"
+  short_description: "Route tasks to installed Overdrive skills"
+  default_prompt: "Use $overdrive to choose and follow the best matching installed Overdrive skill for this task."

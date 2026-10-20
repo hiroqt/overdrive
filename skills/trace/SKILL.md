@@ -14,6 +14,10 @@ description: >-
 
 Give a new developer a concise, source-grounded model of the codebase and diagnose where an agent/LLM request can regress, lose context, misroute tools, enter hidden repair loops, render incorrectly, or fail to persist. Report evidence and practical fixes; do not modify application files during an audit. This is a review workflow, not a runtime monitor or proof that uninspected paths are correct.
 
+## Adapt to the current task
+
+Select the representative request path and system-plane checkpoints from the reported symptom, actual architecture, available traces, and repository tools. Start with the narrowest plausible path and expand only where evidence or risk justifies it; mark inaccessible runtime layers as not checked. Preserve the read-only boundary and use only current repository/conversation context.
+
 ## Fast workflow
 
 1. **Set the target.** Capture the reported symptom, expected and observed result, triggering request, environment, and last known good state. If one fact is unavailable, mark it unknown and continue with source inspection.
@@ -61,4 +65,4 @@ Read [the evaluation guide](references/evaluation.md) when validating this skill
 
 ## Handoffs
 
-Use **Guard** for security findings and **Refactor** for an approved maintainability improvement. If a fix changes behavior, use **Assert** before implementation, then **Verify** and **Review** afterward. Trace remains a read-only diagnostic unless the user separately authorizes implementation.
+Mention **Guard** for security findings and **Refactor** for an approved maintainability improvement. If a fix changes behavior, recommend **Assert** before implementation, then **Verify** and **Review** afterward. Do not chain automatically or imply another skill ran; Trace remains read-only unless the user separately authorizes implementation.
