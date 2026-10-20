@@ -1,0 +1,459 @@
+import assert from 'node:assert/strict';
+import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
+import os from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import test from 'node:test';
+import { executeInstall, installSkills, prepareInstall } from '../../bin/overdrive.js';
+
+const CLI = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../bin/overdrive.js');
+
+async function fixture() {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'overdrive-installer-'));
+  const skillsRoot = path.join(root, 'source-skills');
+  const project = path.join(root, 'project');
+  const home = path.join(root, 'home');
+  for (const folder of ['assert', 'review', 'overdrive']) {
+    const skill = path.join(skillsRoot, folder);
+    await mkdir(path.join(skill, 'references'), { recursive: true });
+    await writeFile(path.join(skill, 'SKILL.md'),
+      `---\nname: ${folder}\ndescription: A test skill.\n---\n\nUse the test skill.\n`);
+    await writeFile(path.join(skill, 'references', 'guide.md'), 'Supporting instructions.\n');
+    await mkdir(path.join(skill, 'agents'), { recursive: true });
+    await writeFile(path.join(skill, 'agents/openai.yaml'), 'interface:\n  display_name: Test\n');
+  }
+  await Promise.all([mkdir(project), mkdir(home)]);
+  return { root, skillsRoot, project, home };
+}
+
+test('partial plugin installs include the router and restrict it to installed skills', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+
+  await installSkills({
+    scope: 'project', hostIds: ['antigravity'], skillNames: ['assert'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+
+  const bundle = path.join(paths.project, '.agents/plugins/overdrive');
+  assert.match(await readFile(path.join(bundle, 'skills/overdrive/SKILL.md'), 'utf8'), /name: overdrive/);
+  const installed = await readFile(path.join(bundle, 'skills/overdrive/references/installed-skills.md'), 'utf8');
+  assert.match(installed, /- assert\n/);
+  assert.doesNotMatch(installed, /- review\n/);
+  await assert.rejects(readFile(path.join(bundle, 'skills/review/SKILL.md')), { code: 'ENOENT' });
+});
+
+test('flat skill installs also include the router with the selected-skill catalog', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+
+  await installSkills({
+    scope: 'project', hostIds: ['kiro'], skillNames: ['review'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+
+  const router = path.join(paths.project, '.kiro/skills/overdrive');
+  assert.match(await readFile(path.join(router, 'SKILL.md'), 'utf8'), /name: overdrive/);
+  const installed = await readFile(path.join(router, 'references/installed-skills.md'), 'utf8');
+  assert.match(installed, /- review\n/);
+  assert.doesNotMatch(installed, /- assert\n/);
+});
+
+test('overdrive is reserved for the automatically included router', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+
+  await assert.rejects(prepareInstall({
+    scope: 'project', hostIds: ['antigravity'], skillNames: ['overdrive'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  }), /router is included automatically/i);
+});
+
+test('the routing map covers every domain skill exactly once', async () => {
+  const skillsRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../skills');
+  const packageNames = (await readdir(skillsRoot, { withFileTypes: true }))
+    .filter((entry) => entry.isDirectory() && entry.name !== 'overdrive')
+    .map((entry) => entry.name)
+    .sort();
+  const routeMap = await readFile(path.join(skillsRoot, 'overdrive/references/skill-map.md'), 'utf8');
+  const mappedNames = [...routeMap.matchAll(/^\| `([^`]+)` \|/gm)].map((match) => match[1]).sort();
+
+  assert.deepEqual(mappedNames, packageNames);
+});
+
+test('installs only the selected Claude Code host as a namespaced plugin bundle', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+
+  const result = await installSkills({
+    scope: 'project',
+    hostIds: ['claude-code'],
+    skillNames: ['review'],
+    cwd: paths.project,
+    homeDir: paths.home,
+    skillsRoot: paths.skillsRoot,
+  });
+
+  const bundle = path.join(paths.project, '.claude/skills/overdrive');
+  assert.equal(result.installed.length, 1);
+  assert.deepEqual(JSON.parse(await readFile(path.join(bundle, '.claude-plugin/plugin.json'), 'utf8')),
+    { name: 'overdrive', description: 'Adaptive engineering skills for software tasks.', version: '0.1.0' });
+  assert.match(await readFile(path.join(bundle, 'skills/review/SKILL.md'), 'utf8'), /name: review/);
+  assert.equal(await readFile(path.join(bundle, 'skills/review/references/guide.md'), 'utf8'), 'Supporting instructions.\n');
+  await assert.rejects(readFile(path.join(paths.project, '.agents/plugins/overdrive/plugin.json')),
+    { code: 'ENOENT' });
+});
+
+test('Codex installs a CLI plugin and flat IDE skills while preserving selected config', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  await mkdir(path.join(paths.project, '.agents/plugins'), { recursive: true });
+  await writeFile(path.join(paths.project, '.agents/plugins/marketplace.json'), JSON.stringify({
+    name: 'local-repo', plugins: [{ name: 'existing', source: { source: 'local', path: './other' } }], metadata: { owner: 'user' },
+  }, null, 2));
+  await mkdir(path.join(paths.project, '.codex'), { recursive: true });
+  await writeFile(path.join(paths.project, '.codex/config.toml'), 'model = "gpt-6"\n\n[features]\nplugins = true\n');
+
+  await installSkills({
+    scope: 'project', hostIds: ['codex'], skillNames: ['assert', 'review'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+
+  const plugin = path.join(paths.project, '.codex/plugins/overdrive');
+  const marketplace = JSON.parse(await readFile(path.join(paths.project, '.agents/plugins/marketplace.json'), 'utf8'));
+  assert.equal(JSON.parse(await readFile(path.join(plugin, 'plugin.json'), 'utf8')).name, 'overdrive');
+  assert.equal(await readFile(path.join(plugin, 'skills/review/references/guide.md'), 'utf8'), 'Supporting instructions.\n');
+  assert.equal(marketplace.metadata.owner, 'user');
+  assert.deepEqual(marketplace.plugins.map(({ name }) => name), ['existing', 'overdrive']);
+  assert.match(await readFile(path.join(paths.project, '.codex/config.toml'), 'utf8'), /model = "gpt-6"/);
+  assert.match(await readFile(path.join(paths.project, '.codex/config.toml'), 'utf8'), /\[plugins\."overdrive@local-repo"\]\s+enabled = true/);
+  assert.match(await readFile(path.join(paths.project, '.agents/skills/review/SKILL.md'), 'utf8'), /name: review/);
+  assert.match(await readFile(path.join(paths.project, '.agents/skills/review/agents/openai.yaml'), 'utf8'), /interface:/);
+});
+
+test('Codex global installation keeps custom CODEX_HOME marketplace sources inside their root', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  const codexHome = path.join(paths.root, 'custom-codex-home');
+  const marketplacePath = path.join(codexHome, '.agents/plugins/marketplace.json');
+  await mkdir(path.dirname(marketplacePath), { recursive: true });
+  await writeFile(marketplacePath, JSON.stringify({ name: 'custom-source', plugins: [] }, null, 2));
+
+  const plan = await prepareInstall({
+    scope: 'global', hostIds: ['codex'], skillNames: ['assert'],
+    cwd: paths.project, homeDir: paths.home, codexHome, skillsRoot: paths.skillsRoot,
+  });
+  const activations = [];
+  const result = await executeInstall(plan, {
+    skillsRoot: paths.skillsRoot,
+    activateCodex: true,
+    runCommand: (command, args, options) => {
+      activations.push({ command, args, cwd: options.cwd });
+      return { status: 0, stdout: '{}', stderr: '' };
+    },
+  });
+
+  assert.equal(JSON.parse(await readFile(path.join(codexHome, 'plugins/overdrive/plugin.json'), 'utf8')).name,
+    'overdrive');
+  const config = await readFile(path.join(codexHome, 'config.toml'), 'utf8');
+  assert.match(config, /\[marketplaces\.custom-source\]\s+source_type = "local"/);
+  assert.match(config, new RegExp(`source = ${JSON.stringify(codexHome).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`));
+  assert.match(config, /\[plugins\."overdrive@custom-source"\]\s+enabled = true/);
+  const marketplace = JSON.parse(await readFile(marketplacePath, 'utf8'));
+  assert.equal(marketplace.plugins[0].source.path, './plugins/overdrive');
+  assert.deepEqual(activations, [
+    { command: 'codex', args: ['plugin', 'marketplace', 'add', codexHome, '--json'], cwd: codexHome },
+    { command: 'codex', args: ['plugin', 'add', 'overdrive@custom-source', '--json'], cwd: codexHome },
+  ]);
+  assert.equal(result.codexActivation.status, 'installed');
+  assert.equal(plan.codexActivation.destination,
+    path.join(codexHome, 'plugins/cache/custom-source/overdrive/0.1.0'));
+  assert.equal(plan.codexActivation.marketplaceRoot, codexHome);
+  assert.equal(plan.codexActivation.configPath, path.join(codexHome, 'config.toml'));
+  await assert.rejects(readFile(path.join(paths.home, '.agents/plugins/marketplace.json')),
+    { code: 'ENOENT' });
+  await assert.rejects(readFile(path.join(paths.home, '.codex/plugins/overdrive/plugin.json')),
+    { code: 'ENOENT' });
+});
+
+test('Codex reports unavailable and failing CLI activation without hiding completed file writes', async (t) => {
+  for (const expected of ['unavailable', 'failed']) {
+    const paths = await fixture();
+    t.after(() => rm(paths.root, { recursive: true, force: true }));
+    const plan = await prepareInstall({
+      scope: 'project', hostIds: ['codex'], skillNames: ['assert'],
+      cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+    });
+    const calls = [];
+    const result = await executeInstall(plan, {
+      skillsRoot: paths.skillsRoot,
+      activateCodex: true,
+      runCommand: (command, args) => {
+        calls.push(args);
+        if (expected === 'unavailable') return { status: null, error: { code: 'ENOENT', message: 'codex missing' } };
+        return calls.length === 1
+          ? { status: 0, stdout: '{}', stderr: '' }
+          : { status: 1, stdout: '', stderr: 'plugin command unavailable' };
+      },
+    });
+    assert.equal(result.codexActivation.status, expected);
+    assert.deepEqual(calls, expected === 'unavailable'
+      ? [['plugin', 'marketplace', 'add', paths.project, '--json']]
+      : [
+        ['plugin', 'marketplace', 'add', paths.project, '--json'],
+        ['plugin', 'add', 'overdrive@local-repo', '--json'],
+      ]);
+    assert.match(result.codexActivation.command, /codex plugin marketplace add .*codex plugin add overdrive@local-repo/);
+    assert.equal(await readFile(path.join(paths.project, '.codex/plugins/overdrive/plugin.json'), 'utf8')
+      .then((json) => JSON.parse(json).name), 'overdrive');
+  }
+});
+
+test('Codex merges a commented Overdrive table header instead of creating a duplicate TOML table', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  await mkdir(path.join(paths.project, '.codex'), { recursive: true });
+  await writeFile(path.join(paths.project, '.codex/config.toml'),
+    '[plugins."overdrive@local-repo"] # keep this comment\nenabled = false # installer enables this\n');
+
+  await installSkills({
+    scope: 'project', hostIds: ['codex'], skillNames: ['assert'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+
+  const config = await readFile(path.join(paths.project, '.codex/config.toml'), 'utf8');
+  assert.equal((config.match(/^\[plugins\."overdrive@local-repo"\]/gm) ?? []).length, 1);
+  assert.match(config, /\[plugins\."overdrive@local-repo"\] # keep this comment\s+enabled = true # installer enables this/);
+});
+
+test('Codex installation activates the registered plugin after writing its files', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  const plan = await prepareInstall({
+    scope: 'project', hostIds: ['codex'], skillNames: ['assert'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+  const calls = [];
+  const result = await executeInstall(plan, {
+    skillsRoot: paths.skillsRoot,
+    activateCodex: true,
+    runCommand: (command, args, options) => {
+      calls.push({ command, args, cwd: options.cwd });
+      return { status: 0, stdout: '{"installedPath":"plugin-cache"}', stderr: '' };
+    },
+  });
+
+  assert.deepEqual(calls, [
+    { command: 'codex', args: ['plugin', 'marketplace', 'add', paths.project, '--json'], cwd: paths.project },
+    { command: 'codex', args: ['plugin', 'add', 'overdrive@local-repo', '--json'], cwd: paths.project },
+  ]);
+  assert.equal(result.codexActivation.status, 'installed');
+  assert.equal(plan.codexActivation.marketplaceRoot, paths.project);
+  assert.equal(plan.codexActivation.configPath, path.join(paths.home, '.codex/config.toml'));
+  assert.equal(await readFile(path.join(paths.project, '.codex/plugins/overdrive/plugin.json'), 'utf8'),
+    `${JSON.stringify({
+      '$schema': 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json',
+      name: 'overdrive', version: '0.1.0', description: 'Adaptive engineering skills for software tasks.',
+      author: { name: 'Hiroqt' },
+    }, null, 2)}\n`);
+});
+
+test('Codex does not install a plugin when marketplace registration fails', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  const plan = await prepareInstall({
+    scope: 'project', hostIds: ['codex'], skillNames: ['assert'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+  const calls = [];
+  const result = await executeInstall(plan, {
+    skillsRoot: paths.skillsRoot,
+    activateCodex: true,
+    runCommand: (command, args) => {
+      calls.push(args);
+      return { status: 1, stdout: '', stderr: 'marketplace registration failed' };
+    },
+  });
+
+  assert.deepEqual(calls, [['plugin', 'marketplace', 'add', paths.project, '--json']]);
+  assert.equal(result.codexActivation.status, 'failed');
+});
+
+test('Codex rejects malformed registration before creating bundle or skill files', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  await mkdir(path.join(paths.project, '.agents/plugins'), { recursive: true });
+  await writeFile(path.join(paths.project, '.agents/plugins/marketplace.json'), '{broken');
+
+  await assert.rejects(installSkills({
+    scope: 'project', hostIds: ['codex'], skillNames: ['assert'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  }), /marketplace\.json.*valid JSON/i);
+  await assert.rejects(readFile(path.join(paths.project, '.codex/plugins/overdrive/plugin.json')),
+    { code: 'ENOENT' });
+  await assert.rejects(readFile(path.join(paths.project, '.agents/skills/assert/SKILL.md')),
+    { code: 'ENOENT' });
+});
+
+test('Codex rejects malformed Overdrive TOML registration before writing', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  await mkdir(path.join(paths.project, '.codex'), { recursive: true });
+  await writeFile(path.join(paths.project, '.codex/config.toml'), '[plugins."overdrive@local-repo"\nenabled = true\n');
+
+  await assert.rejects(installSkills({
+    scope: 'project', hostIds: ['codex'], skillNames: ['assert'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  }), /malformed Overdrive plugin registration/i);
+  await assert.rejects(readFile(path.join(paths.project, '.codex/plugins/overdrive/plugin.json')),
+    { code: 'ENOENT' });
+  await assert.rejects(readFile(path.join(paths.project, '.agents/plugins/marketplace.json')),
+    { code: 'ENOENT' });
+});
+
+test('Codex rejects a second Overdrive marketplace registration before writing', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  await mkdir(path.join(paths.project, '.codex'), { recursive: true });
+  await writeFile(path.join(paths.project, '.codex/config.toml'), '[plugins."overdrive@another-marketplace"]\nenabled = true\n');
+
+  await assert.rejects(installSkills({
+    scope: 'project', hostIds: ['codex'], skillNames: ['assert'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  }), /already registers Overdrive with marketplace another-marketplace/i);
+  await assert.rejects(readFile(path.join(paths.project, '.codex/plugins/overdrive/plugin.json')),
+    { code: 'ENOENT' });
+});
+
+test('Kiro project installs flat skill folders and global scope installs one Power bundle', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  await installSkills({
+    scope: 'project', hostIds: ['kiro'], skillNames: ['assert'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+  await installSkills({
+    scope: 'global', hostIds: ['kiro'], skillNames: ['review'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+
+  assert.match(await readFile(path.join(paths.project, '.kiro/skills/assert/SKILL.md'), 'utf8'), /name: assert/);
+  assert.equal(await readFile(path.join(paths.home, '.kiro/powers/overdrive/skills/review/references/guide.md'), 'utf8'),
+    'Supporting instructions.\n');
+  await assert.rejects(readFile(path.join(paths.home, '.kiro/skills/review/SKILL.md')),
+    { code: 'ENOENT' });
+});
+
+test('Antigravity global surface selection targets only the requested plugin root', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+
+  await installSkills({
+    scope: 'global', hostIds: ['antigravity'], antigravitySurface: 'ide', skillNames: ['assert'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+
+  assert.deepEqual(JSON.parse(await readFile(path.join(paths.home, '.gemini/config/plugins/overdrive/plugin.json'), 'utf8')),
+    {
+      '$schema': 'https://antigravity.google/schemas/v1/plugin.json',
+      name: 'overdrive',
+      description: 'Adaptive engineering skills for software tasks.',
+    });
+  await assert.rejects(readFile(path.join(paths.home, '.gemini/config/plugins/overdrive/skills/assert/agents/openai.yaml')),
+    { code: 'ENOENT' });
+  await assert.rejects(readFile(path.join(paths.home, '.gemini/antigravity-cli/plugins/overdrive/plugin.json')),
+    { code: 'ENOENT' });
+});
+
+test('Grok installs a Claude-compatible plugin bundle without Codex-only metadata', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+
+  await installSkills({
+    scope: 'project', hostIds: ['grok'], skillNames: ['assert'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+
+  const bundle = path.join(paths.project, '.grok/plugins/overdrive');
+  assert.deepEqual(JSON.parse(await readFile(path.join(bundle, '.claude-plugin/plugin.json'), 'utf8')),
+    { name: 'overdrive', description: 'Adaptive engineering skills for software tasks.', version: '0.1.0' });
+  assert.match(await readFile(path.join(bundle, 'skills/assert/SKILL.md'), 'utf8'), /name: assert/);
+  await assert.rejects(readFile(path.join(bundle, 'skills/assert/agents/openai.yaml')),
+    { code: 'ENOENT' });
+});
+
+test('existing grouped bundles are skipped as a unit without merging', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  const bundle = path.join(paths.project, '.agents/plugins/overdrive');
+  await mkdir(bundle, { recursive: true });
+  await writeFile(path.join(bundle, 'owner.txt'), 'user data\n');
+
+  const result = await installSkills({
+    scope: 'project', hostIds: ['antigravity'], skillNames: ['assert'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+
+  assert.equal(result.installed.length, 0);
+  assert.equal(result.skipped.length, 1);
+  assert.equal(await readFile(path.join(bundle, 'owner.txt'), 'utf8'), 'user data\n');
+  await assert.rejects(readFile(path.join(bundle, 'skills/assert/SKILL.md')),
+    { code: 'ENOENT' });
+});
+
+test('CLI requires an explicit host and installs only the requested Antigravity skill after preview', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  const run = spawnSync(process.execPath, [CLI, 'install', '--host', 'antigravity'], {
+    cwd: paths.project,
+    input: '\nassert\ny\n',
+    encoding: 'utf8',
+    env: { ...process.env, HOME: paths.home, USERPROFILE: paths.home },
+  });
+
+  assert.equal(run.status, 0, run.stderr);
+  assert.match(run.stdout, /Hosts: antigravity/);
+  assert.match(run.stdout, /\.agents\/plugins\/overdrive/);
+  assert.match(run.stdout, /Existing bundle destinations are skipped whole/);
+  assert.match(await readFile(path.join(paths.project, '.agents/plugins/overdrive/skills/assert/SKILL.md'), 'utf8'), /name: assert/);
+  await assert.rejects(readFile(path.join(paths.project, '.claude/skills/overdrive/.claude-plugin/plugin.json')),
+    { code: 'ENOENT' });
+});
+
+test('interactive host selection cannot default to every host', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  const run = spawnSync(process.execPath, [CLI, 'install', '--scope', 'project', '--skill', 'assert'], {
+    cwd: paths.project,
+    input: '\nantigravity\ny\n',
+    encoding: 'utf8',
+    env: { ...process.env, HOME: paths.home, USERPROFILE: paths.home },
+  });
+
+  assert.equal(run.status, 0, run.stderr);
+  assert.match(run.stdout, /Choose host\(s\):/);
+  assert.match(run.stdout, /Hosts: antigravity/);
+  await assert.rejects(readFile(path.join(paths.project, '.claude/skills/overdrive/.claude-plugin/plugin.json')),
+    { code: 'ENOENT' });
+});
+
+test('declining the preview creates no bundle or registration files', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  const run = spawnSync(process.execPath, [CLI, 'install', '--host', 'codex'], {
+    cwd: paths.project,
+    input: '\nassert\nn\n',
+    encoding: 'utf8',
+    env: { ...process.env, HOME: paths.home, USERPROFILE: paths.home },
+  });
+
+  assert.equal(run.status, 0, run.stderr);
+  assert.match(run.stdout, /Installation cancelled/);
+  for (const target of [
+    '.codex/plugins/overdrive/plugin.json', '.agents/plugins/marketplace.json',
+    '.agents/skills/assert/SKILL.md', '.codex/config.toml',
+  ]) {
+    await assert.rejects(readFile(path.join(paths.project, target)), { code: 'ENOENT' });
+  }
+});
