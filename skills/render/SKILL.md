@@ -48,3 +48,7 @@ For behavior-changing code, follow the repository’s spec-first, test-first dev
 - For controlled validation of this skill, read [evaluation](references/evaluation.md).
 - The guide summarizes deterministic [D], LLM-as-a-judge [J], and human [H] evaluations separately; proposed checks are not reported results.
 - Run `python3 <skill-directory>/scripts/inspect_html.py <built-html-file-or-directory>` on rendered HTML when applicable. Read [the inspector guide](references/inspector.md) for checks, limits, and exit codes.
+
+## Handoffs
+
+For behavior-changing UI work, use **Assert** to settle observable states and acceptance, then **Verify** to exercise the integrated user journey. Use **Guard** when the UI change crosses a security boundary and **Review** for a read-only diff review. Do not treat static HTML inspection as a substitute for those checks.

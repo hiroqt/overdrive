@@ -8,6 +8,7 @@
 | --- | --- | --- |
 | Toolkit | [Engineering instructions](AGENTS.md) | Shared workflow, permissions, verification, and context guidance |
 | Toolkit | [Skill handbook](SKILLS.md) | Skill-authoring standard, release checklist, and evaluation guidance |
+| Toolkit | [Skill workflows](docs/SKILL_WORKFLOWS.md) | Portable task sequences and handoff boundaries between Overdrive skills |
 | Overdrive skill | [Forge](skills/forge/SKILL.md) | Create, revise, and review focused engineering skills |
 | Overdrive skill | [Refactor](skills/refactor/SKILL.md) | Map repository-specific structures and improve maintainability safely |
 | Overdrive skill | [Signal](skills/signal/SKILL.md) | Communicate concisely while preserving technical detail and evidence |
@@ -64,6 +65,10 @@ skills/
 
 The package IDs and invocation names are `forge`, `refactor`, `signal`, `render`, `assert`, `prune`, `verify`, `review`, `guard`, and `trace`. Existing installations under previous IDs do not migrate automatically; remove any old copies from the target agent before using the renamed package.
 
+### Use skills together
+
+Each skill remains independently installable. For work that crosses skill boundaries, use the [workflow bundles](docs/SKILL_WORKFLOWS.md) to choose and invoke the relevant skills in sequence. Skills may recommend a handoff by name when the host exposes that skill; they do not automatically invoke one another. The installer is unchanged and still installs all skills; bundles are task workflows, not installer profiles.
+
 ## What makes Overdrive different
 
 Overdrive is built to keep agents grounded in the real codebase and the user's actual requirements. Its skills reinforce each other across discovery, implementation, and review:
@@ -76,6 +81,7 @@ Overdrive is built to keep agents grounded in the real codebase and the user's a
 | Code reviews report plausible but unverified concerns | Trace changed behavior through callers, important callees, tests, README, and deployment assumptions; require one concrete trigger and outcome per finding. | [Review](skills/review/SKILL.md) |
 | Code is written before the behavior is clear | Define observable acceptance first, then use test-first implementation and report only checks that actually ran. | [Assert](skills/assert/SKILL.md) |
 | Test results are serial, fragmented, or confused with app proof | Run independent feature suites concurrently when safe; disclose serial fallback, share the aggregate before E2E, then verify the user journey. | [Verify](skills/verify/SKILL.md) |
+| A task crosses skill boundaries and handoffs are unclear | Use explicit task sequences, preserve evidence and acceptance criteria, and stop at the owning skill's permission boundary. | [Workflow bundles](docs/SKILL_WORKFLOWS.md) |
 | Progress updates bury decisions in filler | Keep communication concise while retaining technical payloads, evidence, uncertainty, and safety details. | [Signal](skills/signal/SKILL.md) |
 | A frontend looks generic or ignores user context | Fit the design to the product, apply relevant Laws of UX concepts, inspect responsive and accessible states, and distinguish source checks from browser evidence. | [Render](skills/render/SKILL.md) |
 | Token saving cuts out useful investigation | Bound searches and tool output while expanding retrieval when evidence, risk, or uncertainty requires it. | [Prune](skills/prune/SKILL.md) |

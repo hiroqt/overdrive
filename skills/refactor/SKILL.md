@@ -100,3 +100,7 @@ Done means a bounded maintainability improvement is present; the relevant behavi
 Keep updates concise and technical. Include changed paths, reason, checks actually run, confirmation gates encountered, and the next recommended improvement. Do not claim automatic discovery, ongoing background maintenance, or measured maintainability gains without evidence.
 
 For controlled behavior evaluation, use the [evaluation guide](references/evaluation.md); its cases are proposals until executed.
+
+## Handoffs
+
+For a behavior-changing refactor, use **Assert** to define and test the behavior first, then **Verify** for the integrated flow. Use **Guard** for a security audit and **Review** for an independent read-only diff review. Keep this skill's API and sensitive-file gates in force throughout.

@@ -46,3 +46,7 @@ This skill coordinates validation. Use the repository's conventions and test too
 ## Evaluation
 
 For proposed behavioral cases and evaluation limits, read [the Verify evaluation guide](references/evaluation.md). Its cases are proposals until actually run and recorded.
+
+## Handoffs
+
+Use **Assert** before implementation when behavior and acceptance are not yet specified. After tests, recommend **Review** for a read-only diff review; use **Guard** when the tested behavior crosses a security boundary. Passing Verify checks does not replace either review.

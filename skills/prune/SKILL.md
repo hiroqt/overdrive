@@ -58,3 +58,7 @@ For a controlled evaluation or a revision to these rules, read [references/evalu
 The guide summarizes deterministic [D], LLM-as-a-judge [J], and human [H] evaluations separately.
 
 For creating or refreshing the persistent repository map, read [references/codebase-map-maintenance.md](references/codebase-map-maintenance.md); use the packaged [map template](assets/CODEBASE_MAP.template.md) as a starting point, not a substitute for source inspection.
+
+## Handoffs
+
+After discovery, hand off according to the task: **Assert** for behavior-changing implementation, **Review** for read-only change analysis, **Guard** for security, **Trace** for an unknown agent/LLM path, or **Refactor** for a maintainability change. Preserve the verified map and paths; do not imply the next skill ran.

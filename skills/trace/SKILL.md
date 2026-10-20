@@ -58,3 +58,7 @@ Return the report in the conversation by default. Write a persistent report only
 ## Evaluation
 
 Read [the evaluation guide](references/evaluation.md) when validating this skill. The listed cases are proposed until executed and recorded.
+
+## Handoffs
+
+Use **Guard** for security findings and **Refactor** for an approved maintainability improvement. If a fix changes behavior, use **Assert** before implementation, then **Verify** and **Review** afterward. Trace remains a read-only diagnostic unless the user separately authorizes implementation.
