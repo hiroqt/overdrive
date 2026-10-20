@@ -15,6 +15,10 @@ Show that changed features pass focused unit checks, then that the running appli
 
 This skill coordinates validation. Use the repository's conventions and test tools; use [Assert](../assert/SKILL.md) when implementing a behavior change with its specification-first, test-first workflow.
 
+## Adapt to the current task
+
+Derive focused cases from the changed behavior, repository harness, and concrete failure risk; use only checks and parallel mechanisms that are actually available. Run a real E2E journey when acceptance depends on the integrated app, and report why it is unavailable when it cannot run. Preserve the required unit-before-E2E gate, but don't add irrelevant checks or retain preferences beyond this task.
+
 ## Workflow
 
 1. **Map acceptance and outputs.** Inspect the request, instructions, repository, manifests, tests, and available app/browser tools. Map each changed feature to focused success, boundary, and failure cases plus the overall user journey. Avoid arbitrary coverage quotas. Create a run folder in the operating system's temporary directory, with `feature-summaries/<run-id>/<feature-id>/` and `e2e/<run-id>/` subfolders. Never assume an installed skill package is writable. Keep sanitized summaries and necessary evidence there through review and reporting, then remove the run folder when the task is complete. If the user or project requires persistent evidence, copy sanitized summaries and necessary evidence to `.overdrive/verify/results/<run-id>/` in the project; apply the project's retention rules, or retain until the related change is accepted and then remove. Use only task-local temporary or project paths by default; ask before writing to shared, external, or otherwise consequential locations.
@@ -49,4 +53,4 @@ For proposed behavioral cases and evaluation limits, read [the Verify evaluation
 
 ## Handoffs
 
-Use **Assert** before implementation when behavior and acceptance are not yet specified. After tests, recommend **Review** for a read-only diff review; use **Guard** when the tested behavior crosses a security boundary. Passing Verify checks does not replace either review.
+Mention **Assert** before implementation when behavior and acceptance are not yet specified. After tests, recommend **Review** for a read-only diff review; mention **Guard** when the tested behavior crosses a security boundary. Do not chain skills automatically or imply another skill ran. Passing Verify checks does not replace either review.

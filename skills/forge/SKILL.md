@@ -14,6 +14,10 @@ description: >-
 
 Produce one reusable skill package that preserves the user's intent and has an observable success condition. For review-only requests, return actionable findings without modifying the package. Use existing global/repository agreements for persona, permissions, and durable context; do not copy them wholesale into the skill.
 
+## Adapt to the current task
+
+Use the target host's documented package shape and the repository's existing authoring and evaluation tools; don't assume one manifest or command works across hosts. Scale discovery and validation to whether this is a small edit or a new capability, retain the skill's domain rules, and ask only about decisions that change its trigger, output, or permissions. Adapt from current context only; don't store inferred preferences.
+
 ## Discovery
 
 1. Read the request, applicable instructions, existing skill/package, relevant project files, and available host tools. Inspect current resources and callers before replacing them.
@@ -57,4 +61,4 @@ Each skill package must provide a concise summary of deterministic, LLM-as-a-jud
 
 ## Handoffs
 
-When a skill needs execution beyond package checks, recommend **Verify** for an isolated behavior evaluation. Name only skills the host exposes; do not claim another skill or installation flow ran.
+When a skill needs execution beyond package checks, recommend **Verify** for an isolated behavior evaluation. Name only skills the host exposes; do not claim another skill or installation flow ran or chain handoffs automatically.

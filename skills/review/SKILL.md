@@ -14,6 +14,10 @@ description: >-
 
 Explain what the change does, then identify only defects or worthwhile changes that have a concrete triggering case and verified source evidence. Review is read-only: do not edit files, generate a patch, or apply fixes. The skill's method is **Change-to-Outcome Trace**: connect each changed behavior to its entry, callers, important callees, state or storage, and user-visible result before deciding whether it is a finding.
 
+## Adapt to the current task
+
+Follow only the changed behavior's real call path, then expand into callers, data boundaries, tests, or deployment assumptions when its risk or evidence points there. Use the repository's actual stack and available read-only checks; don't force a broad audit onto a narrow diff or claim unavailable runtime evidence. Ask only if the review target itself is ambiguous, and keep review findings separate from any proposed implementation handoff.
+
 ## Workflow
 
 1. **Resolve the review target.** Use the branch, PR, commit, or files the user named. For a branch, identify its base and diff. For a PR link, inspect the local PR ref or an already available read-only GitHub integration; if the diff cannot be retrieved without network/auth or other unapproved access, ask for the diff or report that review is blocked. For named files, review their current working-tree state. If no target is named, first report the uncommitted changes; if there are none, review the latest commit against its parent. Never silently choose a different target.
@@ -77,4 +81,4 @@ Read [the evaluation guide](references/evaluation.md) when validating Review. It
 
 ## Handoffs
 
-Use **Guard** for a dedicated security audit and **Trace** when an agent/LLM execution path or broader architecture is the subject. Use **Verify** when the user requests test execution. These are separate tasks; Review remains read-only and does not claim another skill ran.
+Mention **Guard** for a dedicated security audit and **Trace** when an agent/LLM execution path or broader architecture is the subject. Recommend **Verify** when the user requests test execution. These remain separate tasks; do not chain skills automatically, and Review stays read-only without claiming another skill ran.

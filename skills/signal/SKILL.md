@@ -14,6 +14,10 @@ description: >-
 
 Give Arnel the shortest response that still lets him understand, verify, and act. Remove ceremony and repetition; preserve every fact, boundary, and next step that can change a decision. This changes communication style, not reasoning depth, verification, or engineering quality.
 
+## Adapt to the current task
+
+Match the requested depth, audience, language, and consequence level using the current conversation and the task's evidence. Keep exact technical details and safety-critical explanations even when the surrounding answer is brief; use the repository's actual terms when writing about its code. Do not infer a lasting style preference or save one for future sessions.
+
 ## Modes
 
 - **Lite:** Remove filler and repetition. Keep complete sentences and a professional tone.
@@ -88,4 +92,4 @@ The response is direct, readable in one pass, and no longer than needed. It reta
 
 ## Handoffs
 
-Use **Prune** when the task also needs efficient source, search, or tool-output handling. Signal changes response style only; the skill owning the task still controls investigation, permissions, and verification.
+Mention **Prune** when the task also needs efficient source, search, or tool-output handling. Signal changes response style only; the skill owning the task still controls investigation, permissions, and verification. Do not chain skills automatically or imply another skill ran.

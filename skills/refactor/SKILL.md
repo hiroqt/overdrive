@@ -16,6 +16,10 @@ Make a codebase easier for another developer to understand and change through sm
 
 This skill owns maintainability diagnosis and internal structure. Use the repository's existing implementation and conventions. For behavior-changing implementation, follow the available spec-first/TDD workflow. For retrieval, tool-output, or context optimization, use the token-efficiency workflow. Do not create background jobs or imply that the codebase will improve without a future invocation.
 
+## Adapt to the current task
+
+Map only the languages, modules, and callers relevant to the reported friction, then choose an improvement that fits their established ownership and dependency direction. Scale structural exploration and checks to the affected surface and risk; don't impose framework-specific layers on a different stack. Reassess from the current checkout each time and don't write inferred preferences for later sessions.
+
 ## Inputs and inspection
 
 1. Identify the repository, branch, dirty and ignored files, applicable instructions, and existing architecture or codebase map. Read only the relevant source and caller paths; verify maps against the current checkout.
@@ -103,4 +107,4 @@ For controlled behavior evaluation, use the [evaluation guide](references/evalua
 
 ## Handoffs
 
-For a behavior-changing refactor, use **Assert** to define and test the behavior first, then **Verify** for the integrated flow. Use **Guard** for a security audit and **Review** for an independent read-only diff review. Keep this skill's API and sensitive-file gates in force throughout.
+For a behavior-changing refactor, recommend **Assert** to define and test the behavior first, then **Verify** for the integrated flow. Mention **Guard** for a security audit or **Review** for an independent read-only diff review only when relevant. Do not chain skills automatically or imply they ran; keep this skill's API and sensitive-file gates in force throughout.

@@ -1,6 +1,6 @@
 # Overdrive skill workflows
 
-Overdrive skills are small, independent procedures. Combine them when a task crosses their boundaries; do not make every task run every skill. These workflows are invocation guides, not installer profiles or automatic orchestration. Install the needed packages with a host-supported method, then ask the host to invoke them in order. A skill can recommend a next step, but it cannot invoke another skill unless the host explicitly supports that behavior.
+Overdrive skills are small, independent procedures. The [`overdrive` router](../skills/overdrive/SKILL.md) filters to installed skills and picks one primary skill for a task; direct per-skill commands remain available. Combine skills only for deliberate multi-step work. These workflow bundles are invocation guides, not installer profiles or automatic orchestration. A skill can recommend a next step, but it cannot invoke another skill unless the host explicitly supports that behavior.
 
 ## Workflow bundles
 
@@ -14,7 +14,7 @@ Overdrive skills are small, independent procedures. Combine them when a task cro
 | **Maintainability improvement** | [Prune](../skills/prune/SKILL.md) → [Refactor](../skills/refactor/SKILL.md) → ([Assert](../skills/assert/SKILL.md) if behavior changes) → [Verify](../skills/verify/SKILL.md) → [Review](../skills/review/SKILL.md) | Structure is hard to understand or maintain | Refactor protects APIs and sensitive files; follow its confirmation gates. Use Trace first only when the problem is an unknown agent/LLM execution path. |
 | **Skill authoring** | [Forge](../skills/forge/SKILL.md) → package-quality check → [Verify](../skills/verify/SKILL.md) (when executable behavior needs evaluation) | Creating or revising an Overdrive skill | Forge owns the package. The package check proves packaging only; Verify or a domain-specific evaluation is needed for behavioral claims. |
 
-**[Signal](../skills/signal/SKILL.md)** can shape progress updates and final answers alongside any workflow. It does not replace source inspection, checks, or evidence. **Prune** is included at the start when repository discovery or tool-output efficiency matters; skip it when the task needs no repository exploration.
+**[Signal](../skills/signal/SKILL.md)** can shape progress updates and final answers alongside any workflow. It does not replace source inspection, checks, or evidence. **Prune** is included at the start when repository discovery or tool-output efficiency matters; skip it when the task needs no repository exploration. **Overdrive** chooses one task-fit entrypoint; use a workflow bundle only when the requested work needs an intentional sequence.
 
 ## Handoff contract
 
@@ -29,4 +29,4 @@ Do not claim that a handoff ran, that an uninstalled skill is available, or that
 
 ## Host and installation limits
 
-The installer continues to install all Overdrive skills. To install a subset, use the host's supported skill installer with the individual package names. Workflows above describe which installed skills to invoke for a task; they do not change package installation, agent discovery, tool permissions, or host behavior. Verify activation in the target coding agent before relying on a skill.
+The npm installer always includes the router and installs all ten domain skills or the selected subset. The router reads the generated installed-skill list so it cannot route to an omitted skill. Workflow bundles describe explicit sequences; they do not change package installation, agent discovery, tool permissions, or host behavior. Verify activation in the target coding agent before relying on a skill.

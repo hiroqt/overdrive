@@ -1,0 +1,22 @@
+{
+  "name": "@hiroqt/overdrive",
+  "version": "0.1.0",
+  "description": "Install Overdrive agent skills for Codex, Claude Code, Kiro, Antigravity, and Grok Build.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "overdrive": "bin/overdrive.js"
+  },
+  "files": [
+    "bin/",
+    "skills/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test scripts/tests/installer.test.js"
+  }
+}

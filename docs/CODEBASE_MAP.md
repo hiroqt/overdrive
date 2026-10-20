@@ -5,19 +5,20 @@
 ## Identity and status
 
 - **Project:** Arnel’s Agent Engineering Toolkit, a documentation and installable-skill repository.
-- **Last verified:** 2026-10-20.
-- **Revision / working tree:** ten skill package IDs use the portable `skills/<name>/` layout. Current-ID synthetic evaluations cover six paired cases, focused Guard checks, Verify’s concurrent unit/browser-E2E sequence, and a Codex-only automatic-routing probe. Review and Trace evaluation cases are proposed, not run. Guard judge/human evaluation is still pending; Signal routing was not observed; other hosts were not tested for selection.
+- **Last verified:** 2026-10-21.
+- **Revision / working tree:** ten domain skill IDs plus the `overdrive` router use the portable `skills/<name>/` layout. Current-ID synthetic evaluations cover six paired cases, focused Guard checks, Verify’s concurrent unit/browser-E2E sequence, and a Codex-only automatic-routing probe. Review and Trace evaluation cases are proposed, not run. Guard judge/human evaluation is still pending; Signal routing was not observed. The npm package was installed for Antigravity CLI and IDE: strict plugin validation passed, all ten direct skills returned task-appropriate output in the CLI, and a natural `/overdrive` security prompt selected `guard`. The CLI picker confirmed `/overdrive:<skill>` namespacing, though only four direct skills were tested with that exact form. Antigravity IDE listed all ten skills and `/assert` returned the test-first procedure; later IDE test invocation was blocked by a system npm configuration error and an unapproved command prompt. Temporary project-scoped command rules were removed after use. The Codex plugin is installed and enabled in an isolated custom `CODEX_HOME`, but a post-activation chat returned HTTP 401 in the credential-free test home. Kiro CLI, Claude Code, and Grok Build were unavailable; the Codex IDE extension was absent. Earlier flat-layout IDE evidence is historical. See the [cross-agent results](cross-agent-skill-installability-results.md) for details and limits.
 - **Primary instructions:** [AGENTS.md](../AGENTS.md).
 
 ## Purpose and architecture
 
-The repository packages global engineering guidance, a skill-authoring handbook, and reusable agent skills. It contains no application runtime or service implementation.
+The repository packages global engineering guidance, a skill-authoring handbook, reusable agent skills, and a small npm CLI that copies skills into host-specific discovery folders. It contains no hosted application or service implementation.
 
 | Area | Responsibility | Source of truth |
 | --- | --- | --- |
 | Global workflow and permissions | Engineering defaults, SDD/TDD, token/context efficiency, documentation refresh, verification and side-effect boundaries | [AGENTS.md](../AGENTS.md) |
 | Skill authoring standard | Package structure, trigger design, validation and behavioral evaluation expectations | [SKILLS.md](../SKILLS.md) |
 | Automated package quality | Required skill metadata/names, source Markdown links, evaluation labels, README catalog coverage, and CI workflow | [checker](../scripts/check_skill_packages.py), [checker tests](../scripts/tests/test_package_quality.py), [GitHub Actions](../.github/workflows/package-quality.yml) |
+| npm skill installer | Interactive project/global, host, and skill selection; host-specific destinations; collision-safe full-folder copies | [specification](npm-installable-skills-spec.md), [CLI](../bin/overdrive.js), [package metadata](../package.json), [Node tests](../scripts/tests/installer.test.js) |
 | Current-ID skill evaluations | Paired execution cases, Guard security fixture, Verify browser flow, and separate host-routing evidence | [paired benchmark](skills-e2e-benchmark-results.md), [Guard evaluation](../skills/guard/references/evaluation.md), [Verify evaluation](verify-validation.md), [routing probe](automatic-routing-validation.md) |
 | Skill authoring capability | Create, revise, or review focused engineering skills, including source-grounded handling of comments in code-related skills | [Forge](../skills/forge/SKILL.md) |
 | AI-assisted application security review | Read the repository before judging; inspect eight threat families, rank evidence-based findings, and require explicit approval before changing reviewed application files or environments | [Guard](../skills/guard/SKILL.md), [threat review](../skills/guard/references/threat-review.md), [evaluation](../skills/guard/references/evaluation.md) |
@@ -35,7 +36,7 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 
 - Repository overview, skill usage, and install examples: [README.md](../README.md).
 - Guard's threat-specific checks and evaluation cases are in `skills/guard/references/`; one current-ID synthetic deterministic case ran, while independent judge/human review and other threat families remain open.
-- Animated interactive installer: [scripts/install_skills.py](../scripts/install_skills.py); real project/global install runs and terminal banner capture: [cross-agent installability results](cross-agent-skill-installability-results.md).
+- npm installer: [package command](../bin/overdrive.js) and its [specification](npm-installable-skills-spec.md). The prior Python source-checkout installer remains at [scripts/install_skills.py](../scripts/install_skills.py).
 - Authoring guide and package checklist: [SKILLS.md](../SKILLS.md).
 - Installable capabilities live in `skills/<name>/SKILL.md`; optional Codex UI metadata is in that package’s `agents/openai.yaml`.
 - Every skill package includes a linked `references/evaluation.md` with distinct [D] deterministic, [J] LLM-as-a-judge, and [H] human evaluation summaries; see [the authoring standard](../SKILLS.md#evaluation-summaries-for-every-skill).
@@ -46,13 +47,13 @@ The repository packages global engineering guidance, a skill-authoring handbook,
 - Render no-dependency HTML inspector and fixtures are in `skills/render/scripts/` and `skills/render/tests/`.
 - Evaluation records and package-specific validation notes live in `docs/`, including [Verify's synthetic evaluation](verify-validation.md); isolated subprocesses overlapped, while a separate worker dispatch did not demonstrate swarm concurrency.
 - Verify writes new run evidence to OS temporary storage by default, cleans it after reporting, and uses `.overdrive/verify/results/` only when persistent project evidence is required; see [Verify's workflow](../skills/verify/SKILL.md).
-- Current and historical outcomes from the paired Codex benchmark, cross-agent installation, and one-host routing checks are recorded in the [benchmark results](skills-e2e-benchmark-results.md), [installability results](cross-agent-skill-installability-results.md), and [automatic-routing results](automatic-routing-validation.md). Local benchmark scripts and synthetic fixtures are excluded by `.gitignore`.
+- Current and historical outcomes from the paired Codex benchmark, cross-agent installation, and one-host routing checks are recorded in the [benchmark results](skills-e2e-benchmark-results.md), [installability results](cross-agent-skill-installability-results.md), and [automatic-routing results](automatic-routing-validation.md). The npm checks establish package installability and ten skill invocations in Antigravity CLI, plus `/assert` invocation in Antigravity IDE; they do not prove every skill is followed or automatically selected on every host. Local benchmark scripts and synthetic fixtures are excluded by `.gitignore`.
 - [Signal validation](signal-validation.md) records seven historical in-session behavior probes and a current paired case; automatic selection was not observed for the realistic concise-summary prompt.
 - Skills provide workflow guidance; they do not install themselves, grant authorization, publish changes, or prove automatic host selection.
 
 ## Commands
 
-Run `python3 -m unittest discover -s scripts/tests -v` and `python3 scripts/check_skill_packages.py` for package self-tests and repository validation; GitHub Actions runs both on pushes and pull requests. The gate checks package structure and documentation links, not skill behavior. The current Verify result includes an actual local browser E2E; a separate worker-dispatch attempt still did not demonstrate swarm overlap. Automatic routing was probed only on Codex CLI. Local run artifacts are ignored by Git; summaries live in the [skill evaluation records](skills-e2e-benchmark-results.md), [Verify record](verify-validation.md), and [automatic-routing report](automatic-routing-validation.md).
+Run `npm test`, `npm pack --dry-run`, `python3 -m unittest discover -s scripts/tests -v`, and `python3 scripts/check_skill_packages.py` for installer and package checks; GitHub Actions runs them on pushes and pull requests. The Node tests verify host paths/manifests, selection, copying, Codex marketplace/TOML registration and CLI activation, collisions, and Claude's plugin namespace. They do not establish activation on every host. Live evidence covers all ten direct skills and one automatic `/overdrive` selection in Antigravity CLI, all-ten skill listing plus `/assert` in Antigravity IDE, and Codex plugin-cache activation. A post-activation Codex response remains unverified because the isolated test home had no credentials. Final local validation passed 21 Node tests, 13 Python tests, the 11-package/265-link checker, a 56-entry pack dry-run, and `git diff --check`. Local run artifacts are ignored by Git. See the [cross-agent results](cross-agent-skill-installability-results.md), [skill evaluation records](skills-e2e-benchmark-results.md), [Verify record](verify-validation.md), and [automatic-routing report](automatic-routing-validation.md).
 
 ## High-value checks and constraints
 
@@ -89,3 +90,7 @@ Run `python3 -m unittest discover -s scripts/tests -v` and `python3 scripts/chec
 - Updated on 2026-10-19 with current package-ID paired, Guard, Verify, installer, and Codex automatic-routing evaluations; Signal selection remains unobserved and other hosts remain untested.
 - Updated on 2026-10-20 by renaming Agent Architecture Audit to Trace and expanding its layer checklist into six conditional system planes; proposed evaluation cases remain unrun.
 - Updated on 2026-10-20 with Review, a read-only change-to-outcome process, concrete-finding output, and proposed evaluations; no behavioral evaluation has run.
+- Updated on 2026-10-21 with the npm installer, five-host path matrix, package checks, and host smoke-test limits; live invocation is recorded separately from file-copy evidence.
+- Updated on 2026-10-21 with packed npm-shim E2E: Antigravity CLI plugin validation and `/assert` path citation passed; Codex installation/registration passed but chat activation was inconclusive. Earlier flat-layout IDE results are labeled historical in the cross-agent results.
+- Updated on 2026-10-21 with current grouped-plugin Antigravity IDE `/assert` invocation, Codex external `CODEX_HOME` marketplace registration, and TOML comment-preserving regression coverage.
+- Updated on 2026-10-21 with all-ten Antigravity CLI direct skill probes, four native namespaced command probes, the natural `/overdrive` to `guard` route, and cleanup of temporary project permissions; IDE coverage remains `/assert` plus discovery listing.
