@@ -121,14 +121,14 @@ Installable folders under [`skills/`](skills/) use the open [Agent Skills format
 Run the installer from the project where you want the skills, or choose global scope for your user account:
 
 ```bash
-npx @hiroqt/overdrive install
+npx overdrive-skills install
 ```
 
 Requires Node.js 18 or newer and npm. Project scope is preselected; choose global explicitly. The installer scans project markers and suggests likely hosts, but asks you to confirm or replace that selection. Press Enter at the skill prompt to select all ten domain skills. The `overdrive` router is always included. Pass `--host` one or more times (or use comma-separated IDs); use `--scope` and `--skill` to set scripted selections:
 
 ```bash
-npx @hiroqt/overdrive install --host antigravity --skill assert
-npx @hiroqt/overdrive install --scope global --host antigravity --surface cli
+npx overdrive-skills install --host antigravity --skill assert
+npx overdrive-skills install --scope global --host antigravity --surface cli
 ```
 
 Host IDs: `claude-code`, `codex`, `kiro`, `antigravity`, and `grok`. For global Antigravity, choose `ide`, `cli`, or `both` with `--surface` or the prompt. Review all destinations and selected-host registration paths, then confirm before writing. Existing bundles are skipped whole; existing flat skills are skipped individually. A failed copy preserves non-empty partial content and reports the cleanup path. v1 does not update or uninstall existing destinations.
@@ -161,7 +161,7 @@ The [cross-agent installation results](docs/cross-agent-skill-installability-res
 To install only the authoring skill, run the npm installer and select `forge` at the skill prompt:
 
 ```bash
-npx @hiroqt/overdrive install
+npx overdrive-skills install
 ```
 
 The installer skips any existing `forge` destination rather than overwriting it.

@@ -649,7 +649,7 @@ export async function installSkills(options) {
 
 function usage() {
   return [
-    'Usage: npx @hiroqt/overdrive install [--host <id[,id]>] [--scope project|global]',
+    'Usage: npx overdrive-skills install [--host <id[,id]>] [--scope project|global]',
     '       [--skill <name[,name]>] [--surface ide|cli|both]',
     '',
     `Hosts: ${HOSTS.map(({ id }) => id).join(', ')}`,
