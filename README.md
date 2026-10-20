@@ -1,44 +1,113 @@
-# Overdrive
+<h1 align="center">Overdrive</h1>
 
-**Hiroqt’s portable AI coding-agent toolkit: source-grounded, stack-aware, test-first, and built for product-fit interfaces.** Overdrive combines ten focused skills, a task-fit router, and shared guidance for maintainable code, efficient exploration, and evidence-based delivery.
+<p align="center">
+  <strong>Adaptive engineering skills for coding agents</strong><br>
+  Ten focused workflows, one task-aware router, and repository-first guidance.
+</p>
 
-## Contents
+<p align="center">
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#skills">Skills</a> ·
+  <a href="#host-support">Host support</a> ·
+  <a href="#evidence">Evidence</a>
+</p>
 
-| Area | Name | Purpose |
-| --- | --- | --- |
-| Toolkit | [Engineering instructions](AGENTS.md) | Shared workflow, permissions, verification, and context guidance |
-| Toolkit | [Skill handbook](SKILLS.md) | Skill-authoring standard, release checklist, and evaluation guidance |
-| Toolkit | [Skill workflows](docs/SKILL_WORKFLOWS.md) | Portable task sequences and handoff boundaries between Overdrive skills |
-| Toolkit | [npm installer specification](docs/npm-installable-skills-spec.md) | Host matrix, install behavior, and acceptance checks |
-| Overdrive skill | [Forge](skills/forge/SKILL.md) | Create, revise, and review focused engineering skills |
-| Overdrive skill | [Refactor](skills/refactor/SKILL.md) | Map repository-specific structures and improve maintainability safely |
-| Overdrive skill | [Signal](skills/signal/SKILL.md) | Communicate concisely while preserving technical detail and evidence |
-| Overdrive skill | [Render](skills/render/SKILL.md) | Craft product-fit frontend experiences and verify production quality |
-| Overdrive skill | [Assert](skills/assert/SKILL.md) | Specify behavior, then implement test-first |
-| Overdrive skill | [Prune](skills/prune/SKILL.md) | Reduce avoidable search, output, and context overhead |
-| Overdrive skill | [Verify](skills/verify/SKILL.md) | Run feature-level unit tests with safe parallel fallbacks, share results, then prove the overall app flow end to end |
-| Overdrive skill | [Review](skills/review/SKILL.md) | Trace changes through callers and data flow; report only concrete, verified findings |
-| Overdrive skill | [Guard](skills/guard/SKILL.md) | Audit AI-assisted code for security flaws and require approval before repository changes |
-| Overdrive skill | [Trace](skills/trace/SKILL.md) | Map a codebase for new developers and trace agent/LLM failures across its system planes |
-| Overdrive skill | [Overdrive router](skills/overdrive/SKILL.md) | Route a task to one relevant installed skill or explicitly select one |
+## Quick start
 
-## Global instructions
+Run the installer from the project where you want the skills:
 
-1. Copy [AGENTS.md](AGENTS.md) into `~/.codex/AGENTS.md`, or `$CODEX_HOME/AGENTS.md` when configured.
-2. Check whether an `AGENTS.override.md` is active; it takes precedence.
-3. Start a fresh Codex session and verify the loaded instructions.
+```bash
+npx @hiroqt/overdrive install
+```
 
-Keep project commands and specialized constraints in each repository’s own instruction files. The global defaults are local reviews, private project memory, and approval for destructive or shared-environment changes.
+> **npm package status:** `@hiroqt/overdrive` is the current published package. This repository now uses the name `overdrive-skills`, which is not published yet. After its release, the command will be `npx overdrive-skills install`.
 
-## Skill authoring guide
+Requires Node.js 18+ and npm. There is no separate Overdrive initialization step: select your host and skills, confirm the preview, then invoke them using that host’s native command. Reload the host if it does not pick up newly installed skills.
 
-Read [SKILLS.md](SKILLS.md) when creating or reviewing a capability. It distinguishes global policy, reusable skill procedures, supporting resources, and private context. The release checklist adapts the supplied 30-point quality guide.
+The interactive installer defaults to project scope, suggests hosts from project markers, and asks you to confirm every selection and destination before writing. Press Enter at the skill picker to choose all ten domain skills; the `overdrive` router is always included. Existing destinations are skipped. The installer does not update or uninstall skills.
 
-`SKILLS.md` is a handbook. It is not an installable skill and should not be pasted into every skill’s entrypoint. Each installable capability lives in its own folder with an exact `SKILL.md` filename.
+Interactive color terminals show the cyan-to-violet `HIROQT` wordmark; `NO_COLOR`, `TERM=dumb`, and redirected output stay plain.
 
-## Validate skill packages
+For scripted installs, choose hosts explicitly:
 
-Run the package tests and repository checks with Node.js 18+ and Python 3:
+```bash
+npx @hiroqt/overdrive install --host antigravity --skill assert
+npx @hiroqt/overdrive install --scope global --host antigravity --surface cli
+```
+
+Host IDs: `claude-code`, `codex`, `kiro`, `antigravity`, `grok`. Use `--scope project|global`, repeatable or comma-separated `--host` and `--skill` values, and `--surface ide|cli|both` for global Antigravity.
+
+## Use Overdrive
+
+Give the router a task to choose one primary skill, or name a skill to select it directly:
+
+```text
+/overdrive Add request validation to this API endpoint
+/overdrive assert Add request validation to this API endpoint
+```
+
+These examples use slash-command syntax; Claude Code prefixes the router with its plugin namespace, while Codex uses `$overdrive`. The router adapts to the current request, repository instructions, stack, and available checks. It only considers skills installed in that bundle, may suggest one useful handoff, and does not chain skills automatically. See [Host support](#host-support) for exact commands.
+
+## Skills
+
+The router is installed automatically. Choose any domain skills; each package follows the [Agent Skills format](https://agentskills.io/specification) and includes its `SKILL.md` plus supporting references, scripts, or assets.
+
+| Skill | Use it to… |
+| --- | --- |
+| [Forge](skills/forge/SKILL.md) | Create, improve, or review reusable agent skills. |
+| [Refactor](skills/refactor/SKILL.md) | Map real project structure and make safe maintainability changes. |
+| [Signal](skills/signal/SKILL.md) | Write concise updates without losing evidence or technical detail. |
+| [Render](skills/render/SKILL.md) | Design and verify product-fit frontend experiences. |
+| [Assert](skills/assert/SKILL.md) | Specify behavior, then implement it test-first. |
+| [Prune](skills/prune/SKILL.md) | Explore efficiently without cutting useful investigation. |
+| [Verify](skills/verify/SKILL.md) | Run focused tests, then verify the full user flow. |
+| [Review](skills/review/SKILL.md) | Trace changes and report concrete, source-verified findings. |
+| [Guard](skills/guard/SKILL.md) | Audit AI-assisted code for security risks and unsafe changes. |
+| [Trace](skills/trace/SKILL.md) | Map a codebase or diagnose an agent/LLM failure across its system. |
+
+## Host support
+
+Project installs are local to a repository; global installs use the host's user-level location. Codex CLI and Codex IDE use different package layouts. Kiro's global Power is activated contextually and does not promise slash aliases.
+
+<details>
+<summary>Show install paths and native commands</summary>
+
+| Host / surface | Project install | Global install | Router / direct skill |
+| --- | --- | --- | --- |
+| Claude Code IDE/CLI | `.claude/skills/overdrive/` | `~/.claude/skills/overdrive/` | `/overdrive:overdrive` / `/overdrive:<skill>` |
+| Codex CLI | `.codex/plugins/overdrive/` plus local marketplace registration | `$CODEX_HOME/plugins/overdrive/` (default `~/.codex`) | `$overdrive` / `$<skill>`; `/skills` lists skills |
+| Codex IDE | `.agents/skills/<skill>/` | `~/.agents/skills/<skill>/` | `$overdrive` / `$<skill>`; `/skills` lists skills |
+| Kiro IDE/CLI | `.kiro/skills/<skill>/` | `~/.kiro/powers/overdrive/` | Project: `/overdrive` / `/<skill>`; global Power: contextual activation |
+| Antigravity IDE | `.agents/plugins/overdrive/` | `~/.gemini/config/plugins/overdrive/` | `/overdrive` / `/<skill>` |
+| Antigravity CLI | `.agents/plugins/overdrive/` | `~/.gemini/antigravity-cli/plugins/overdrive/` | `/overdrive` / `/<skill>` |
+| Grok Build CLI | `.grok/plugins/overdrive/` | `~/.grok/plugins/overdrive/` | `/overdrive` / `/<skill>` |
+
+For Codex CLI, the installer previews and registers the selected local marketplace before activating the plugin. A marker match is only a suggestion; it does not detect which IDE window is active. Non-Codex bundles omit Codex-only metadata. See the [npm installer specification](docs/npm-installable-skills-spec.md) for registration and host details.
+
+</details>
+
+## Evidence
+
+Overdrive separates package checks, host installation, command invocation, and automatic routing. Passing one does not prove the others. The records below include setup, results, and limits:
+
+- [Cross-agent installation and chat checks](docs/cross-agent-skill-installability-results.md)
+- [Automatic router selection probe](docs/automatic-routing-validation.md)
+- [Paired skill behavior benchmark](docs/skills-e2e-benchmark-results.md)
+- [Render](docs/render-validation.md), [Refactor](docs/refactor-validation.md), and [Verify](docs/verify-validation.md) evaluations
+
+## Project links
+
+| Guide | What it covers |
+| --- | --- |
+| [Skill workflows](docs/SKILL_WORKFLOWS.md) | Task sequences and useful handoffs. |
+| [Skill handbook](SKILLS.md) | Authoring, package quality, and release guidance; not an installable skill. |
+| [Installer specification](docs/npm-installable-skills-spec.md) | Host layouts, prompts, safety, and acceptance criteria. |
+| [AGENTS.md](AGENTS.md) | Optional repository and engineering guidance; not copied by the npm installer. |
+
+<details>
+<summary>Checks for contributors</summary>
+
+Run from the repository root with Node.js 18+ and Python 3:
 
 ```bash
 npm test
@@ -47,216 +116,12 @@ python3 -m unittest discover -s scripts/tests -v
 python3 scripts/check_skill_packages.py
 ```
 
-The JavaScript tests cover host layouts and manifests, interactive selection, copied references, selected-host registration, collision safety, and cancellation. `npm pack --dry-run` checks the package file set without publishing. The Python checker validates skill metadata, links, evaluation labels, and README catalog coverage. [GitHub Actions](.github/workflows/package-quality.yml) runs these checks on pushes and pull requests. They establish packaging and local installer behavior, not automatic skill selection by every host.
+These validate installer behavior, package contents, skill metadata, and local links. They do not establish automatic selection or consistent behavior across every agent and version. [GitHub Actions](.github/workflows/package-quality.yml) runs the package checks on pushes and pull requests.
 
-## The Overdrive skills
+</details>
 
-Overdrive contains ten domain skills plus the `overdrive` task router. Domain skill folders follow the standard `skills/<name>/SKILL.md` layout; the router is included automatically with every install and is not selectable as a domain skill:
+---
 
-```text
-skills/
-├── overdrive/ # task-fit router and installed-skill filter
-├── forge/     # create and review skills
-├── refactor/  # evolve code structure across stacks
-├── signal/    # concise, evidence-preserving communication
-├── render/    # product-fit frontend craft
-├── assert/    # specification-first, test-first coding
-├── prune/     # efficient repository and context exploration
-├── verify/    # feature unit tests with safe parallel fallbacks and real app E2E proof
-├── review/    # read-only code review with concrete, source-verified cases
-├── guard/     # AI-assisted code security review and approval-gated remediation
-└── trace/      # newcomer codebase map and agent-system diagnosis
-```
+Overdrive adapts to the active conversation and repository instructions; it does not save learned preferences. Skills provide guidance and do not grant permissions, install themselves, or guarantee that a host selects or follows them.
 
-The ten domain package IDs are `forge`, `refactor`, `signal`, `render`, `assert`, `prune`, `verify`, `review`, `guard`, and `trace`. The router considers only the selected skills installed alongside it.
-
-### Use skills together
-
-Invoke the router with a task to choose and follow one primary skill; append a skill name to force that skill. Direct skill commands remain available. The router filters out skills absent from the selected install and may mention one useful handoff without invoking it. For a deliberate multi-skill sequence, use the [workflow bundles](docs/SKILL_WORKFLOWS.md); the router does not chain skills automatically.
-
-```text
-/overdrive Add request validation to this API endpoint
-/overdrive review Review the current diff for concrete regressions
-/overdrive list
-```
-
-## What makes Overdrive different
-
-Overdrive is built to keep agents grounded in the real codebase and the user's actual requirements. Its skills reinforce each other across discovery, implementation, and review:
-
-| Bottleneck | Overdrive response | Skill |
-| --- | --- | --- |
-| A stale comment dictates a new implementation | Treat comments as claims. Trace the symbol, callers, tests/contracts, maintained docs, supported APIs, and local patterns. Follow verified architecture and project standards over stale or deprecated recipes; preserve proven domain and safety constraints, and correct stale comments when appropriate. | [Refactor](skills/refactor/SKILL.md), [Assert](skills/assert/SKILL.md), [Render](skills/render/SKILL.md), [Prune](skills/prune/SKILL.md) |
-| An AI repair removes safeguards to make an error disappear | Inspect the repository and diff first; flag removed access checks, validation, TLS verification, safe error handling, rate limits, or policy controls; rank findings and require explicit approval before edits. Review authorization, exposed secrets, dependencies, infrastructure, business rules, AI endpoints, and audit evidence. | [Guard](skills/guard/SKILL.md) |
-| A refactor assumes every repository uses the same stack | Identify languages and frameworks from project files, then map real entrypoints, components, services, types, helpers, tests, and package boundaries before proposing a bounded improvement. | [Refactor](skills/refactor/SKILL.md) |
-| Code reviews report plausible but unverified concerns | Trace changed behavior through callers, important callees, tests, README, and deployment assumptions; require one concrete trigger and outcome per finding. | [Review](skills/review/SKILL.md) |
-| Code is written before the behavior is clear | Define observable acceptance first, then use test-first implementation and report only checks that actually ran. | [Assert](skills/assert/SKILL.md) |
-| Test results are serial, fragmented, or confused with app proof | Run independent feature suites concurrently when safe; disclose serial fallback, share the aggregate before E2E, then verify the user journey. | [Verify](skills/verify/SKILL.md) |
-| A task crosses skill boundaries and handoffs are unclear | Use explicit task sequences, preserve evidence and acceptance criteria, and stop at the owning skill's permission boundary. | [Workflow bundles](docs/SKILL_WORKFLOWS.md) |
-| Progress updates bury decisions in filler | Keep communication concise while retaining technical payloads, evidence, uncertainty, and safety details. | [Signal](skills/signal/SKILL.md) |
-| A frontend looks generic or ignores user context | Fit the design to the product, apply relevant Laws of UX concepts, inspect responsive and accessible states, and distinguish source checks from browser evidence. | [Render](skills/render/SKILL.md) |
-| Token saving cuts out useful investigation | Bound searches and tool output while expanding retrieval when evidence, risk, or uncertainty requires it. | [Prune](skills/prune/SKILL.md) |
-| New skills make unsupported quality claims | Define triggers, boundaries, verification, and evaluation evidence before packaging a reusable workflow. | [Forge](skills/forge/SKILL.md) |
-
-This is **comment-aware, code-first guidance**, not a rule to ignore comments. Comments can document valid constraints; agents verify them against the implementation and other authoritative project evidence before relying on them.
-
-## Evidence behind the workflows
-
-Overdrive keeps measured results separate from product claims. The linked records describe the exact setup and limitations:
-
-- [Paired skill benchmark](docs/skills-e2e-benchmark-results.md): the current-ID refresh ran six representative pairs. Five treatment cases passed the runner’s full checks; Signal met response constraints but lacked the runner’s activation acknowledgement. One Forge case passed only in treatment; the others showed parity. This is one unblinded Codex CLI run, not broad reliability evidence.
-- [Automatic routing probe](docs/automatic-routing-validation.md): Codex CLI read the intended current entrypoint on 7/8 natural prompts; Signal selection was not observed, Refactor also read Prune, and an unrelated control read no skill. Other hosts were not tested for selection.
-- [Refactor stack evaluation](docs/refactor-validation.md): the synthetic React/TypeScript, C#/ASP.NET Core, Rust, Python, and mixed-monorepo treatment cases passed 5/5; controls passed 4/5. Each stack used a small fixture, so this is evidence for those cases, not every codebase.
-- [Render design-review evaluation](docs/render-validation.md): treatment passed the deterministic design-choice and WCAG 2.0 review checks while control missed the design-choice check. The fixture had no runnable browser, so this is not proof of rendered UI or accessibility conformance.
-- [Cross-agent installation checks](docs/cross-agent-skill-installability-results.md): separate package layout, IDE/CLI discovery, router selection, and per-skill execution evidence, with unavailable hosts listed explicitly.
-
-The source-grounded comment policy is newly added and has **not yet had a dedicated behavioral E2E benchmark**. Earlier per-skill records remain historical unless a current-ID refresh is called out explicitly; see each record for details.
-
-Verify's synthetic workflow evaluation is recorded in [Verify validation](docs/verify-validation.md). Its current-ID rerun passed overlapping unit subprocesses (4/4), summary-before-E2E ordering, local browser persistence after reload, and the injected unit/startup failure gates. A separate worker-dispatch attempt still did not show overlapping execution. The routing probe selected Verify in Codex CLI; separate-host behavior and broad reliability remain untested.
-
-## Install skills across coding agents
-
-Installable folders under [`skills/`](skills/) use the open [Agent Skills format](https://agentskills.io/specification): each contains `SKILL.md` metadata and instructions, with optional references, scripts, or assets. Overdrive's npm CLI creates the selected host's documented plugin/Power bundle or flat-skill layout. Discovery, activation, commands, script execution, and permissions still depend on each host and version.
-
-Run the installer from the project where you want the skills, or choose global scope for your user account:
-
-```bash
-npx overdrive-skills install
-```
-
-Requires Node.js 18 or newer and npm. Project scope is preselected; choose global explicitly. The installer scans project markers and suggests likely hosts, but asks you to confirm or replace that selection. Press Enter at the skill prompt to select all ten domain skills. The `overdrive` router is always included. Pass `--host` one or more times (or use comma-separated IDs); use `--scope` and `--skill` to set scripted selections:
-
-```bash
-npx overdrive-skills install --host antigravity --skill assert
-npx overdrive-skills install --scope global --host antigravity --surface cli
-```
-
-Host IDs: `claude-code`, `codex`, `kiro`, `antigravity`, and `grok`. For global Antigravity, choose `ide`, `cli`, or `both` with `--surface` or the prompt. Review all destinations and selected-host registration paths, then confirm before writing. Existing bundles are skipped whole; existing flat skills are skipped individually. A failed copy preserves non-empty partial content and reports the cleanup path. v1 does not update or uninstall existing destinations.
-
-Selected host layouts and invocation:
-
-| Host/surface | Project location | Global location | Invocation |
-| --- | --- | --- | --- |
-| Claude Code IDE/CLI | `.claude/skills/overdrive/` plugin bundle | `~/.claude/skills/overdrive/` plugin bundle | `/overdrive:overdrive` routes; `/overdrive:<skill>` invokes directly, e.g. `/overdrive:review`. [Plugin docs](https://code.claude.com/docs/en/plugins/create). |
-| Codex CLI | `.codex/plugins/overdrive/` plus `.agents/plugins/marketplace.json` and `.codex/config.toml` | `$CODEX_HOME/plugins/overdrive/` and `$CODEX_HOME/config.toml` (default `~/.codex`); marketplace stays at `~/.agents/plugins/marketplace.json` when CODEX_HOME is within the user home, otherwise it is placed under CODEX_HOME and registered there. After preview and confirmation, the installer registers the selected local marketplace with Codex CLI, then runs `codex plugin add` to activate the plugin in its cache. | `$overdrive` routes; `$<skill>` invokes directly; `/skills` lists them. [Plugin docs](https://developers.openai.com/plugins/build/plugins). |
-| Codex IDE extension | `.agents/skills/<skill>/` flat skills | `~/.agents/skills/<skill>/` flat skills | `$overdrive` routes; `$<skill>` invokes directly; `/skills` lists them. Codex IDE does not support grouped plugins. [Skills docs](https://developers.openai.com/plugins/build/skills). |
-| Kiro IDE/CLI project | `.kiro/skills/<skill>/` flat skills | — | `/overdrive` routes; `/<skill>` invokes directly. [Skills docs](https://kiro.dev/docs/cli/skills/). |
-| Kiro global Power | — | `~/.kiro/powers/overdrive/` grouped Power | Power can activate from relevant context; bundled slash aliases are not promised. [Power docs](https://kiro.dev/docs/powers/create/). |
-| Antigravity IDE | `.agents/plugins/overdrive/` plugin bundle | `~/.gemini/config/plugins/overdrive/` | `/overdrive` routes; `/<skill>` invokes directly. Uses Antigravity's native `plugin.json` schema. [Skills docs](https://antigravity.google/docs/skills?tab=ide). |
-| Antigravity CLI | `.agents/plugins/overdrive/` plugin bundle | `~/.gemini/antigravity-cli/plugins/overdrive/` | `/overdrive` routes; `/<skill>` invokes directly. [CLI skills docs](https://antigravity.google/docs/skills?tab=cli). |
-| Grok Build CLI | `.grok/plugins/overdrive/` Claude-compatible plugin bundle | `~/.grok/plugins/overdrive/` | `/overdrive` routes; `/<skill>` invokes directly. [Docs](https://docs.x.ai/build/features/skills-plugins-marketplaces). |
-
-Each native form invokes the same router instructions and installed-skill filter; direct per-skill commands remain available. Claude's directory plugin therefore uses the namespaced `/overdrive:overdrive` router and `/overdrive:<skill>` direct commands. Codex's IDE uses flat skills and Codex's CLI uses a grouped plugin. Kiro's project skills use `/<skill>` commands; its global Power does not promise slash aliases. Antigravity's project plugin folder is shared by its IDE and CLI, and Grok accepts plugin-provided slash-command skills. Global Antigravity writes only the selected surface(s). Non-Codex bundles omit Codex-only `agents/openai.yaml` metadata. An explicit router invocation does not prove ambient automatic selection.
-
-Host detection is a project-marker heuristic, not a claim about which IDE window is active. For example, `.claude/`, `.codex/`, `.kiro/`, and `.grok/` suggest their matching hosts; `.agents/skills/` suggests Codex IDE; a native Antigravity `plugin.json` suggests Antigravity. You confirm the host list before the destination preview and final confirmation.
-
-The npm terminal restores the cyan-to-violet `HIROQT` wordmark from the earlier installer. Color and the short type-on animation appear only in an interactive color terminal; `NO_COLOR`, dumb terminals, and redirected output stay plain.
-
-### Recorded installation checks
-
-The [cross-agent installation results](docs/cross-agent-skill-installability-results.md) separate npm layout/config checks from live host smoke checks. They identify which IDE/CLI surfaces were available and which plugin commands were actually invoked; structural checks do not prove automatic routing or behavior across every host version.
-
-## Install Forge
-
-To install only the authoring skill, run the npm installer and select `forge` at the skill prompt:
-
-```bash
-npx overdrive-skills install
-```
-
-The installer skips any existing `forge` destination rather than overwriting it.
-
-Invoke it with a focused request:
-
-```text
-Use $forge to create a review-only API-contract skill
-using this repository’s existing contracts and validation commands.
-```
-
-```text
-Use $forge to review this skill package without modifying it.
-```
-
-## Assert: specification-first, test-first engineering
-
-Use the [assert skill](skills/assert/SKILL.md) for coding requests. It turns the request into a proportionate spec with acceptance checks before implementation, then uses a red-green-refactor loop for behavior changes. It carries Arnel’s preferences for small diffs, existing conventions, preserved unrelated work, and honest verification reports. The skill is guidance; it does not replace higher-priority instructions, repository rules, or task-specific authorization.
-
-```text
-Use $assert to implement the requested behavior.
-```
-
-## Verify: unit tests, then real app E2E
-
-Use [Verify](skills/verify/SKILL.md) for focused feature tests followed by a real user journey. It prefers swarm workers, but falls back to test-runner or isolated-process parallelism; if safe concurrency is unavailable, it can run serially with that limitation reported. It saves per-feature results in OS temporary storage by default, shares the aggregate before E2E, and removes run artifacts after reporting. Persistent sanitized evidence can go in `.overdrive/verify/results/` when user or project policy requires it. Web E2E uses a browser on the running app; API checks, mocks, builds, and health checks are not UI proof. It requests approval for authenticated accounts, external services, and shared state. See the [executed evaluation](docs/verify-validation.md) for one synthetic run and its limits.
-
-```text
-Use $verify to test changed features in parallel where safe, share the unit summary, then prove the running app's user flow in a browser.
-```
-
-## Review: concrete, read-only code review
-
-Use [Review](skills/review/SKILL.md) for a named branch, pull request, commit, or files. If no target is named, it identifies uncommitted changes first, then the latest commit if the tree is clean. Its Change-to-Outcome Trace follows changed behavior through discoverable callers, relevant callees, data/state writes, tests, README, and deployment assumptions. Every finding needs a checked path and a concrete trigger that produces a bad result; vague concerns and style preferences are omitted.
-
-Review is read-only and uses targeted local inspection rather than agent swarms or broad tool discovery. Its output starts with a short change summary, states the assumed load, then groups continuously numbered findings as Must fix, Should fix, and Nice to have. Every finding explains the code's role, the trigger and impact, the smallest fix, and the consequence of skipping it. Use Guard for a dedicated security audit, Trace for whole-agent architecture mapping, and Verify for test execution.
-
-```text
-Use $review on the current branch. Read the changed code and callers, follow the data flow, state the load assumption, and report only findings with a concrete case. Do not edit files.
-```
-
-## Guard: AI-assisted application security
-
-Use [Guard](skills/guard/SKILL.md) before generating or repairing security-sensitive code, or to review an existing repository. It reads the source and surrounding architecture before judgment, checks eight threat families, and reports High/Medium/Low findings with evidence and confidence. It focuses on disappearing protections during error fixes, broken authorization, exposed secrets, malicious or hallucinated dependencies, uncontrolled infrastructure, business-logic gaps, direct frontend-to-AI abuse, and missing traceability/security verification. It prepares a safe test-mode alternative when a prompt asks to bypass login, and treats suspicious dependency metadata as a signal to investigate rather than proof of malware.
-
-Guard requires explicit user approval before changing reviewed application files or environments. It cannot intercept prompts, scan every generation pass, or enforce edits unless the host provides configured hooks or scanners; it reports those capability limits rather than claiming automatic protection.
-
-```text
-Use $guard to audit this repository's auth, AI endpoints, dependencies, secrets, and deployment config. Report ranked findings; do not edit files until I approve a concrete plan.
-```
-
-## Prune: efficient repository exploration
-
-Use [prune](skills/prune/SKILL.md) to reduce repeated searches, oversized tool results, and unnecessary context retention while preserving the investigation needed for a correct solution. On first use in a codebase, it creates or extends a source-linked `docs/CODEBASE_MAP.md`; after meaningful code changes and before session handoff, it refreshes that map. It explicitly considers relevant MCP tools and schemas as part of the efficiency decision; it does not optimize token count by skipping useful sources, checks, or domain knowledge.
-
-```text
-Use $prune to investigate and implement this task efficiently.
-```
-
-## Refactor: codebase structure and maintainability
-
-Use [Refactor](skills/refactor/SKILL.md) to identify each repository's languages/frameworks and map the structures they actually use: composition roots and entrypoints, UI/domain components, contracts and types, state and services, data adapters, helpers/extensions, and tests. Examples include React components/hooks/services, C# projects/DI/controllers/domain types/extensions, Rust crates/modules/traits/helpers, Python packages/classes/protocols, and equivalent constructs in other stacks. For monorepos, it maps each app/package separately and traces boundaries between them. It makes incremental, evidence-based maintainability improvements while preserving behavior and local conventions. Sensitive files such as `.env` files stay protected; API or contract restructuring needs your explicit confirmation. Each invocation reassesses the current codebase; the skill does not run continuously in the background.
-
-```text
-Use $refactor to assess this repository and make the next safe, high-value maintainability improvement.
-```
-
-## Trace: map a codebase and diagnose agent behavior
-
-Use [Trace](skills/trace/SKILL.md) when an agent/LLM feature misbehaves at an unknown layer or before release. It gives a new developer a source-linked map of the repository, then follows one representative request through the relevant host, prompt/context, model/orchestration, tool, response, data, and operations boundaries. Its broader [system map](skills/trace/references/agent-stack.md) groups conditional checkpoints into six planes and retains every label supplied in the original request.
-
-The workflow is read-only by default. It starts with a fast representative path and expands when evidence or risk points elsewhere; it does not claim to inspect every file or guarantee runtime correctness. The source list described as 12 layers contains 14 labels; “ArCs” remains undefined. Use Refactor for approved structural changes and Guard for security findings.
-
-```text
-Use $trace to map this codebase for a new developer and trace one failing LLM request. Rank findings, cite source evidence, and propose code-first fixes without editing.
-```
-
-## Signal: concise communication
-
-Use [Signal](skills/signal/SKILL.md) for compact answers and progress updates that retain technical details, evidence, and uncertainty. It covers response wording; use Prune for search, tool-output, and context overhead.
-
-Invoke it with `$signal`, or ask for `/signal lite`, `/signal full`, or `/signal ultra`. `/signal off` returns to the host's normal response style. Commands and aliases work only when the host exposes the installed skill; they do not configure host commands by themselves.
-
-Forge includes its template, evaluation reference, and optional Codex UI metadata; it has no custom executable helpers. Render includes scoped references and a read-only static HTML inspector. Follow each target host’s discovery and invocation rules; portable metadata does not guarantee identical behavior across products.
-
-## Frontend design and production checks
-
-Use [Render](skills/render/SKILL.md) for new web surfaces, redesigns, visual critiques, or frontend implementation. It prioritizes product-fit visual direction, useful icons and motion, practical accessibility, responsive inspection, technical SEO for public pages, and measured performance guidance. Familiar patterns are critique signals, not blanket bans.
-
-For static or server-rendered HTML, the packaged inspector can be run with `python3 skills/render/scripts/inspect_html.py <html-file-or-directory>`. It checks a small set of markup signals; browser interaction, visual quality, accessibility, and field performance still need appropriate project-level validation.
-
-## Validation and limits
-
-See the [executed validation record](docs/forge-validation.md) for checks performed and remaining limits.
-
-Packaging validation checks syntax and resources. Behavioral evaluation checks actual decisions and outputs; explicit invocation does not prove automatic discovery. Run realistic cases using the [evaluation protocol](skills/forge/references/evaluation.md), and distinguish executed tests from planned scenarios.
-
-These files define behavior. They do not grant access, configure MCP connections, install themselves, create scheduled workers, or enable GitHub automatic reviews. Keep sensitive history and credentials outside distributed skill packages.
+[MIT License](LICENSE)
