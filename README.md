@@ -1,6 +1,6 @@
 # Overdrive
 
-**Hiroqt’s portable AI coding-agent toolkit: source-grounded, stack-aware, test-first, and built for product-fit interfaces.** Overdrive combines ten focused skills with shared guidance for maintainable code, efficient exploration, and evidence-based delivery.
+**Hiroqt’s portable AI coding-agent toolkit: source-grounded, stack-aware, test-first, and built for product-fit interfaces.** Overdrive combines ten focused skills, a task-fit router, and shared guidance for maintainable code, efficient exploration, and evidence-based delivery.
 
 ## Contents
 
@@ -9,6 +9,7 @@
 | Toolkit | [Engineering instructions](AGENTS.md) | Shared workflow, permissions, verification, and context guidance |
 | Toolkit | [Skill handbook](SKILLS.md) | Skill-authoring standard, release checklist, and evaluation guidance |
 | Toolkit | [Skill workflows](docs/SKILL_WORKFLOWS.md) | Portable task sequences and handoff boundaries between Overdrive skills |
+| Toolkit | [npm installer specification](docs/npm-installable-skills-spec.md) | Host matrix, install behavior, and acceptance checks |
 | Overdrive skill | [Forge](skills/forge/SKILL.md) | Create, revise, and review focused engineering skills |
 | Overdrive skill | [Refactor](skills/refactor/SKILL.md) | Map repository-specific structures and improve maintainability safely |
 | Overdrive skill | [Signal](skills/signal/SKILL.md) | Communicate concisely while preserving technical detail and evidence |
@@ -19,6 +20,7 @@
 | Overdrive skill | [Review](skills/review/SKILL.md) | Trace changes through callers and data flow; report only concrete, verified findings |
 | Overdrive skill | [Guard](skills/guard/SKILL.md) | Audit AI-assisted code for security flaws and require approval before repository changes |
 | Overdrive skill | [Trace](skills/trace/SKILL.md) | Map a codebase for new developers and trace agent/LLM failures across its system planes |
+| Overdrive skill | [Overdrive router](skills/overdrive/SKILL.md) | Route a task to one relevant installed skill or explicitly select one |
 
 ## Global instructions
 
@@ -36,21 +38,24 @@ Read [SKILLS.md](SKILLS.md) when creating or reviewing a capability. It distingu
 
 ## Validate skill packages
 
-Run the repository package check and its focused tests with Python 3:
+Run the package tests and repository checks with Node.js 18+ and Python 3:
 
 ```bash
+npm test
+npm pack --dry-run
 python3 -m unittest discover -s scripts/tests -v
 python3 scripts/check_skill_packages.py
 ```
 
-The checker validates each skill directory has a `SKILL.md`, required `name` and `description` fields and their documented limits, optional `compatibility` length, local Markdown link targets, `[D]`/`[J]`/`[H]` evaluation summary entries, and coverage in this README’s Contents catalog. These labels indicate documented evaluation categories; they do not mean a case ran or passed. [GitHub Actions](.github/workflows/package-quality.yml) runs both commands on pushes and pull requests. Require the `validate` status check in branch protection if it should block merges. This is a packaging check; it does not replace behavioral evaluation or E2E testing.
+The JavaScript tests cover host layouts and manifests, interactive selection, copied references, selected-host registration, collision safety, and cancellation. `npm pack --dry-run` checks the package file set without publishing. The Python checker validates skill metadata, links, evaluation labels, and README catalog coverage. [GitHub Actions](.github/workflows/package-quality.yml) runs these checks on pushes and pull requests. They establish packaging and local installer behavior, not automatic skill selection by every host.
 
 ## The Overdrive skills
 
-Overdrive is the name of this ten-skill collection. Each package is independently installable and follows the standard `skills/<name>/SKILL.md` layout:
+Overdrive contains ten domain skills plus the `overdrive` task router. Domain skill folders follow the standard `skills/<name>/SKILL.md` layout; the router is included automatically with every install and is not selectable as a domain skill:
 
 ```text
 skills/
+├── overdrive/ # task-fit router and installed-skill filter
 ├── forge/     # create and review skills
 ├── refactor/  # evolve code structure across stacks
 ├── signal/    # concise, evidence-preserving communication
@@ -63,11 +68,17 @@ skills/
 └── trace/      # newcomer codebase map and agent-system diagnosis
 ```
 
-The package IDs and invocation names are `forge`, `refactor`, `signal`, `render`, `assert`, `prune`, `verify`, `review`, `guard`, and `trace`. Existing installations under previous IDs do not migrate automatically; remove any old copies from the target agent before using the renamed package.
+The ten domain package IDs are `forge`, `refactor`, `signal`, `render`, `assert`, `prune`, `verify`, `review`, `guard`, and `trace`. The router considers only the selected skills installed alongside it.
 
 ### Use skills together
 
-Each skill remains independently installable. For work that crosses skill boundaries, use the [workflow bundles](docs/SKILL_WORKFLOWS.md) to choose and invoke the relevant skills in sequence. Skills may recommend a handoff by name when the host exposes that skill; they do not automatically invoke one another. The installer is unchanged and still installs all skills; bundles are task workflows, not installer profiles.
+Invoke the router with a task to choose and follow one primary skill; append a skill name to force that skill. Direct skill commands remain available. The router filters out skills absent from the selected install and may mention one useful handoff without invoking it. For a deliberate multi-skill sequence, use the [workflow bundles](docs/SKILL_WORKFLOWS.md); the router does not chain skills automatically.
+
+```text
+/overdrive Add request validation to this API endpoint
+/overdrive review Review the current diff for concrete regressions
+/overdrive list
+```
 
 ## What makes Overdrive different
 
@@ -97,7 +108,7 @@ Overdrive keeps measured results separate from product claims. The linked record
 - [Automatic routing probe](docs/automatic-routing-validation.md): Codex CLI read the intended current entrypoint on 7/8 natural prompts; Signal selection was not observed, Refactor also read Prune, and an unrelated control read no skill. Other hosts were not tested for selection.
 - [Refactor stack evaluation](docs/refactor-validation.md): the synthetic React/TypeScript, C#/ASP.NET Core, Rust, Python, and mixed-monorepo treatment cases passed 5/5; controls passed 4/5. Each stack used a small fixture, so this is evidence for those cases, not every codebase.
 - [Render design-review evaluation](docs/render-validation.md): treatment passed the deterministic design-choice and WCAG 2.0 review checks while control missed the design-choice check. The fixture had no runnable browser, so this is not proof of rendered UI or accessibility conformance.
-- [Cross-agent installation checks](docs/cross-agent-skill-installability-results.md): current package IDs copied byte-for-byte to six host target layouts (48 package copies). This confirms installability only; only Codex CLI had a separate automatic-routing probe.
+- [Cross-agent installation checks](docs/cross-agent-skill-installability-results.md): separate package layout, IDE/CLI discovery, router selection, and per-skill execution evidence, with unavailable hosts listed explicitly.
 
 The source-grounded comment policy is newly added and has **not yet had a dedicated behavioral E2E benchmark**. Earlier per-skill records remain historical unless a current-ID refresh is called out explicitly; see each record for details.
 
@@ -105,54 +116,53 @@ Verify's synthetic workflow evaluation is recorded in [Verify validation](docs/v
 
 ## Install skills across coding agents
 
-Installable folders under [`skills/`](skills/) use the open [Agent Skills format](https://agentskills.io/specification): each contains `SKILL.md` metadata and instructions, with optional bundled references, scripts, or assets. The [Vercel Skills CLI](https://github.com/vercel-labs/skills) installs packages into host-specific directories. A shared format makes packages portable; discovery, activation, slash commands, script execution, and permissions still depend on each host and version.
+Installable folders under [`skills/`](skills/) use the open [Agent Skills format](https://agentskills.io/specification): each contains `SKILL.md` metadata and instructions, with optional references, scripts, or assets. Overdrive's npm CLI creates the selected host's documented plugin/Power bundle or flat-skill layout. Discovery, activation, commands, script execution, and permissions still depend on each host and version.
 
-This repository is private. Authenticate with GitHub CLI, clone the skill source once, then run the installer from the root of the project where you want to use the skills. It shows an animated Hiroqt wordmark, asks whether to install to that project or your user-wide agent folders, then displays the destination and agent list for confirmation. It installs all skill packages to Claude Code, Codex, Gemini CLI, Google Antigravity, Cursor, and Kiro CLI.
+After the package is released to npm, run the installer from the project where you want the skills, or choose global scope for your user account:
 
 ```bash
-gh repo clone hiroqt/overdrive ~/hiroqt-skills
-cd /path/to/your/project
-python3 ~/hiroqt-skills/scripts/install_skills.py
+npx @hiroqt/overdrive install
 ```
 
-Requirements: Python 3, Node.js/npm, and GitHub CLI authentication for this private repository. The selected project is the current working directory. Choose `1` for project-local skill files or `2` for user-wide skill locations, then type `y` to confirm. `Ctrl+C` cancels. In terminals without ANSI color support, or when `NO_COLOR` is set, the logo prints without animation. Update the cloned source with `git -C ~/hiroqt-skills pull` and rerun the installer when you want newer versions.
+Requires Node.js 18 or newer and npm. The installer defaults to project scope and all ten domain skills, but always asks you to choose at least one host. It includes the `overdrive` router automatically. Pass `--host` one or more times (or use comma-separated IDs); use `--scope` and `--skill` to script the other selections:
 
-The installer copies files to avoid skills depending on the source clone after installation. It targets the six listed agents as a set; the Skills CLI controls their host-specific directories. To install a single skill or a different agent set, use the direct Skills CLI command below and replace the skill/agent options as needed.
+```bash
+npx @hiroqt/overdrive install --host antigravity --skill assert
+npx @hiroqt/overdrive install --scope global --host antigravity --surface cli
+```
 
-| Host | Skills CLI target | Common project location | Host-specific discovery check |
+Host IDs: `claude-code`, `codex`, `kiro`, `antigravity`, and `grok`. For global Antigravity, choose `ide`, `cli`, or `both` with `--surface` or the prompt. Review all destinations and selected-host registration paths, then confirm before writing. Existing bundles are skipped whole; existing flat skills are skipped individually. A failed copy preserves non-empty partial content and reports the cleanup path. v1 does not update or uninstall existing destinations.
+
+Selected host layouts and invocation:
+
+| Host/surface | Project location | Global location | Invocation |
 | --- | --- | --- | --- |
-| Claude Code | `claude-code` | `.claude/skills/<name>/SKILL.md` | Run `/skills`; see [Claude skill locations](https://code.claude.com/docs/en/skills). |
-| OpenAI Codex CLI | `codex` | `.agents/skills/<name>/SKILL.md` | Check Codex's available skills; see [Codex skill locations](https://learn.chatgpt.com/docs/build-skills). |
-| Gemini CLI | `gemini-cli` | `.agents/skills/` or `.gemini/skills/` | Run `/skills list`; see [Gemini skill management](https://geminicli.com/docs/cli/using-agent-skills/). |
-| Google Antigravity IDE | `antigravity` | `.agents/skills/<name>/SKILL.md` | Check the agent's Customizations/skills UI; see [Antigravity skill locations](https://antigravity.google/docs/skills). |
-| Cursor | `cursor` | `.agents/skills/` or `.cursor/skills/` | Check Agent skills in Cursor; see [Cursor skill locations](https://cursor.com/help/customization/skills). |
-| Kiro CLI | `kiro-cli` | `.kiro/skills/<name>/SKILL.md` | Check discovered skills in the CLI; see [Kiro Agent Skills](https://kiro.dev/docs/skills/). |
+| Claude Code IDE/CLI | `.claude/skills/overdrive/` plugin bundle | `~/.claude/skills/overdrive/` plugin bundle | `/overdrive:overdrive` routes; `/overdrive:<skill>` invokes directly, e.g. `/overdrive:review`. [Plugin docs](https://code.claude.com/docs/en/plugins/create). |
+| Codex CLI | `.codex/plugins/overdrive/` plus `.agents/plugins/marketplace.json` and `.codex/config.toml` | `$CODEX_HOME/plugins/overdrive/` and `$CODEX_HOME/config.toml` (default `~/.codex`); marketplace stays at `~/.agents/plugins/marketplace.json` when CODEX_HOME is within the user home, otherwise it is placed under CODEX_HOME and registered there. After preview and confirmation, the installer registers the selected local marketplace with Codex CLI, then runs `codex plugin add` to activate the plugin in its cache. | `$overdrive` routes; `$<skill>` invokes directly; `/skills` lists them. [Plugin docs](https://developers.openai.com/plugins/build/plugins). |
+| Codex IDE extension | `.agents/skills/<skill>/` flat skills | `~/.agents/skills/<skill>/` flat skills | `$overdrive` routes; `$<skill>` invokes directly; `/skills` lists them. Codex IDE does not support grouped plugins. [Skills docs](https://developers.openai.com/plugins/build/skills). |
+| Kiro IDE/CLI project | `.kiro/skills/<skill>/` flat skills | — | `/overdrive` routes; `/<skill>` invokes directly. [Skills docs](https://kiro.dev/docs/cli/skills/). |
+| Kiro global Power | — | `~/.kiro/powers/overdrive/` grouped Power | Power can activate from relevant context; bundled slash aliases are not promised. [Power docs](https://kiro.dev/docs/powers/create/). |
+| Antigravity IDE | `.agents/plugins/overdrive/` plugin bundle | `~/.gemini/config/plugins/overdrive/` | `/overdrive` routes; `/<skill>` invokes directly. Uses Antigravity's native `plugin.json` schema. [Skills docs](https://antigravity.google/docs/skills?tab=ide). |
+| Antigravity CLI | `.agents/plugins/overdrive/` plugin bundle | `~/.gemini/antigravity-cli/plugins/overdrive/` | `/overdrive` routes; `/<skill>` invokes directly. [CLI skills docs](https://antigravity.google/docs/skills?tab=cli). |
+| Grok Build CLI | `.grok/plugins/overdrive/` Claude-compatible plugin bundle | `~/.grok/plugins/overdrive/` | `/overdrive` routes; `/<skill>` invokes directly. [Docs](https://docs.x.ai/build/features/skills-plugins-marketplaces). |
 
-Gemini CLI and Antigravity are separate Google products with different global paths and lifecycle behavior. The installer uses each selected host's supported project path; Antigravity IDE also documents `~/.gemini/config/skills/` for global skills. Kiro IDE supports `.kiro/skills/` and can import a skill folder through its UI; the E2E below tests only the `kiro-cli` installer target, not the IDE import UI. For targets not listed, use only the host's documented Agent Skills folder or import flow. Do not assume a `SKILL.md` file alone enables discovery in every AI coding tool. See the [installer's current supported-agent list](https://github.com/vercel-labs/skills#supported-agents).
+Each native form invokes the same router instructions and installed-skill filter; direct per-skill commands remain available. Claude's directory plugin therefore uses the namespaced `/overdrive:overdrive` router and `/overdrive:<skill>` direct commands. Codex's IDE uses flat skills and Codex's CLI uses a grouped plugin. Kiro's project skills use `/<skill>` commands; its global Power does not promise slash aliases. Antigravity's project plugin folder is shared by its IDE and CLI, and Grok accepts plugin-provided slash-command skills. Global Antigravity writes only the selected surface(s). Non-Codex bundles omit Codex-only `agents/openai.yaml` metadata. An explicit router invocation does not prove ambient automatic selection.
 
-### Direct install with the Skills CLI
-
-Run this from the destination project if you need a single skill or a custom agent selection:
-
-```bash
-npx skills@latest add ~/hiroqt-skills --skill render --agent codex
-```
-
-Add `--global` for user-wide installation. See [the Skills CLI options](https://github.com/vercel-labs/skills#options).
+The previous Python source-checkout installer remains at `scripts/install_skills.py` for existing clones. New installs should use npm.
 
 ### Recorded installation checks
 
-The [cross-agent installation results](docs/cross-agent-skill-installability-results.md) record actual Skills CLI package copies, project/global scope runs, and a pseudo-terminal check of the animated installer banner. These results verify installation paths and copied file contents; they do not prove each coding agent activates or follows the skills.
+The [cross-agent installation results](docs/cross-agent-skill-installability-results.md) separate npm layout/config checks from live host smoke checks. They identify which IDE/CLI surfaces were available and which plugin commands were actually invoked; structural checks do not prove automatic routing or behavior across every host version.
 
 ## Install Forge
 
-After cloning the repository, install only the authoring skill to a supported host with:
+To install only the authoring skill, run the npm installer and select `forge` at the skill prompt:
 
 ```bash
-npx skills@latest add . --skill forge --agent <agent-id>
+npx @hiroqt/overdrive install
 ```
 
-Review existing skills with the same name before confirming an overwrite. Alternatively, import or copy the complete `skills/forge` folder using the target host's documented skill flow.
+The installer skips any existing `forge` destination rather than overwriting it.
 
 Invoke it with a focused request:
 
