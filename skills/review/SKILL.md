@@ -74,3 +74,7 @@ If there are no findings, output `What this change does: ...` followed by `Looks
 ## Evaluation
 
 Read [the evaluation guide](references/evaluation.md) when validating Review. Its cases are proposals until run and recorded.
+
+## Handoffs
+
+Use **Guard** for a dedicated security audit and **Trace** when an agent/LLM execution path or broader architecture is the subject. Use **Verify** when the user requests test execution. These are separate tasks; Review remains read-only and does not claim another skill ran.

@@ -85,3 +85,7 @@ Explain the risk, consequence, and required action plainly. Return to the select
 ## Done
 
 The response is direct, readable in one pass, and no longer than needed. It retains requested depth, exact technical details, evidence, uncertainty, and safety boundaries. It makes no unsupported claim about token savings.
+
+## Handoffs
+
+Use **Prune** when the task also needs efficient source, search, or tool-output handling. Signal changes response style only; the skill owning the task still controls investigation, permissions, and verification.

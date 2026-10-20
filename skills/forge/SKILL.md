@@ -54,3 +54,7 @@ The intended outputs exist, required structural checks pass, applicable behavior
 Report package paths, trigger/scope, changes, checks actually run, pending evaluations, and invocation/install guidance for the verified host. Update the existing private project context with decisions and lessons; keep personal history and sensitive data out of the distributed package. Publish or install only when requested.
 
 Each skill package must provide a concise summary of deterministic, LLM-as-a-judge, and human evaluation in its linked [evaluation guide](references/evaluation.md).
+
+## Handoffs
+
+When a skill needs execution beyond package checks, recommend **Verify** for an isolated behavior evaluation. Name only skills the host exposes; do not claim another skill or installation flow ran.

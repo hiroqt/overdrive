@@ -44,3 +44,7 @@ This skill guides an agent; it is not a security scanner, policy engine, or host
 - No unsupported claim of interception, scanner coverage, package safety, or complete security is made.
 
 For detailed threat-specific checks and examples, read [the threat review guide](references/threat-review.md). For proposed deterministic, judge-based, and human evaluation cases, read [the evaluation guide](references/evaluation.md).
+
+## Handoffs
+
+After the user approves a concrete security change plan, use **Assert** to define the security property and regression case, then **Verify** to run focused and integrated checks. Recommend **Review** for an independent read-only diff review. No handoff changes Guard's approval requirement.

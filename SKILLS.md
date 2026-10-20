@@ -115,6 +115,8 @@ Organize around decisions and completion, not a persona monologue. The default s
 4. **Verify:** run relevant checks, inspect behavior, and classify failures. Completion: evidence supports acceptance or the exact gap is documented.
 5. **Review and report:** inspect the final result and summarize outcome, risks, and remaining work. Completion: the user can assess the result without reconstructing the entire chat.
 
+When a task crosses capability boundaries, define an explicit handoff to the relevant installed skill (for example, Assert → Verify → Review for a behavior change). Preserve findings and acceptance criteria, honor approval gates, and say when the host cannot invoke the next skill. Never imply automatic chaining or make one skill depend on another package being installed. See the [portable workflow sequences](docs/SKILL_WORKFLOWS.md).
+
 Specify exact commands when the skill owns a stable tool interface. For heterogeneous repositories, discover scripts from manifests/CI instead of universally prescribing `npm test`. Explain whether a command is read-only, local-only, or mutating, and what result should count as success.
 
 Use conditional rules for fragile decisions:
