@@ -5,9 +5,88 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-import { executeInstall, installSkills, prepareInstall } from '../../bin/overdrive.js';
+import { detectHosts, executeInstall, installSkills, prepareInstall, showBanner } from '../../bin/overdrive.js';
 
 const CLI = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../bin/overdrive.js');
+
+test('package metadata is configured for public scoped npm release', async () => {
+  const packagePath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../package.json');
+  const metadata = JSON.parse(await readFile(packagePath, 'utf8'));
+
+  assert.equal(metadata.publishConfig.access, 'public');
+  assert.equal(metadata.repository.url, 'git+https://github.com/hiroqt/agents.md.git');
+});
+
+test('banner restores the cyan-to-violet wordmark on color terminals', async () => {
+  let output = '';
+  const stream = { isTTY: true, write: (chunk) => { output += chunk; } };
+
+  await showBanner(stream, { color: true, delayMs: 0 });
+
+  assert.match(output, /\u001b\[38;5;51mH\u001b\[0m/);
+  assert.match(output, /\u001b\[38;5;213mT\u001b\[0m/);
+  assert.match(output, /OVERDRIVE SKILLS INSTALLER/);
+});
+
+test('banner stays plain in non-TTY output', async () => {
+  let output = '';
+  const stream = { isTTY: false, write: (chunk) => { output += chunk; } };
+
+  await showBanner(stream, { delayMs: 0 });
+
+  assert.match(output, /HIROQT/);
+  assert.doesNotMatch(output, /\u001b\[/);
+});
+
+test('banner respects NO_COLOR in an interactive terminal', async () => {
+  let output = '';
+  const stream = { isTTY: true, write: (chunk) => { output += chunk; } };
+
+  await showBanner(stream, { delayMs: 0, env: { NO_COLOR: '1', TERM: 'xterm-256color' } });
+
+  assert.match(output, /HIROQT/);
+  assert.doesNotMatch(output, /\u001b\[/);
+});
+
+test('banner stays plain in a dumb terminal', async () => {
+  let output = '';
+  const stream = { isTTY: true, write: (chunk) => { output += chunk; } };
+
+  await showBanner(stream, { delayMs: 0, env: { TERM: 'dumb' } });
+
+  assert.match(output, /HIROQT/);
+  assert.doesNotMatch(output, /\u001b\[/);
+});
+
+test('project host detection returns only recognized marker hints', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  await Promise.all([
+    mkdir(path.join(paths.project, '.claude')),
+    mkdir(path.join(paths.project, '.agents/skills'), { recursive: true }),
+    mkdir(path.join(paths.project, '.kiro')),
+    mkdir(path.join(paths.project, '.grok')),
+  ]);
+
+  const hints = await detectHosts(paths.project);
+
+  assert.deepEqual(hints.map(({ id }) => id), ['claude-code', 'codex', 'kiro', 'grok']);
+  assert.match(hints.find(({ id }) => id === 'codex').reason, /\.agents\/skills/);
+});
+
+test('project host detection recognizes Antigravity plugin metadata', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  const pluginRoot = path.join(paths.project, '.agents/plugins/overdrive');
+  await mkdir(pluginRoot, { recursive: true });
+  await writeFile(path.join(pluginRoot, 'plugin.json'), JSON.stringify({
+    '$schema': 'https://antigravity.google/schemas/v1/plugin.json',
+  }));
+
+  const hints = await detectHosts(paths.project);
+
+  assert.deepEqual(hints.map(({ id }) => id), ['antigravity']);
+});
 
 async function fixture() {
   const root = await mkdtemp(path.join(os.tmpdir(), 'overdrive-installer-'));
@@ -418,6 +497,54 @@ test('CLI requires an explicit host and installs only the requested Antigravity 
   assert.match(run.stdout, /Existing bundle destinations are skipped whole/);
   assert.match(await readFile(path.join(paths.project, '.agents/plugins/overdrive/skills/assert/SKILL.md'), 'utf8'), /name: assert/);
   await assert.rejects(readFile(path.join(paths.project, '.claude/skills/overdrive/.claude-plugin/plugin.json')),
+    { code: 'ENOENT' });
+});
+
+test('interactive install suggests hosts from project markers and requires confirmation', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  await Promise.all([
+    mkdir(path.join(paths.project, '.claude')),
+    mkdir(path.join(paths.project, '.kiro')),
+  ]);
+  const run = spawnSync(process.execPath, [CLI, 'install', '--skill', 'assert'], {
+    cwd: paths.project,
+    input: '\n\ny\n',
+    encoding: 'utf8',
+    env: { ...process.env, HOME: paths.home, USERPROFILE: paths.home, NO_COLOR: '1' },
+  });
+
+  assert.equal(run.status, 0, run.stderr);
+  assert.match(run.stdout, /Detected project host hints: claude-code, kiro/);
+  assert.match(run.stdout, /press Enter to accept detected hosts/);
+  assert.match(run.stdout, /Hosts: claude-code, kiro/);
+  assert.match(run.stdout, /\.claude\/skills\/overdrive/);
+  assert.match(run.stdout, /\.kiro\/skills\/assert/);
+  assert.doesNotMatch(run.stdout, /\u001b\[/);
+});
+
+test('interactive global install detects Antigravity and installs only the chosen surface', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  const pluginRoot = path.join(paths.project, '.agents/plugins/overdrive');
+  await mkdir(pluginRoot, { recursive: true });
+  await writeFile(path.join(pluginRoot, 'plugin.json'), JSON.stringify({
+    '$schema': 'https://antigravity.google/schemas/v1/plugin.json',
+  }));
+  const run = spawnSync(process.execPath, [CLI, 'install', '--skill', 'assert'], {
+    cwd: paths.project,
+    input: '2\n\ncli\ny\n',
+    encoding: 'utf8',
+    env: { ...process.env, HOME: paths.home, USERPROFILE: paths.home, NO_COLOR: '1' },
+  });
+
+  assert.equal(run.status, 0, run.stderr);
+  assert.match(run.stdout, /Install scope:.*Global/);
+  assert.match(run.stdout, /Detected project host hints: antigravity/);
+  assert.match(run.stdout, /Scope: global/);
+  assert.match(run.stdout, /Antigravity surface: cli/);
+  assert.match(await readFile(path.join(paths.home, '.gemini/antigravity-cli/plugins/overdrive/skills/assert/SKILL.md'), 'utf8'), /name: assert/);
+  await assert.rejects(readFile(path.join(paths.home, '.gemini/config/plugins/overdrive/plugin.json')),
     { code: 'ENOENT' });
 });
 

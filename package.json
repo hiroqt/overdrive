@@ -3,6 +3,13 @@
   "version": "0.1.0",
   "description": "Install Overdrive agent skills for Codex, Claude Code, Kiro, Antigravity, and Grok Build.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hiroqt/agents.md.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "engines": {
     "node": ">=18"
