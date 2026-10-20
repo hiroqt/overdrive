@@ -6,8 +6,9 @@ Install only the selected host's native Overdrive package shape so its skills an
 
 ## Scope and behavior
 
-- `npx @hiroqt/overdrive install` uses Node built-ins and prompts for scope, at least one host, skills, and any host-specific surface choice.
-- Hosts are never selected implicitly. Project scope and all ten skills remain the defaults; host choice is required. `--host <id>` supports repeatable/comma-separated explicit selection. Antigravity global installs allow IDE, CLI, or both.
+- `npx @hiroqt/overdrive install` uses Node built-ins and prompts for scope, host(s), skills, and any host-specific surface choice.
+- Project scope is preselected; global scope must be chosen explicitly. The installer scans the current project for known host markers, suggests likely hosts, and requires confirmation or manual replacement. With no matching markers, the user selects hosts from the full list. `--host <id>` supports repeatable/comma-separated explicit selection. Antigravity global installs allow IDE, CLI, or both.
+- Print the existing cyan-to-violet `HIROQT` type-on wordmark in interactive color terminals. Respect `NO_COLOR` and `TERM=dumb`; do not emit ANSI control sequences to redirected/non-TTY output.
 - Copy selected skill packages, including references, assets, scripts, and tests. Include host-specific metadata only for the selected host: `agents/openai.yaml` is Codex-only and must not appear in other hosts' bundles.
 - Treat grouped plugin/Power folders as atomic destinations: if the bundle already exists, skip that host bundle without merging or changing it. Flat Kiro project and Codex IDE skills are individually skipped on collision.
 - Show every bundle/skill destination and host registration/config path before writing. Registration merges preserve unrelated keys and refuse malformed marketplace JSON or malformed/conflicting Overdrive registration. Cancel means no file writes.
@@ -59,12 +60,16 @@ The guidance must be tailored to each skill, not pasted as a generic replacement
 - Merge only the selected host's registration. Preserve unknown existing JSON/TOML content; fail before writes on malformed marketplace JSON or malformed/conflicting Overdrive registration.
 - A project install resolves from the invocation directory. A global install uses the selected host's documented user locations and relevant host home override when documented.
 - Host format/path documentation proves compatibility shape, not live discovery or invocation. Report host availability and runtime checks separately.
-- Prepare the package and verify it; do not publish, commit, or push.
-- Keep the existing Python source-checkout installer available.
+- Prepare the package and verify it; do not publish, commit, or push without direct authorization.
+- Retire the legacy Python installer; retain Python only for package validation tools that still use it.
 
 ## Acceptance checks
 
 - [ ] The CLI requires explicit host selection interactively or accepts explicit `--host`; it never defaults to every host.
+- [ ] Project scope is preselected and global scope requires an explicit user choice.
+- [ ] Recognized project host markers are shown as suggestions and require user confirmation; unknown or ambiguous markers do not trigger implicit host installation.
+- [ ] The original cyan-to-violet wordmark is animated only for an interactive color TTY; non-TTY, `NO_COLOR`, and `TERM=dumb` output contains no ANSI sequences.
+- [ ] Package metadata declares public access for the scoped package and links to the canonical GitHub repository; review the package file set before publishing.
 - [ ] Project/global selections produce only selected-host paths; Antigravity global surface selection is IDE, CLI, or both.
 - [ ] Each grouped host bundle has its correct host manifest, `skills/<name>/SKILL.md`, and all nested resources.
 - [ ] Every install includes the `overdrive` router plus only the selected domain skills; its generated installed-skill list exactly matches the selected set.

@@ -1,8 +1,14 @@
 # Cross-agent skill installability E2E
 
-## Current npm package E2E — 2026-10-21
+## Release-prep installer smoke test — 2026-10-21
 
-Packed the local `@hiroqt/overdrive@0.1.0` checkout to a temporary tarball, then ran the package's `overdrive install` executable through npm in isolated project directories. No registry publish or global install was used. The selected-host Antigravity install validated the grouped plugin, and a separate isolated all-ten-skill bundle was used for direct chat checks. Codex was tested separately.
+Packed the working checkout as `@hiroqt/overdrive@0.1.0` (56 files, 92.0 kB compressed) and ran its npm executable via `npx --package=<local-tarball>` in the visible VS Code terminal. The isolated project had a `.kiro/` marker. The installer preselected project scope, suggested Kiro with the `.kiro/` reason, accepted the suggestion on Enter, previewed the selected destinations, and installed `assert` plus the automatic `overdrive` router after confirmation. Result: **2 installed, 0 skipped, 0 registrations updated**. The final project contained only `.kiro/`; both skill entrypoints and references were present, and Codex-only `agents/openai.yaml` metadata was absent. The cyan-to-violet wordmark appeared in the interactive terminal. No npm registry publish or global install was performed.
+
+This smoke test covers the current installer package and one selected skill. Earlier all-ten live skill invocations and their host-specific limits are recorded below; they were not repeated during this release-prep change.
+
+## Earlier cross-agent runtime E2E — 2026-10-21 (52-file tarball)
+
+Packed an earlier local `@hiroqt/overdrive@0.1.0` checkout to a temporary tarball, then ran the package's `overdrive install` executable through npm in isolated project directories. No registry publish or global install was used. The selected-host Antigravity install validated the grouped plugin, and a separate isolated all-ten-skill bundle was used for direct chat checks. Codex was tested separately.
 
 | Host surface | Live evidence | Limit |
 | --- | --- | --- |
@@ -10,23 +16,30 @@ Packed the local `@hiroqt/overdrive@0.1.0` checkout to a temporary tarball, then
 | Antigravity IDE | In the isolated project, `/assert` returned the specification-first/test-first procedure. After installing the all-ten bundle and reloading the IDE, `/overdrive list` displayed all ten skill names, descriptions, and installed `SKILL.md` paths. | Other nine skills were not individually invoked in the IDE. A later `/assert` probe failed while invoking `npm test` because Node reported `ERR_INVALID_PACKAGE_CONFIG` in the system npm installation; the IDE then waited for approval to run `node --test`, which was not approved. The earlier successful `/assert` response remains the live invocation evidence. |
 | Codex CLI | The npm package shim installed the grouped plugin and Codex IDE skill, registered the local marketplace, then ran `codex plugin add`. In an isolated custom `CODEX_HOME`, `codex plugin list` reported `overdrive@local-repo` as installed and enabled. | An earlier `$assert` chat probe ran before `codex plugin add` and was inconclusive because the global skill scan exceeded the context budget. A later read-only chat probe in the isolated Codex home reached the API without credentials and returned HTTP 401, so no post-activation model response was verified. |
 | Codex IDE extension | Not tested. | The available VS Code profile has no Codex extension. |
-| Kiro IDE/CLI | Not re-run against the current package layout. | Earlier IDE invocation exercised flat project skills; it does not validate the new Kiro global Power bundle. Kiro CLI is absent. |
+| Kiro IDE/CLI | The release-prep smoke test above verifies current package placement under `.kiro/skills/`; no current Kiro IDE/CLI chat invocation was run. | Earlier IDE invocation exercised flat project skills; it does not validate the new Kiro global Power bundle. Kiro CLI is absent. |
 | Claude Code IDE/CLI | Not tested. | Claude Code CLI is absent; the installed Claude Desktop app is not Claude Code, and its IDE integration was not inspected. |
 | Grok Build CLI | Not tested. | Grok Build CLI is absent. |
 
-The earlier live E2E tarball contained 52 files (87.6 kB compressed). The final local `npm pack --dry-run --json` check contains 56 files (90,828 bytes compressed; 274,188 unpacked); the live host checks were not repeated from that final pack. The selected-host Antigravity install reported one installed and zero skipped. Custom Codex installation reported two copied destinations, two registrations, and plugin-cache activation; `codex plugin list` showed the plugin as installed and enabled. Package installs displayed their previews and were confirmed in isolated temporary projects. All ten skills returned task-appropriate output in Antigravity CLI, including four checks using the native `/overdrive:<skill>` namespace; the `/overdrive` router selected `guard` for a security task. Antigravity IDE listed all ten skills and returned the expected `/assert` procedure. The package was prepared locally and remains unpublished. See [README](../README.md#install-skills-across-coding-agents) for the host layouts and linked official format documentation.
+The earlier live E2E tarball contained 52 files (87.6 kB compressed). The release-prep package contained 56 files (91,968 bytes compressed; 277,982 unpacked); its selected-host local install smoke test is described above. The earlier Antigravity/Codex host checks and all-ten chat probes below were not repeated against the release-prep tarball. The selected-host Antigravity install reported one installed and zero skipped. Custom Codex installation reported two copied destinations, two registrations, and plugin-cache activation; `codex plugin list` showed the plugin as installed and enabled. Package installs displayed their previews and were confirmed in isolated temporary projects. All ten skills returned task-appropriate output in Antigravity CLI, including four checks using the native `/overdrive:<skill>` namespace; the `/overdrive` router selected `guard` for a security task. Antigravity IDE listed all ten skills and returned the expected `/assert` procedure. The package was subsequently published publicly as `0.1.0`; see [public npm release](#public-npm-release) for registry verification. See [README](../README.md#install-skills-across-coding-agents) for the host layouts and linked official format documentation.
 
 The prior all-host npm smoke test immediately below used the earlier flat-skill installer layout. Its file-copy and live invocation outcomes are historical and do not validate the current grouped bundles or registration behavior. These checks establish package packing, selected-host placement, Antigravity CLI plugin validation, all-ten direct skill invocation in Antigravity CLI, `/overdrive` routing to `guard`, all-ten Antigravity IDE slash-menu discovery, `/assert` invocation in the Antigravity IDE, and Codex CLI plugin-cache activation. They do not establish a post-activation Codex chat response, individual invocation behavior for the other nine Antigravity IDE skills, behavior across unavailable hosts, or automatic routing beyond the one observed security prompt.
 
-## Final local validation — 2026-10-21
+## Final local validation — release-prep branch, 2026-10-21
 
-- `npm test`: 21/21 installer tests passed.
+- `npm test`: 30/30 installer tests passed, including interactive marker suggestions and TTY color fallbacks.
 - `python3 -m unittest discover -s scripts/tests -v`: 13/13 package-checker tests passed.
-- `python3 scripts/check_skill_packages.py`: passed, 11 packages and 265 Markdown link targets.
-- `npm pack --dry-run --json`: passed, 56 entries for `@hiroqt/overdrive@0.1.0` (90,828 bytes compressed; 274,188 unpacked).
+- `python3 scripts/check_skill_packages.py`: passed, 11 packages and 267 Markdown link targets.
+- `npm pack --dry-run --json`: passed, 56 entries for `@hiroqt/overdrive@0.1.0` (91,968 bytes compressed; 277,982 unpacked).
 - `git diff --check`: passed.
 
 The first pack dry-run using the default npm cache failed because that cache contains root-owned files; rerunning with a temporary task-local npm cache passed. No global cache ownership or permissions were changed.
+
+## Public npm release — 2026-10-21
+
+- `npm publish --access public` published `@hiroqt/overdrive@0.1.0` after the account owner completed npm's security-key challenge.
+- Registry metadata confirms `latest: 0.1.0`, 56 package files, and shasum `84d4643e8a185e43734a295f8115372f13e1acc7`, matching the reviewed pack dry run.
+- `npx --package=@hiroqt/overdrive overdrive --help` fetched the public package and printed the expected installer usage.
+- The full interactive install E2E used the matching local tarball before publication; the public registry smoke test exercised the CLI help entrypoint only.
 
 ## Historical all-host npm smoke checks — earlier installer layout
 
@@ -88,7 +101,7 @@ Total: **30 package installations and 174 source-file copies checked** (29 uniqu
 
 ## Hiroqt interactive installer E2E
 
-Ran [`scripts/install_skills.py`](../scripts/install_skills.py) with the real Skills CLI twice, supplying the menu selection and final confirmation through stdin. Each run used a fresh project directory and an isolated temporary `HOME`/npm cache:
+Ran the legacy Python source-checkout installer (retired after the npm installer replaced it) with the real Skills CLI twice, supplying the menu selection and final confirmation through stdin. Each run used a fresh project directory and an isolated temporary `HOME`/npm cache:
 
 | Scope choice | Prompt and confirmation | Agent-skill mappings | Unique file copies | Result |
 | --- | --- | ---: | ---: | --- |
