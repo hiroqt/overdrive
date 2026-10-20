@@ -6,7 +6,7 @@ Install only the selected host's native Overdrive package shape so its skills an
 
 ## Scope and behavior
 
-- `npx @hiroqt/overdrive install` uses Node built-ins and prompts for scope, host(s), skills, and any host-specific surface choice.
+- `npx overdrive-skills install` uses Node built-ins and prompts for scope, host(s), skills, and any host-specific surface choice.
 - Project scope is preselected; global scope must be chosen explicitly. The installer scans the current project for known host markers, suggests likely hosts, and requires confirmation or manual replacement. With no matching markers, the user selects hosts from the full list. `--host <id>` supports repeatable/comma-separated explicit selection. Antigravity global installs allow IDE, CLI, or both.
 - Print the existing cyan-to-violet `HIROQT` type-on wordmark in interactive color terminals. Respect `NO_COLOR` and `TERM=dumb`; do not emit ANSI control sequences to redirected/non-TTY output.
 - Copy selected skill packages, including references, assets, scripts, and tests. Include host-specific metadata only for the selected host: `agents/openai.yaml` is Codex-only and must not appear in other hosts' bundles.

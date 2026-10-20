@@ -9,12 +9,21 @@ import { detectHosts, executeInstall, installSkills, prepareInstall, showBanner 
 
 const CLI = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../bin/overdrive.js');
 
-test('package metadata is configured for public scoped npm release', async () => {
+test('package metadata targets the public unscoped npm package', async () => {
   const packagePath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../package.json');
   const metadata = JSON.parse(await readFile(packagePath, 'utf8'));
 
+  assert.equal(metadata.name, 'overdrive-skills');
   assert.equal(metadata.publishConfig.access, 'public');
   assert.equal(metadata.repository.url, 'git+https://github.com/hiroqt/agents.md.git');
+});
+
+test('CLI help shows the unscoped npm install command', () => {
+  const result = spawnSync(process.execPath, [CLI, '--help'], { encoding: 'utf8' });
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /Usage: npx overdrive-skills install/);
+  assert.doesNotMatch(result.stdout, /@hiroqt\/overdrive/);
 });
 
 test('banner restores the cyan-to-violet wordmark on color terminals', async () => {
