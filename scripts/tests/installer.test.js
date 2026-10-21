@@ -102,7 +102,7 @@ async function fixture() {
   const skillsRoot = path.join(root, 'source-skills');
   const project = path.join(root, 'project');
   const home = path.join(root, 'home');
-  for (const folder of ['assert', 'review', 'overdrive']) {
+  for (const folder of ['assert', 'review', 'overdrive', 'continuity']) {
     const skill = path.join(skillsRoot, folder);
     await mkdir(path.join(skill, 'references'), { recursive: true });
     await writeFile(path.join(skill, 'SKILL.md'),
@@ -110,10 +110,162 @@ async function fixture() {
     await writeFile(path.join(skill, 'references', 'guide.md'), 'Supporting instructions.\n');
     await mkdir(path.join(skill, 'agents'), { recursive: true });
     await writeFile(path.join(skill, 'agents/openai.yaml'), 'interface:\n  display_name: Test\n');
+    if (folder === 'continuity') {
+      await mkdir(path.join(skill, 'assets'), { recursive: true });
+      await writeFile(path.join(skill, 'assets/always-on.md'),
+        'For substantial tasks, use Continuity. Verify `.overdrive/continuity/checkpoint.md` against current source.\n');
+    }
   }
   await Promise.all([mkdir(project), mkdir(home)]);
   return { root, skillsRoot, project, home };
 }
+
+test('continuity installs host-native project guidance and preserves existing AGENTS instructions', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  await writeFile(path.join(paths.project, 'AGENTS.md'), '# Project rules\nKeep existing instructions.\n');
+
+  const plan = await prepareInstall({
+    scope: 'project',
+    hostIds: ['claude-code', 'codex', 'kiro', 'antigravity', 'grok'],
+    skillNames: ['continuity'],
+    cwd: paths.project,
+    homeDir: paths.home,
+    skillsRoot: paths.skillsRoot,
+  });
+  const result = await executeInstall(plan, { skillsRoot: paths.skillsRoot });
+
+  assert.deepEqual(plan.registrations.filter(({ kind }) => kind === 'continuity-guidance')
+    .map(({ destination }) => path.relative(paths.project, destination)).sort(), [
+    '.agents/rules/overdrive-continuity.md',
+    '.claude/rules/overdrive-continuity.md',
+    '.kiro/steering/overdrive-continuity.md',
+    'AGENTS.md',
+  ]);
+  assert.match(await readFile(path.join(paths.project, 'AGENTS.md'), 'utf8'), /Keep existing instructions/);
+  assert.match(await readFile(path.join(paths.project, 'AGENTS.md'), 'utf8'), /overdrive-continuity:start/);
+  assert.match(await readFile(path.join(paths.project, '.agents/rules/overdrive-continuity.md'), 'utf8'), /trigger: always_on/);
+  assert.match(await readFile(path.join(paths.project, '.kiro/steering/overdrive-continuity.md'), 'utf8'), /inclusion: always/);
+  assert.match(await readFile(path.join(paths.project, '.claude/rules/overdrive-continuity.md'), 'utf8'), /For substantial tasks/);
+  assert.match(await readFile(path.join(paths.project, '.claude/rules/overdrive-continuity.md'), 'utf8'), /\.overdrive\/continuity\/checkpoint\.md/);
+  assert.deepEqual(result.registrations.filter((destination) => [
+    path.join(paths.project, 'AGENTS.md'),
+    path.join(paths.project, '.claude/rules/overdrive-continuity.md'),
+    path.join(paths.project, '.kiro/steering/overdrive-continuity.md'),
+    path.join(paths.project, '.agents/rules/overdrive-continuity.md'),
+  ].includes(destination)).sort(), [
+    path.join(paths.project, 'AGENTS.md'),
+    path.join(paths.project, '.agents/rules/overdrive-continuity.md'),
+    path.join(paths.project, '.claude/rules/overdrive-continuity.md'),
+    path.join(paths.project, '.kiro/steering/overdrive-continuity.md'),
+  ].sort());
+});
+
+test('continuity global guidance uses selected host homes and reports Grok global limitation', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  const codexHome = path.join(paths.root, 'codex-home');
+
+  const plan = await prepareInstall({
+    scope: 'global',
+    hostIds: ['claude-code', 'codex', 'kiro', 'antigravity', 'grok'],
+    skillNames: ['continuity'],
+    cwd: paths.project,
+    homeDir: paths.home,
+    codexHome,
+    skillsRoot: paths.skillsRoot,
+    antigravitySurface: 'both',
+  });
+
+  assert.deepEqual(plan.registrations.filter(({ kind }) => kind === 'continuity-guidance')
+    .map(({ destination }) => destination).sort(), [
+    path.join(paths.home, '.claude/rules/overdrive-continuity.md'),
+    path.join(paths.home, '.gemini/config/rules/overdrive-continuity.md'),
+    path.join(paths.home, '.kiro/steering/overdrive-continuity.md'),
+    path.join(codexHome, 'AGENTS.md'),
+  ].sort());
+  assert.deepEqual(plan.guidanceUnavailable.map(({ hostId }) => hostId), ['grok']);
+});
+
+test('continuity skips an existing host rule instead of overwriting it', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  const existing = path.join(paths.project, '.claude/rules/overdrive-continuity.md');
+  await mkdir(path.dirname(existing), { recursive: true });
+  await writeFile(existing, 'User-owned rule.\n');
+
+  const plan = await prepareInstall({
+    scope: 'project', hostIds: ['claude-code'], skillNames: ['continuity'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+
+  assert.equal(plan.registrations.length, 0);
+  assert.equal(plan.guidanceSkipped[0].destination, existing);
+  const result = await executeInstall(plan, { skillsRoot: paths.skillsRoot });
+  assert.equal(await readFile(existing, 'utf8'), 'User-owned rule.\n');
+  assert.equal(result.guidanceSkipped.length, 1);
+});
+
+test('other skills do not install continuity steering guidance', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+
+  const plan = await prepareInstall({
+    scope: 'project', hostIds: ['kiro', 'antigravity'], skillNames: ['assert'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+
+  assert.deepEqual(plan.registrations, []);
+  assert.deepEqual(plan.guidanceSkipped, []);
+});
+
+test('continuity does not duplicate an existing managed AGENTS block', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  const agentsPath = path.join(paths.project, 'AGENTS.md');
+  await writeFile(agentsPath, '<!-- overdrive-continuity:start -->\nExisting managed guidance.\n<!-- overdrive-continuity:end -->\n');
+
+  const plan = await prepareInstall({
+    scope: 'project', hostIds: ['codex'], skillNames: ['continuity'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+
+  assert.equal(plan.registrations.some(({ kind }) => kind === 'continuity-guidance'), false);
+  assert.equal(plan.guidanceSkipped[0].destination, agentsPath);
+  assert.match(plan.guidanceSkipped[0].reason, /managed block already exists/);
+});
+
+test('continuity adds guidance only for the selected host', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+
+  const plan = await prepareInstall({
+    scope: 'project', hostIds: ['kiro'], skillNames: ['continuity'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+  await executeInstall(plan, { skillsRoot: paths.skillsRoot });
+
+  assert.deepEqual(plan.registrations.filter(({ kind }) => kind === 'continuity-guidance')
+    .map(({ destination }) => path.relative(paths.project, destination)), [
+    '.kiro/steering/overdrive-continuity.md',
+  ]);
+  await assert.rejects(readFile(path.join(paths.project, 'AGENTS.md')), { code: 'ENOENT' });
+  await assert.rejects(readFile(path.join(paths.project, '.claude/rules/overdrive-continuity.md')), { code: 'ENOENT' });
+  await assert.rejects(readFile(path.join(paths.project, '.agents/rules/overdrive-continuity.md')), { code: 'ENOENT' });
+});
+
+test('continuity rejects malformed managed AGENTS markers before installing', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  const agentsPath = path.join(paths.project, 'AGENTS.md');
+  await writeFile(agentsPath, 'Project rules.\n<!-- overdrive-continuity:start -->\n');
+
+  await assert.rejects(prepareInstall({
+    scope: 'project', hostIds: ['codex', 'grok'], skillNames: ['continuity'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  }), /incomplete or duplicate Overdrive Continuity markers/);
+  assert.equal(await readFile(agentsPath, 'utf8'), 'Project rules.\n<!-- overdrive-continuity:start -->\n');
+});
 
 test('partial plugin installs include the router and restrict it to installed skills', async (t) => {
   const paths = await fixture();
@@ -557,6 +709,22 @@ test('interactive global install detects Antigravity and installs only the chose
     { code: 'ENOENT' });
 });
 
+test('global Grok continuity install reports that always-on guidance is unavailable', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  const run = spawnSync(process.execPath, [CLI, 'install', '--scope', 'global', '--host', 'grok', '--skill', 'continuity'], {
+    cwd: paths.project,
+    input: 'y\n',
+    encoding: 'utf8',
+    env: { ...process.env, HOME: paths.home, USERPROFILE: paths.home, NO_COLOR: '1' },
+  });
+
+  assert.equal(run.status, 0, run.stderr);
+  assert.match(run.stdout, /grok always-on guidance unavailable/);
+  assert.match(await readFile(path.join(paths.home, '.grok/plugins/overdrive/skills/continuity/SKILL.md'), 'utf8'), /name: continuity/);
+  await assert.rejects(readFile(path.join(paths.home, 'AGENTS.md')), { code: 'ENOENT' });
+});
+
 test('interactive host selection cannot default to every host', async (t) => {
   const paths = await fixture();
   t.after(() => rm(paths.root, { recursive: true, force: true }));
@@ -574,21 +742,22 @@ test('interactive host selection cannot default to every host', async (t) => {
     { code: 'ENOENT' });
 });
 
-test('declining the preview creates no bundle or registration files', async (t) => {
+test('declining a continuity preview creates no bundle or guidance files', async (t) => {
   const paths = await fixture();
   t.after(() => rm(paths.root, { recursive: true, force: true }));
-  const run = spawnSync(process.execPath, [CLI, 'install', '--host', 'codex'], {
+  const run = spawnSync(process.execPath, [CLI, 'install', '--host', 'codex', '--skill', 'continuity'], {
     cwd: paths.project,
-    input: '\nassert\nn\n',
+    input: '\nn\n',
     encoding: 'utf8',
     env: { ...process.env, HOME: paths.home, USERPROFILE: paths.home },
   });
 
   assert.equal(run.status, 0, run.stderr);
   assert.match(run.stdout, /Installation cancelled/);
+  assert.match(run.stdout, /register\/merge .*AGENTS\.md/);
   for (const target of [
     '.codex/plugins/overdrive/plugin.json', '.agents/plugins/marketplace.json',
-    '.agents/skills/assert/SKILL.md', '.codex/config.toml',
+    '.agents/skills/continuity/SKILL.md', '.codex/config.toml', 'AGENTS.md',
   ]) {
     await assert.rejects(readFile(path.join(paths.project, target)), { code: 'ENOENT' });
   }

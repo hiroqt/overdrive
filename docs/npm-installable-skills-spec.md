@@ -12,6 +12,7 @@ Install only the selected host's native Overdrive package shape so its skills an
 - Copy selected skill packages, including references, assets, scripts, and tests. Include host-specific metadata only for the selected host: `agents/openai.yaml` is Codex-only and must not appear in other hosts' bundles.
 - Treat grouped plugin/Power folders as atomic destinations: if the bundle already exists, skip that host bundle without merging or changing it. Flat Kiro project and Codex IDE skills are individually skipped on collision.
 - Show every bundle/skill destination and host registration/config path before writing. Registration merges preserve unrelated keys and refuse malformed marketplace JSON or malformed/conflicting Overdrive registration. Cancel means no file writes.
+- When `continuity` is selected, preview and write a compact host-native always-loaded rule: Claude project/global `.claude/rules/overdrive-continuity.md` / `~/.claude/rules/overdrive-continuity.md`; Codex project/global `AGENTS.md` / `$CODEX_HOME/AGENTS.md`; Kiro `.kiro/steering/overdrive-continuity.md` / `~/.kiro/steering/overdrive-continuity.md`; Antigravity `.agents/rules/overdrive-continuity.md` / `~/.gemini/config/rules/overdrive-continuity.md`; Grok project `AGENTS.md`. Merge one marked block into an existing `AGENTS.md`, preserve all surrounding text, skip an existing managed block or standalone rule file, and reject malformed markers. Grok global plugin installation has no documented global always-loaded guidance path and must report that limitation.
 - For a new Codex CLI bundle, preview the `$CODEX_HOME/config.toml` marketplace registration path, local marketplace root, and plugin-cache activation destination. After confirmation and file registration, run `codex plugin marketplace add <root>` before `codex plugin add overdrive@<marketplace>`; if the CLI is missing, print both commands for later, and if either step fails, report completed writes and the failure.
 - Do not remember project preferences. Adaptation comes only from the current conversation and repository instructions.
 
@@ -41,7 +42,7 @@ Every grouped bundle contains a host-supported manifest and only selected skills
 
 ## Adaptive skill behavior
 
-Each of the ten `SKILL.md` files must tell the agent to:
+Each of the eleven `SKILL.md` files must tell the agent to:
 
 1. Inspect only the current task's relevant repository instructions, stack, conventions, state, tools, and tests before choosing a workflow.
 2. Scale steps and checks to the task and risk, use only tools/checks actually available, and keep the skill's existing specialty and safety boundaries.
@@ -49,7 +50,7 @@ Each of the ten `SKILL.md` files must tell the agent to:
 4. Mention a relevant handoff when it helps, without chaining skills automatically or claiming another skill ran.
 5. Use only current conversation/repository context for adaptation; do not write or retain preferences for future sessions.
 
-The guidance must be tailored to each skill, not pasted as a generic replacement for its workflow.
+The guidance must be tailored to each skill, not pasted as a generic replacement for its workflow. Continuity creates a compact project index on first substantial use only when one is missing; there is no init command, and checkpoint files are never committed automatically.
 
 ## Constraints and invariants
 
@@ -80,6 +81,7 @@ The guidance must be tailored to each skill, not pasted as a generic replacement
 - [ ] Claude Code uses `/overdrive:<skill>` plugin namespacing and no longer rewrites `review` as an alias.
 - [ ] Preview lists bundle/skill and registration/config paths; declining creates or changes nothing.
 - [ ] Existing bundle collisions skip as a unit; existing flat skills skip individually; unrelated config survives a registration merge.
+- [ ] Continuity installs only selected-host always-loaded guidance, previews all paths, preserves existing `AGENTS.md` content, skips rule collisions, and reports Grok's global-guidance limitation.
 - [ ] Tests cover the user-visible selection, layout, reference preservation, registration, collision, and cancellation behavior.
 - [ ] `npm test`, package-quality tests/checker, `npm pack --dry-run`, and `git diff --check` pass.
 - [ ] Host chat/CLI smoke tests run only where available. Any unavailable surface, invocation mismatch, or unverified automatic selection is reported without extrapolation.
@@ -87,8 +89,8 @@ The guidance must be tailored to each skill, not pasted as a generic replacement
 ## Affected surfaces
 
 - npm CLI, package metadata and installer tests.
-- The `overdrive` router skill and generated installed-skill catalog; preserve all ten domain workflows and their reference files.
-- All ten skill E2E results, plus router selection and partial-install filtering results.
+- The `overdrive` router skill and generated installed-skill catalog; preserve all eleven domain workflows and their reference files.
+- All eleven skill E2E results, plus router selection and partial-install filtering results.
 - README host-selection/install and invocation guidance.
 - `docs/CODEBASE_MAP.md` and cross-agent E2E evidence.
 - Package-quality workflow only if needed to run the focused installer/package checks.
@@ -102,5 +104,5 @@ The guidance must be tailored to each skill, not pasted as a generic replacement
 - Antigravity project installs use its shared plugin root. Global installs let the user choose IDE, CLI, or both.
 - Kiro project skills are flat; global Kiro uses a grouped Power.
 - Preview and confirm selected-host registration/configuration before writing it.
-- Adapt all ten skills to current task/repository context with lightweight, optional handoffs. Do not persist preferences.
+- Adapt all eleven skills to current task/repository context with lightweight, optional handoffs. Continuity uses project-local shareable checkpoints and no personal preference writes.
 - Skip existing destinations; updates/uninstall and npm publishing are out of scope.

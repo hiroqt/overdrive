@@ -425,6 +425,84 @@ async function prepareCodexRegistration(base, codexRoot, bundleWillInstall, plug
   };
 }
 
+function mergeContinuityGuidance(original, guidance) {
+  const start = '<!-- overdrive-continuity:start -->';
+  const end = '<!-- overdrive-continuity:end -->';
+  const starts = original.split(start).length - 1;
+  const ends = original.split(end).length - 1;
+  if (starts || ends) {
+    if (starts !== 1 || ends !== 1 || original.indexOf(start) > original.indexOf(end)) {
+      throw new Error('AGENTS.md has incomplete or duplicate Overdrive Continuity markers; resolve them before installing.');
+    }
+    return null;
+  }
+
+  const block = `${start}\n${guidance.trim()}\n${end}`;
+  const separator = original ? (original.endsWith('\n\n') ? '' : original.endsWith('\n') ? '\n' : '\n\n') : '';
+  return `${original}${separator}${block}\n`;
+}
+
+async function prepareContinuityGuidance({ scope, hostIds, base, codexRoot, skillsRoot, skillNames }) {
+  const registrations = [];
+  const guidanceSkipped = [];
+  const guidanceUnavailable = [];
+  if (!skillNames.includes('continuity')) return { registrations, guidanceSkipped, guidanceUnavailable };
+
+  const guidance = await readFile(path.join(skillsRoot, 'continuity/assets/always-on.md'), 'utf8');
+  const targets = new Map();
+  const add = (hostId, root, destination, format) => {
+    const current = targets.get(destination);
+    if (current) current.hostIds.push(hostId);
+    else targets.set(destination, { hostIds: [hostId], root, destination, format });
+  };
+
+  for (const hostId of hostIds) {
+    if (scope === 'global' && hostId === 'grok') {
+      guidanceUnavailable.push({ hostId, reason: 'Grok documents project AGENTS.md guidance but no global always-loaded guidance path.' });
+    } else if (hostId === 'codex' || hostId === 'grok') {
+      const root = hostId === 'codex' && scope === 'global' ? codexRoot : base;
+      add(hostId, root, path.join(root, 'AGENTS.md'), 'agents');
+    } else {
+      const relative = {
+        'claude-code': '.claude/rules/overdrive-continuity.md',
+        kiro: '.kiro/steering/overdrive-continuity.md',
+        antigravity: scope === 'global'
+          ? '.gemini/config/rules/overdrive-continuity.md'
+          : '.agents/rules/overdrive-continuity.md',
+      }[hostId];
+      const root = base;
+      add(hostId, root, path.join(root, relative), hostId);
+    }
+  }
+
+  for (const target of targets.values()) {
+    await assertNoSymlinkComponents(target.root, target.destination);
+    const original = await readOptional(target.destination);
+    let text;
+    if (target.format === 'agents') {
+      text = mergeContinuityGuidance(original ?? '', guidance);
+      if (text === null) {
+        guidanceSkipped.push({ destination: target.destination, reason: 'managed block already exists' });
+        continue;
+      }
+    } else {
+      if (original !== null) {
+        guidanceSkipped.push({ destination: target.destination, reason: 'host rule already exists' });
+        continue;
+      }
+      const metadata = target.format === 'kiro'
+        ? 'inclusion: always'
+        : target.format === 'antigravity'
+          ? 'trigger: always_on\ndescription: Keep long coding sessions oriented through verified project context.'
+          : null;
+      text = metadata ? `---\n${metadata}\n---\n\n${guidance.trim()}\n` : guidance;
+    }
+    registrations.push({ destination: target.destination, original, text, kind: 'continuity-guidance', hostIds: target.hostIds });
+  }
+
+  return { registrations, guidanceSkipped, guidanceUnavailable };
+}
+
 export async function prepareInstall({
   scope,
   hostIds,
@@ -478,6 +556,9 @@ export async function prepareInstall({
   const codexRegistration = targets.codexSelected
     ? await prepareCodexRegistration(base, codexRoot, codexBundle && !codexBundle.skip, codexBundle?.destination)
     : { registrations: [], marketplaceName: null };
+  const continuityGuidance = await prepareContinuityGuidance({
+    scope, hostIds, base, codexRoot, skillsRoot, skillNames,
+  });
   const codexActivation = codexRegistration.marketplaceName
     ? {
       marketplaceName: codexRegistration.marketplaceName,
@@ -489,7 +570,9 @@ export async function prepareInstall({
     : null;
   return {
     base, scope, hostIds, skillNames, installedSkillNames, ...targets,
-    registrations: codexRegistration.registrations,
+    registrations: [...codexRegistration.registrations, ...continuityGuidance.registrations],
+    guidanceSkipped: continuityGuidance.guidanceSkipped,
+    guidanceUnavailable: continuityGuidance.guidanceUnavailable,
     codexActivation,
   };
 }
@@ -585,7 +668,13 @@ export async function executeInstall(plan, {
   activateCodex = false,
   runCommand = spawnSync,
 } = {}) {
-  const result = { installed: [], skipped: [], registrations: [] };
+  const result = {
+    installed: [],
+    skipped: [],
+    registrations: [],
+    guidanceSkipped: [...plan.guidanceSkipped],
+    guidanceUnavailable: [...plan.guidanceUnavailable],
+  };
   for (const bundle of plan.bundles) {
     if (bundle.skip) {
       result.skipped.push(bundle);
@@ -767,6 +856,12 @@ async function promptInstall(options) {
     for (const registration of plan.registrations) {
       process.stdout.write(`  register/merge ${registration.destination}\n`);
     }
+    for (const item of plan.guidanceSkipped) {
+      process.stdout.write(`  skip existing continuity guidance ${item.destination} (${item.reason})\n`);
+    }
+    for (const item of plan.guidanceUnavailable) {
+      process.stdout.write(`  ${item.hostId} always-on guidance unavailable: ${item.reason}\n`);
+    }
     if (plan.codexActivation) {
       process.stdout.write(`  register Codex CLI marketplace in ${plan.codexActivation.configPath} from ${plan.codexActivation.marketplaceRoot}\n`);
       process.stdout.write(`  activate Codex CLI at ${plan.codexActivation.destination} with overdrive@${plan.codexActivation.marketplaceName}\n`);
@@ -781,6 +876,8 @@ async function promptInstall(options) {
     for (const item of result.installed) process.stdout.write(`Installed ${item.destination}\n`);
     for (const item of result.skipped) process.stdout.write(`Skipped existing ${item.destination}\n`);
     for (const item of result.registrations) process.stdout.write(`Registered ${item}\n`);
+    for (const item of result.guidanceSkipped) process.stdout.write(`Skipped existing continuity guidance ${item.destination}\n`);
+    for (const item of result.guidanceUnavailable) process.stdout.write(`${item.hostId} always-on guidance unavailable: ${item.reason}\n`);
     if (result.codexActivation?.status === 'installed') {
       process.stdout.write(`Activated Codex CLI at ${plan.codexActivation.destination}. Start a new Codex session to load its commands.\n`);
     } else if (result.codexActivation?.status === 'unavailable') {
