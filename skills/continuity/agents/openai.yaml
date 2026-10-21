@@ -1,0 +1,4 @@
+interface:
+  display_name: "Continuity"
+  short_description: "Resume and retrieve project context"
+  default_prompt: "Use $continuity to recover relevant project context, verify it against current source, and resume or checkpoint this task."

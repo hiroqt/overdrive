@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Adaptive engineering skills for coding agents</strong><br>
-  Ten focused workflows, one task-aware router, and repository-first guidance.
+  Eleven focused workflows, one task-aware router, and repository-first guidance.
 </p>
 
 <p align="center">
@@ -13,7 +13,7 @@
 
 ## Install and use by host
 
-The examples below install into the current project and explicitly select one host. The installer asks which skills to include; press Enter to select all ten. The `overdrive` task router is always included, destinations are previewed before writing, and existing skills are skipped. Add `--scope global` to install for your user, or `--skill assert,review` to select specific domain skills. There is no separate initialization step.
+The examples below install into the current project and explicitly select one host. The installer asks which skills to include; press Enter to select all eleven. The `overdrive` task router is always included, destinations and any selected-host guidance are previewed before writing, and existing skills/rules are skipped. Add `--scope global` to install for your user, or `--skill assert,review` to select specific domain skills. There is no separate initialization step.
 
 The published package is currently `@hiroqt/overdrive`. This repository has been renamed to `overdrive-skills`, which is not published yet; use `npx overdrive-skills install` after that package is released. Node.js 18+ and npm are required. Interactive color terminals show the cyan-to-violet `HIROQT` wordmark; `NO_COLOR`, `TERM=dumb`, and redirected output stay plain.
 
@@ -77,6 +77,10 @@ From the project root, run `grok inspect` to check discovered skills and plugins
 
 Overdrive adapts to the current task, repository instructions, stack, and available checks. The router only considers installed skills, selects one primary skill, and may suggest a useful handoff without automatically chaining skills. Host command syntax differs; use the examples above for each host.
 
+### Continuity
+
+Select `continuity` during installation to add a short always-loaded reminder in that host's native project or user guidance location. Invoke it using host syntax: `$continuity` in Codex, `/continuity` for flat Kiro project skills, or `/overdrive:continuity` in namespaced plugin hosts such as Claude Code and Antigravity. It resumes a task from `.overdrive/continuity/checkpoint.md`, retrieves project facts through a compact `.overdrive/continuity/index.md`, and checks both against the current branch and source before relying on them. The index is created on first substantial use if missing; there is no separate init command. Checkpoints are project-local and shareable, contain no transcript or personal preferences, and are never committed automatically. Kiro custom agents may need the steering file added to their configured resources. Grok's global plugin can install, but documented global always-loaded guidance is unavailable.
+
 ## Contents
 
 The router is installed automatically. Choose any domain skills; each package follows the [Agent Skills format](https://agentskills.io/specification) and includes its `SKILL.md` plus supporting references, scripts, or assets.
@@ -84,6 +88,7 @@ The router is installed automatically. Choose any domain skills; each package fo
 | Skill | Use it to… |
 | --- | --- |
 | [Overdrive](skills/overdrive/SKILL.md) | Route a task to the best matching installed skill. |
+| [Continuity](skills/continuity/SKILL.md) | Resume long-running work and retrieve verified project context quickly. |
 | [Forge](skills/forge/SKILL.md) | Create, improve, or review reusable agent skills. |
 | [Refactor](skills/refactor/SKILL.md) | Map real project structure and make safe maintainability changes. |
 | [Signal](skills/signal/SKILL.md) | Write concise updates without losing evidence or technical detail. |
