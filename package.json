@@ -1,7 +1,7 @@
 {
   "name": "overdrive-skills",
   "version": "0.1.0",
-  "description": "Install Overdrive agent skills for Codex, Claude Code, Kiro, Antigravity, and Grok Build.",
+  "description": "Install Overdrive agent skills for VS Code Copilot, Codex, Claude Code, Kiro, Antigravity, and Grok Build.",
   "license": "MIT",
   "repository": {
     "type": "git",
