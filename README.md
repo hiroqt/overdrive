@@ -13,14 +13,33 @@
 
 ## Install and use by host
 
-The examples below install into the current project and explicitly select one host. The installer asks which skills to include; press Enter to select all eleven. The `overdrive` task router is always included, destinations and any selected-host guidance are previewed before writing, and existing skills/rules are skipped. Add `--scope global` to install for your user, or `--skill assert,review` to select specific domain skills. There is no separate initialization step.
+Run the command from any IDE's integrated terminal to install into native agent locations. For a user-level install, start with `npx overdrive-skills install --scope global`; select the supported agent(s) and skills when prompted. The picker selects all available skills by default, including the optional `overdrive` task router. Destinations and selected-host guidance are previewed before writing, and existing skills/rules are skipped. Use `--skill assert,review` to select specific skills. There is no separate initialization step.
 
-The published package is currently `@hiroqt/overdrive`. This repository has been renamed to `overdrive-skills`, which is not published yet; use `npx overdrive-skills install` after that package is released. Node.js 18+ and npm are required. Interactive color terminals show the cyan-to-violet `HIROQT` wordmark; `NO_COLOR`, `TERM=dumb`, and redirected output stay plain.
+`overdrive-skills` installs native packages for Claude Code, Codex IDE/CLI, Kiro, Antigravity, and Grok Build. VS Code and other IDEs can run the same command in their integrated terminals when one of those agents is available; this package does not install an IDE extension. Node.js 18+ and npm are required. Interactive color terminals show the cyan-to-violet `HIROQT` wordmark; `NO_COLOR`, `TERM=dumb`, and redirected output stay plain.
+
+The examples below use `npx`, which runs the published `overdrive-skills` package without a separate global CLI install. To install the package's `overdrive` command globally and reuse it, run:
+
+```bash
+npm install --global overdrive-skills
+overdrive install --scope global
+```
+
+Afterward, use `overdrive install` in place of `npx overdrive-skills install` in the examples below.
+
+```bash
+npx overdrive-skills install --scope global
+```
+
+To install only selected skills in a project, run this from the project root:
+
+```bash
+npx overdrive-skills install --host codex --skill assert,review
+```
 
 ### Claude Code (IDE and CLI)
 
 ```bash
-npx @hiroqt/overdrive install --host claude-code
+npx overdrive-skills install --host claude-code
 ```
 
 Project bundle: `.claude/skills/overdrive/`; global bundle: `~/.claude/skills/overdrive/`.
@@ -30,7 +49,7 @@ In an already-open session, run `/reload-plugins`. Route a task with `/overdrive
 ### Codex (IDE and CLI)
 
 ```bash
-npx @hiroqt/overdrive install --host codex
+npx overdrive-skills install --host codex
 ```
 
 Project install: CLI plugin in `.codex/plugins/overdrive/` and IDE skills in `.agents/skills/`. Global CLI plugin follows `$CODEX_HOME`; global IDE skills go to `~/.agents/skills/`.
@@ -40,7 +59,7 @@ The installer registers and activates the Codex CLI plugin when `codex` is avail
 ### Kiro (IDE and CLI)
 
 ```bash
-npx @hiroqt/overdrive install --host kiro
+npx overdrive-skills install --host kiro
 ```
 
 Project skills: `.kiro/skills/`; global Power: `~/.kiro/powers/overdrive/`.
@@ -50,7 +69,7 @@ Open the project in Kiro IDE, or start a Kiro CLI V3 session from the project wi
 ### Antigravity IDE and CLI
 
 ```bash
-npx @hiroqt/overdrive install --host antigravity
+npx overdrive-skills install --host antigravity
 ```
 
 Project plugin: `.agents/plugins/overdrive/`. Global IDE and CLI installs use `~/.gemini/config/plugins/overdrive/` and `~/.gemini/antigravity-cli/plugins/overdrive/`, respectively.
@@ -60,7 +79,7 @@ The project plugin is shared by Antigravity IDE and CLI. In the IDE, open the pr
 For a global install, choose the target surface explicitly:
 
 ```bash
-npx @hiroqt/overdrive install --scope global --host antigravity --surface ide
+npx overdrive-skills install --scope global --host antigravity --surface ide
 ```
 
 Use `--surface cli` or `--surface both` for the CLI or both surfaces. See [Antigravity Agent Skills](https://www.antigravity.google/docs/skills?tab=ide) and [CLI commands](https://www.antigravity.google/docs/cli/reference/).
@@ -68,7 +87,7 @@ Use `--surface cli` or `--surface both` for the CLI or both surfaces. See [Antig
 ### Grok Build CLI
 
 ```bash
-npx @hiroqt/overdrive install --host grok
+npx overdrive-skills install --host grok
 ```
 
 Project plugin: `.grok/plugins/overdrive/`; global plugin: `~/.grok/plugins/overdrive/`.
@@ -77,13 +96,19 @@ From the project root, run `grok inspect` to check discovered skills and plugins
 
 Overdrive adapts to the current task, repository instructions, stack, and available checks. The router only considers installed skills, selects one primary skill, and may suggest a useful handoff without automatically chaining skills. Host command syntax differs; use the examples above for each host.
 
+### Publish npm updates
+
+Pushes and pull requests run package checks, but do not publish to npm. To release an update, bump the `version` in `package.json`, merge the change, and publish a GitHub Release with a tag matching that version (for example, `v0.1.1`). The `npm-publish.yml` workflow reruns package checks and publishes only when the tag matches the package version.
+
+Before the first automated release, configure npm Trusted Publishing for `overdrive-skills`: select GitHub Actions, repository `hiroqt/overdrive`, and workflow file `.github/workflows/npm-publish.yml`, with direct publishing allowed. This uses GitHub OIDC instead of an npm token. Each npm version can be published only once, so release a new version for every package update. See [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/).
+
 ### Continuity
 
 Select `continuity` during installation to add a short always-loaded reminder in that host's native project or user guidance location. Invoke it using host syntax: `$continuity` in Codex, `/continuity` for flat Kiro project skills, or `/overdrive:continuity` in namespaced plugin hosts such as Claude Code and Antigravity. It resumes a task from `.overdrive/continuity/checkpoint.md`, retrieves project facts through a compact `.overdrive/continuity/index.md`, and checks both against the current branch and source before relying on them. The index is created on first substantial use if missing; there is no separate init command. Checkpoints are project-local and shareable, contain no transcript or personal preferences, and are never committed automatically. Kiro custom agents may need the steering file added to their configured resources. Grok's global plugin can install, but documented global always-loaded guidance is unavailable.
 
 ## Contents
 
-The router is installed automatically. Choose any domain skills; each package follows the [Agent Skills format](https://agentskills.io/specification) and includes its `SKILL.md` plus supporting references, scripts, or assets.
+The router is optional and can be selected like any other skill. If omitted, only the selected skills are installed and can be invoked directly. Each package follows the [Agent Skills format](https://agentskills.io/specification) and includes its `SKILL.md` plus supporting references, scripts, or assets.
 
 | Skill | Use it to… |
 | --- | --- |
