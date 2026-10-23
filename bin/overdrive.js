@@ -159,7 +159,7 @@ function addFlatSkill(flatSkills, root, skillName, hostId) {
   else flatSkills.set(destination, { destination, skillName, hostIds: [hostId] });
 }
 
-function projectTargets({ hostIds, installedSkillNames, base, scope, antigravitySurface, codexRoot }) {
+function projectTargets({ hostIds, skillNames, base, scope, antigravitySurface, codexRoot }) {
   const bundles = new Map();
   const flatSkills = new Map();
   let codexSelected = false;
@@ -176,9 +176,9 @@ function projectTargets({ hostIds, installedSkillNames, base, scope, antigravity
     } else if (hostId === 'codex') {
       codexSelected = true;
       addBundle(bundles, path.join(codexRoot, 'plugins/overdrive'), 'plugin.json', pluginManifest(), hostId, codexRoot);
-      for (const skillName of installedSkillNames) addFlatSkill(flatSkills, path.join(base, '.agents/skills'), skillName, hostId);
+      for (const skillName of skillNames) addFlatSkill(flatSkills, path.join(base, '.agents/skills'), skillName, hostId);
     } else if (hostId === 'kiro' && scope === 'project') {
-      for (const skillName of installedSkillNames) addFlatSkill(flatSkills, path.join(base, '.kiro/skills'), skillName, hostId);
+      for (const skillName of skillNames) addFlatSkill(flatSkills, path.join(base, '.kiro/skills'), skillName, hostId);
     } else if (hostId === 'kiro') {
       addBundle(bundles, path.join(base, '.kiro/powers/overdrive'), 'plugin.json', kiroPowerManifest(), hostId);
     } else if (hostId === 'antigravity') {
@@ -519,7 +519,6 @@ export async function prepareInstall({
   if (new Set(hostIds).size !== hostIds.length) throw new Error('Select each host only once.');
   if (!Array.isArray(skillNames) || skillNames.length === 0) throw new Error('Select at least one skill.');
   if (new Set(skillNames).size !== skillNames.length) throw new Error('Select each skill only once.');
-  if (skillNames.includes(ROUTER_SKILL)) throw new Error('The Overdrive router is included automatically; select one or more domain skills.');
   if (hostIds.includes('antigravity') && scope === 'global' && !['ide', 'cli', 'both'].includes(antigravitySurface)) {
     throw new Error('Choose Antigravity global surface: ide, cli, or both.');
   }
@@ -531,16 +530,15 @@ export async function prepareInstall({
   const codexHomeRoot = path.resolve(codexHome ?? path.join(homeDir, '.codex'));
   const codexRoot = scope === 'project' ? path.join(base, '.codex') : codexHomeRoot;
   const available = await availableSkills(skillsRoot);
-  if (!available.includes(ROUTER_SKILL)) throw new Error('The Overdrive router skill package is missing.');
   for (const skillName of skillNames) {
     if (!available.includes(skillName)) throw new Error(`Unknown skill: ${skillName}`);
     await rejectSymlinks(path.join(skillsRoot, skillName));
   }
-  const installedSkillNames = [ROUTER_SKILL, ...skillNames];
+  const domainSkillNames = skillNames.filter((name) => name !== ROUTER_SKILL);
 
   const targets = projectTargets({
     hostIds,
-    installedSkillNames,
+    skillNames,
     base,
     scope,
     antigravitySurface,
@@ -569,7 +567,7 @@ export async function prepareInstall({
     }
     : null;
   return {
-    base, scope, hostIds, skillNames, installedSkillNames, ...targets,
+    base, scope, hostIds, skillNames, domainSkillNames, ...targets,
     registrations: [...codexRegistration.registrations, ...continuityGuidance.registrations],
     guidanceSkipped: continuityGuidance.guidanceSkipped,
     guidanceUnavailable: continuityGuidance.guidanceUnavailable,
@@ -682,8 +680,8 @@ export async function executeInstall(plan, {
     }
     const installed = await installDirectory(skillsRoot, bundle.destination, bundle.manifestPath, {
       content: bundle.manifest,
-      skillNames: plan.installedSkillNames,
-      selectedSkillNames: plan.skillNames,
+      skillNames: plan.skillNames,
+      selectedSkillNames: plan.domainSkillNames,
       hostIds: bundle.hostIds,
     });
     if (installed) result.installed.push(bundle);
@@ -694,7 +692,7 @@ export async function executeInstall(plan, {
       result.skipped.push(skill);
       continue;
     }
-    const installed = await installFlatSkill(skillsRoot, skill, plan.skillNames);
+    const installed = await installFlatSkill(skillsRoot, skill, plan.domainSkillNames);
     if (installed) result.installed.push(skill);
     else result.skipped.push(skill);
   }
@@ -742,7 +740,8 @@ function usage() {
     '       [--skill <name[,name]>] [--surface ide|cli|both]',
     '',
     `Hosts: ${HOSTS.map(({ id }) => id).join(', ')}`,
-    'Host selection is required. Project scope and all skills are the defaults.',
+    'Host selection is required. Project scope and all skills (including the optional router) are the defaults.',
+    'Use --scope global to install for your user from any IDE terminal.',
     '--surface applies to global Antigravity installs only.',
   ].join('\n');
 }
@@ -794,7 +793,7 @@ function describePlan(plan) {
 
 async function promptInstall(options) {
   const skills = await availableSkills(SKILLS_ROOT);
-  const skillChoices = skills.filter((name) => name !== ROUTER_SKILL).map((name) => ({ id: name, label: '' }));
+  const skillChoices = skills.map((name) => ({ id: name, label: name === ROUTER_SKILL ? 'optional task router' : '' }));
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   const abort = new AbortController();
   rl.on('SIGINT', () => abort.abort());
@@ -849,7 +848,7 @@ async function promptInstall(options) {
 
     const plan = await prepareInstall({ scope, hostIds, skillNames, cwd, homeDir, codexHome, antigravitySurface });
     process.stdout.write(`\nScope: ${scope} (${path.resolve(scope === 'project' ? cwd : homeDir)})\n`);
-    process.stdout.write(`Hosts: ${hostIds.join(', ')}\nSkills: ${skillNames.join(', ')}\nRouter: ${ROUTER_SKILL} (included automatically)\n`);
+    process.stdout.write(`Hosts: ${hostIds.join(', ')}\nSkills: ${skillNames.join(', ')}\nRouter: ${skillNames.includes(ROUTER_SKILL) ? 'selected' : 'not selected'}\n`);
     if (hostIds.includes('antigravity') && scope === 'global') process.stdout.write(`Antigravity surface: ${antigravitySurface}\n`);
     process.stdout.write('\nPreview:\n');
     for (const target of describePlan(plan)) process.stdout.write(`  ${target}\n`);

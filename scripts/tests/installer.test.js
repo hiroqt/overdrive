@@ -23,6 +23,7 @@ test('CLI help shows the unscoped npm install command', () => {
 
   assert.equal(result.status, 0);
   assert.match(result.stdout, /Usage: npx overdrive-skills install/);
+  assert.match(result.stdout, /--scope global/);
   assert.doesNotMatch(result.stdout, /@hiroqt\/overdrive/);
 });
 
@@ -267,7 +268,7 @@ test('continuity rejects malformed managed AGENTS markers before installing', as
   assert.equal(await readFile(agentsPath, 'utf8'), 'Project rules.\n<!-- overdrive-continuity:start -->\n');
 });
 
-test('partial plugin installs include the router and restrict it to installed skills', async (t) => {
+test('plugin installs contain only selected skills when the router is omitted', async (t) => {
   const paths = await fixture();
   t.after(() => rm(paths.root, { recursive: true, force: true }));
 
@@ -277,14 +278,12 @@ test('partial plugin installs include the router and restrict it to installed sk
   });
 
   const bundle = path.join(paths.project, '.agents/plugins/overdrive');
-  assert.match(await readFile(path.join(bundle, 'skills/overdrive/SKILL.md'), 'utf8'), /name: overdrive/);
-  const installed = await readFile(path.join(bundle, 'skills/overdrive/references/installed-skills.md'), 'utf8');
-  assert.match(installed, /- assert\n/);
-  assert.doesNotMatch(installed, /- review\n/);
+  assert.match(await readFile(path.join(bundle, 'skills/assert/SKILL.md'), 'utf8'), /name: assert/);
+  await assert.rejects(readFile(path.join(bundle, 'skills/overdrive/SKILL.md')), { code: 'ENOENT' });
   await assert.rejects(readFile(path.join(bundle, 'skills/review/SKILL.md')), { code: 'ENOENT' });
 });
 
-test('flat skill installs also include the router with the selected-skill catalog', async (t) => {
+test('flat skill installs omit the router when it was not selected', async (t) => {
   const paths = await fixture();
   t.after(() => rm(paths.root, { recursive: true, force: true }));
 
@@ -293,21 +292,24 @@ test('flat skill installs also include the router with the selected-skill catalo
     cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
   });
 
+  assert.match(await readFile(path.join(paths.project, '.kiro/skills/review/SKILL.md'), 'utf8'), /name: review/);
+  await assert.rejects(readFile(path.join(paths.project, '.kiro/skills/overdrive/SKILL.md')), { code: 'ENOENT' });
+});
+
+test('selected router installs with a catalog of only selected domain skills', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+
+  await installSkills({
+    scope: 'project', hostIds: ['kiro'], skillNames: ['overdrive', 'review'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+
   const router = path.join(paths.project, '.kiro/skills/overdrive');
   assert.match(await readFile(path.join(router, 'SKILL.md'), 'utf8'), /name: overdrive/);
   const installed = await readFile(path.join(router, 'references/installed-skills.md'), 'utf8');
   assert.match(installed, /- review\n/);
-  assert.doesNotMatch(installed, /- assert\n/);
-});
-
-test('overdrive is reserved for the automatically included router', async (t) => {
-  const paths = await fixture();
-  t.after(() => rm(paths.root, { recursive: true, force: true }));
-
-  await assert.rejects(prepareInstall({
-    scope: 'project', hostIds: ['antigravity'], skillNames: ['overdrive'],
-    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
-  }), /router is included automatically/i);
+  assert.doesNotMatch(installed, /- overdrive\n|- assert\n/);
 });
 
 test('the routing map covers every domain skill exactly once', async () => {
@@ -740,6 +742,25 @@ test('interactive host selection cannot default to every host', async (t) => {
   assert.match(run.stdout, /Hosts: antigravity/);
   await assert.rejects(readFile(path.join(paths.project, '.claude/skills/overdrive/.claude-plugin/plugin.json')),
     { code: 'ENOENT' });
+});
+
+test('interactive skill picker defaults to all skills including the optional router', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  const run = spawnSync(process.execPath, [CLI, 'install', '--host', 'kiro'], {
+    cwd: paths.project,
+    input: '\n\ny\n',
+    encoding: 'utf8',
+    env: { ...process.env, HOME: paths.home, USERPROFILE: paths.home, NO_COLOR: '1' },
+  });
+
+  assert.equal(run.status, 0, run.stderr);
+  const skillNames = ['assert', 'continuity', 'forge', 'guard', 'overdrive', 'prune', 'refactor', 'render', 'review', 'signal', 'trace', 'verify'];
+  assert.ok(run.stdout.includes(`Skills: ${skillNames.join(', ')}`));
+  assert.match(run.stdout, /Router: selected/);
+  for (const skill of skillNames) {
+    assert.match(await readFile(path.join(paths.project, `.kiro/skills/${skill}/SKILL.md`), 'utf8'), /name:/);
+  }
 });
 
 test('declining a continuity preview creates no bundle or guidance files', async (t) => {
