@@ -2,12 +2,12 @@
 
 ## Outcome
 
-Install selected skills into the native user-level locations of supported coding agents. The terminal-based npm command can be run from any IDE terminal; it is not a VS Code extension and does not claim to support unlisted agents. The `overdrive` task router is an optional skill, and domain skills install independently without it.
+Install selected skills into native project or user locations for VS Code GitHub Copilot and the other supported coding agents. The npm command runs from an IDE terminal and does not install a VS Code extension. The `overdrive` task router is optional, and domain skills install independently without it.
 
 ## Scope and behavior
 
 - `npx overdrive-skills install` uses Node built-ins and prompts for scope, host(s), skills, and any host-specific surface choice. `npx overdrive-skills install --scope global` is the global entry point from any IDE terminal.
-- Project scope is preselected; global scope must be chosen explicitly. The installer scans the current project for known host markers, suggests likely hosts, and requires confirmation or manual replacement. With no matching markers, the user selects hosts from the full list. `--host <id>` supports repeatable/comma-separated explicit selection. Antigravity global installs allow IDE, CLI, or both.
+- Project scope is preselected; global scope must be chosen explicitly. Detect the active VS Code integrated terminal, its installed supported agent extensions, and known project host markers. When those signals identify one host, use it without the host picker; when they identify multiple hosts, show them as defaults and let the user choose. If VS Code is active but no supported extension is detected, default to VS Code Copilot's native skill location. If no host is detected, show the full host list. `--host <id>` supports repeatable/comma-separated explicit selection. Antigravity global installs allow IDE, CLI, or both.
 - Print the existing cyan-to-violet `HIROQT` type-on wordmark in interactive color terminals. Respect `NO_COLOR` and `TERM=dumb`; do not emit ANSI control sequences to redirected/non-TTY output.
 - Copy only selected skill packages, including references, assets, scripts, and tests. The interactive picker selects all available skills, including `overdrive`, by default; users can choose any nonempty subset. Include host-specific metadata only for the selected host: `agents/openai.yaml` is Codex-only and must not appear in other hosts' bundles.
 - Treat grouped plugin/Power folders as atomic destinations: if the bundle already exists, skip that host bundle without merging or changing it. Flat Kiro project and Codex IDE skills are individually skipped on collision.
@@ -22,6 +22,7 @@ Install selected skills into the native user-level locations of supported coding
 | --- | --- | --- | --- |
 | Claude Code IDE/CLI | `.claude/skills/overdrive/` plugin bundle | `~/.claude/skills/overdrive/` plugin bundle | `/overdrive:<skill>` |
 | Codex CLI | `.codex/plugins/overdrive/` plus `.agents/plugins/marketplace.json` and `.codex/config.toml` registration; register the repo marketplace, then run `codex plugin add` | `$CODEX_HOME/plugins/overdrive/` and `$CODEX_HOME/config.toml` registration (default `$CODEX_HOME=~/.codex`); marketplace goes under `~/.agents` when CODEX_HOME is within the user home, and under CODEX_HOME otherwise; register the marketplace, then populate its plugin cache | `$<skill>` or `/skills` |
+| VS Code GitHub Copilot | `.github/skills/<skill>/` | `~/.copilot/skills/<skill>/` | VS Code Agent Skills; skills are available through the Agent Customizations / Skills experience |
 | Codex IDE extension | `.agents/skills/<skill>/` | `~/.agents/skills/<skill>/` | Codex native skill invocation; grouped plugins are unsupported by this surface |
 | Kiro IDE/CLI | Flat `.kiro/skills/<skill>/` | `~/.kiro/powers/overdrive/` Power bundle | `/overdrive` routes and `/skill` invokes a project skill; global Power slash aliases are not promised unless verified |
 | Antigravity IDE | `.agents/plugins/overdrive/` | `~/.gemini/config/plugins/overdrive/` | Host-native skill command, normally `/<skill>` |
@@ -66,7 +67,8 @@ The guidance must be tailored to each skill, not pasted as a generic replacement
 
 ## Acceptance checks
 
-- [ ] The CLI requires explicit host selection interactively or accepts explicit `--host`; it never defaults to every host.
+- [ ] A single recognized IDE/project host is selected without showing the host picker; ambiguous or absent signals use the picker, and explicit `--host` always takes precedence.
+- [ ] VS Code project/global installs use `.github/skills/<skill>/` and `~/.copilot/skills/<skill>/` respectively.
 - [ ] Project scope is preselected and global scope requires an explicit user choice.
 - [ ] Recognized project host markers are shown as suggestions and require user confirmation; unknown or ambiguous markers do not trigger implicit host installation.
 - [ ] The original cyan-to-violet wordmark is animated only for an interactive color TTY; non-TTY, `NO_COLOR`, and `TERM=dumb` output contains no ANSI sequences.
@@ -104,7 +106,8 @@ The guidance must be tailored to each skill, not pasted as a generic replacement
 - User confirmed on 2026-10-23: use the supported hosts' native user-level locations from any IDE terminal; keep all skills selected by default; make the router optional; limit the change to install/selection; and publish the initial public `overdrive-skills@0.1.0` package after validation.
 - User requested branch commits and push on 2026-10-23. Future npm publication is gated on a matching versioned GitHub Release; regular pushes run checks only.
 - Use grouped host-native plugin bundles where documented; use flat native skills where a surface requires them. Prefer native slash/invocation names, including namespaces, and report unsupported commands.
-- Require explicit host choice. Add `--host`; never create unselected host roots.
+- User requested dynamic host adaptation on 2026-10-23. Add VS Code with GitHub Copilot at `.github/skills` / `~/.copilot/skills`; detect VS Code integrated terminals and project markers; skip the host picker when exactly one target is identified, while preserving the preview/confirmation gate.
+- Require explicit or detected host choice. Add `--host`; never create unselected host roots.
 - Antigravity project installs use its shared plugin root. Global installs let the user choose IDE, CLI, or both.
 - Kiro project skills are flat; global Kiro uses a grouped Power.
 - Preview and confirm selected-host registration/configuration before writing it.

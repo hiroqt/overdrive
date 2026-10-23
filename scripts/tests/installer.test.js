@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-import { detectHosts, executeInstall, installSkills, prepareInstall, showBanner } from '../../bin/overdrive.js';
+import { detectIDEHosts, detectHosts, executeInstall, installSkills, prepareInstall, showBanner } from '../../bin/overdrive.js';
 
 const CLI = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../bin/overdrive.js');
 
@@ -76,12 +76,22 @@ test('project host detection returns only recognized marker hints', async (t) =>
     mkdir(path.join(paths.project, '.agents/skills'), { recursive: true }),
     mkdir(path.join(paths.project, '.kiro')),
     mkdir(path.join(paths.project, '.grok')),
+    mkdir(path.join(paths.project, '.github/skills'), { recursive: true }),
   ]);
 
   const hints = await detectHosts(paths.project);
 
-  assert.deepEqual(hints.map(({ id }) => id), ['claude-code', 'codex', 'kiro', 'grok']);
+  assert.deepEqual(hints.map(({ id }) => id), ['vscode', 'claude-code', 'codex', 'kiro', 'grok']);
   assert.match(hints.find(({ id }) => id === 'codex').reason, /\.agents\/skills/);
+  assert.match(hints.find(({ id }) => id === 'vscode').reason, /\.github\/skills/);
+});
+
+test('VS Code integrated terminal detects installed agent extensions and falls back to Copilot skills', () => {
+  assert.deepEqual(detectIDEHosts({ TERM_PROGRAM: 'vscode' }, ['OpenAI.chatgpt']), ['codex']);
+  assert.deepEqual(detectIDEHosts({ VSCODE_PID: '1234' }, ['Anthropic.claude-code']), ['claude-code']);
+  assert.deepEqual(detectIDEHosts({ TERM_PROGRAM: 'vscode' }, ['GitHub.copilot-chat']), ['vscode']);
+  assert.deepEqual(detectIDEHosts({ TERM_PROGRAM: 'vscode' }, []), ['vscode']);
+  assert.deepEqual(detectIDEHosts({ TERM_PROGRAM: 'xterm-256color' }, ['OpenAI.chatgpt']), []);
 });
 
 test('project host detection recognizes Antigravity plugin metadata', async (t) => {
@@ -587,6 +597,27 @@ test('Kiro project installs flat skill folders and global scope installs one Pow
     { code: 'ENOENT' });
 });
 
+test('VS Code installs workspace skills in .github/skills and user skills in .copilot/skills', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+
+  const projectPlan = await prepareInstall({
+    scope: 'project', hostIds: ['vscode'], skillNames: ['assert'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+  const globalPlan = await prepareInstall({
+    scope: 'global', hostIds: ['vscode'], skillNames: ['review'],
+    cwd: paths.project, homeDir: paths.home, skillsRoot: paths.skillsRoot,
+  });
+
+  assert.deepEqual(projectPlan.flatSkills.map(({ destination }) => destination), [
+    path.join(paths.project, '.github/skills/assert'),
+  ]);
+  assert.deepEqual(globalPlan.flatSkills.map(({ destination }) => destination), [
+    path.join(paths.home, '.copilot/skills/review'),
+  ]);
+});
+
 test('Antigravity global surface selection targets only the requested plugin root', async (t) => {
   const paths = await fixture();
   t.after(() => rm(paths.root, { recursive: true, force: true }));
@@ -674,7 +705,10 @@ test('interactive install suggests hosts from project markers and requires confi
     cwd: paths.project,
     input: '\n\ny\n',
     encoding: 'utf8',
-    env: { ...process.env, HOME: paths.home, USERPROFILE: paths.home, NO_COLOR: '1' },
+    env: {
+      ...process.env, HOME: paths.home, USERPROFILE: paths.home, NO_COLOR: '1',
+      TERM_PROGRAM: 'xterm-256color', VSCODE_PID: '', VSCODE_IPC_HOOK_CLI: '',
+    },
   });
 
   assert.equal(run.status, 0, run.stderr);
@@ -696,19 +730,61 @@ test('interactive global install detects Antigravity and installs only the chose
   }));
   const run = spawnSync(process.execPath, [CLI, 'install', '--skill', 'assert'], {
     cwd: paths.project,
-    input: '2\n\ncli\ny\n',
+    input: '2\ncli\ny\n',
     encoding: 'utf8',
-    env: { ...process.env, HOME: paths.home, USERPROFILE: paths.home, NO_COLOR: '1' },
+    env: {
+      ...process.env, HOME: paths.home, USERPROFILE: paths.home, NO_COLOR: '1',
+      TERM_PROGRAM: 'xterm-256color', VSCODE_PID: '', VSCODE_IPC_HOOK_CLI: '',
+    },
   });
 
   assert.equal(run.status, 0, run.stderr);
   assert.match(run.stdout, /Install scope:.*Global/);
   assert.match(run.stdout, /Detected project host hints: antigravity/);
+  assert.doesNotMatch(run.stdout, /Choose host\(s\):/);
   assert.match(run.stdout, /Scope: global/);
   assert.match(run.stdout, /Antigravity surface: cli/);
   assert.match(await readFile(path.join(paths.home, '.gemini/antigravity-cli/plugins/overdrive/skills/assert/SKILL.md'), 'utf8'), /name: assert/);
   await assert.rejects(readFile(path.join(paths.home, '.gemini/config/plugins/overdrive/plugin.json')),
     { code: 'ENOENT' });
+});
+
+test('interactive VS Code install detects the IDE and skips the host picker', async (t) => {
+  const paths = await fixture();
+  t.after(() => rm(paths.root, { recursive: true, force: true }));
+  const projectRun = spawnSync(process.execPath, [CLI, 'install', '--skill', 'assert'], {
+    cwd: paths.project,
+    input: '1\ny\n',
+    encoding: 'utf8',
+    env: {
+      ...process.env, HOME: paths.home, USERPROFILE: paths.home,
+      TERM_PROGRAM: 'vscode', NO_COLOR: '1', PATH: paths.home,
+    },
+  });
+
+  assert.equal(projectRun.status, 0, projectRun.stderr);
+  assert.match(projectRun.stdout, /This project \(Visual Studio Code workspace\)/);
+  assert.match(projectRun.stdout, /Detected IDE: Visual Studio Code/);
+  assert.match(projectRun.stdout, /Scope: project \(Visual Studio Code workspace:/);
+  assert.doesNotMatch(projectRun.stdout, /Choose host\(s\):/);
+  assert.match(projectRun.stdout, /Hosts: vscode/);
+  assert.match(await readFile(path.join(paths.project, '.github/skills/assert/SKILL.md'), 'utf8'), /name: assert/);
+
+  const globalRun = spawnSync(process.execPath, [CLI, 'install', '--scope', 'global', '--skill', 'review'], {
+    cwd: paths.project,
+    input: 'y\n',
+    encoding: 'utf8',
+    env: {
+      ...process.env, HOME: paths.home, USERPROFILE: paths.home,
+      TERM_PROGRAM: 'vscode', NO_COLOR: '1', PATH: paths.home,
+    },
+  });
+
+  assert.equal(globalRun.status, 0, globalRun.stderr);
+  assert.doesNotMatch(globalRun.stdout, /Choose host\(s\):/);
+  assert.match(globalRun.stdout, /Scope: global \(Visual Studio Code user skills:/);
+  assert.match(globalRun.stdout, /Hosts: vscode/);
+  assert.match(await readFile(path.join(paths.home, '.copilot/skills/review/SKILL.md'), 'utf8'), /name: review/);
 });
 
 test('global Grok continuity install reports that always-on guidance is unavailable', async (t) => {
@@ -734,7 +810,10 @@ test('interactive host selection cannot default to every host', async (t) => {
     cwd: paths.project,
     input: '\nantigravity\ny\n',
     encoding: 'utf8',
-    env: { ...process.env, HOME: paths.home, USERPROFILE: paths.home },
+    env: {
+      ...process.env, HOME: paths.home, USERPROFILE: paths.home,
+      TERM_PROGRAM: 'xterm-256color', VSCODE_PID: '', VSCODE_IPC_HOOK_CLI: '',
+    },
   });
 
   assert.equal(run.status, 0, run.stderr);

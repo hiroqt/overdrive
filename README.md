@@ -15,7 +15,7 @@
 
 Run the command from any IDE's integrated terminal to install into native agent locations. For a user-level install, start with `npx overdrive-skills install --scope global`; select the supported agent(s) and skills when prompted. The picker selects all available skills by default, including the optional `overdrive` task router. Destinations and selected-host guidance are previewed before writing, and existing skills/rules are skipped. Use `--skill assert,review` to select specific skills. There is no separate initialization step.
 
-`overdrive-skills` installs native packages for Claude Code, Codex IDE/CLI, Kiro, Antigravity, and Grok Build. VS Code and other IDEs can run the same command in their integrated terminals when one of those agents is available; this package does not install an IDE extension. Node.js 18+ and npm are required. Interactive color terminals show the cyan-to-violet `HIROQT` wordmark; `NO_COLOR`, `TERM=dumb`, and redirected output stay plain.
+`overdrive-skills` installs skills for VS Code with GitHub Copilot, Claude Code, Codex IDE/CLI, Kiro, Antigravity, and Grok Build. Run it from any IDE's integrated terminal; it installs into the selected agent's native project or user skill location and does not install an IDE extension. Node.js 18+ and npm are required. Interactive color terminals show the cyan-to-violet `HIROQT` wordmark; `NO_COLOR`, `TERM=dumb`, and redirected output stay plain.
 
 The examples below use `npx`, which runs the published `overdrive-skills` package without a separate global CLI install. To install the package's `overdrive` command globally and reuse it, run:
 
@@ -30,11 +30,29 @@ Afterward, use `overdrive install` in place of `npx overdrive-skills install` in
 npx overdrive-skills install --scope global
 ```
 
-To install only selected skills in a project, run this from the project root:
+To install selected skills in a specific project without specifying a host on the command line, run this from the project root:
 
 ```bash
-npx overdrive-skills install --host codex --skill assert,review
+npx overdrive-skills install --scope project --skill assert,review
 ```
+
+In a VS Code integrated terminal, the installer checks installed supported agent extensions and project host markers. It selects a single detected target automatically; when multiple targets are detected, it opens the host picker with those targets preselected. If no supported agent extension is found, it defaults to VS Code's Copilot skill location. The preview names the detected IDE, scope, and destination, and still asks before writing. Pass `--host <id>` to override detection. Omit `--skill assert,review` to open the skill picker.
+
+### VS Code with GitHub Copilot
+
+To install specifically for GitHub Copilot in VS Code, choose the `vscode` host explicitly:
+
+```bash
+npx overdrive-skills install --scope project --host vscode --skill assert,review
+```
+
+Project skills install under `.github/skills/`; global user skills install under `~/.copilot/skills/`:
+
+```bash
+npx overdrive-skills install --scope global --host vscode --skill assert,review
+```
+
+In the VS Code integrated terminal, omitting `--host` detects installed extensions: OpenAI's `openai.chatgpt` extension selects Codex, Anthropic's `anthropic.claude-code` selects Claude Code, and GitHub Copilot selects the VS Code host. If more than one is installed, choose among the detected targets in the host picker. The same prompts let you choose project or global scope. VS Code discovers Agent Skills from these locations through its Skills experience; see [VS Code Agent Skills](https://code.visualstudio.com/docs/agent-customization/agent-skills).
 
 ### Claude Code (IDE and CLI)
 

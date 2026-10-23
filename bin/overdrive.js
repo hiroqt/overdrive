@@ -18,6 +18,7 @@ const NAME_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const BANNER_COLORS = ['38;5;51', '38;5;45', '38;5;81', '38;5;117', '38;5;141', '38;5;213'];
 
 export const HOSTS = [
+  { id: 'vscode', label: 'Visual Studio Code (GitHub Copilot)' },
   { id: 'claude-code', label: 'Claude Code (IDE + CLI)' },
   { id: 'codex', label: 'OpenAI Codex (IDE + CLI)' },
   { id: 'kiro', label: 'Kiro (IDE + CLI)' },
@@ -26,6 +27,34 @@ export const HOSTS = [
 ];
 
 const HOST_IDS = new Set(HOSTS.map(({ id }) => id));
+
+function isVSCodeTerminal(env) {
+  return env.TERM_PROGRAM?.toLowerCase() === 'vscode' || Boolean(env.VSCODE_PID || env.VSCODE_IPC_HOOK_CLI);
+}
+
+function installedVSCodeExtensions(env) {
+  const result = spawnSync('code --list-extensions', {
+    encoding: 'utf8',
+    env,
+    shell: true,
+    timeout: 1500,
+    windowsHide: true,
+  });
+  if (result.error || result.status !== 0) return [];
+  return result.stdout.split(/\r?\n/).map((id) => id.trim().toLowerCase()).filter(Boolean);
+}
+
+export function detectIDEHosts(env = process.env, extensionIds) {
+  if (!isVSCodeTerminal(env)) return [];
+  const extensions = (extensionIds ?? installedVSCodeExtensions(env)).map((id) => id.toLowerCase());
+  const detected = new Set();
+  for (const id of extensions) {
+    if (id === 'openai.chatgpt') detected.add('codex');
+    if (id === 'anthropic.claude-code') detected.add('claude-code');
+    if (id === 'github.copilot' || id === 'github.copilot-chat') detected.add('vscode');
+  }
+  return detected.size ? [...detected] : ['vscode'];
+}
 
 function pluginManifest() {
   return {
@@ -94,6 +123,7 @@ export async function detectHosts(projectRoot) {
     if (!hints.has(id)) hints.set(id, reason);
   };
   const directoryMarkers = [
+    ['vscode', '.github/skills/'],
     ['claude-code', '.claude/'],
     ['codex', '.codex/'],
     ['codex', '.agents/skills/'],
@@ -165,7 +195,10 @@ function projectTargets({ hostIds, skillNames, base, scope, antigravitySurface, 
   let codexSelected = false;
 
   for (const hostId of hostIds) {
-    if (hostId === 'claude-code') {
+    if (hostId === 'vscode') {
+      const skillRoot = scope === 'project' ? path.join(base, '.github/skills') : path.join(base, '.copilot/skills');
+      for (const skillName of skillNames) addFlatSkill(flatSkills, skillRoot, skillName, hostId);
+    } else if (hostId === 'claude-code') {
       addBundle(
         bundles,
         path.join(base, '.claude/skills/overdrive'),
@@ -813,9 +846,13 @@ async function promptInstall(options) {
     const homeDir = process.env.HOME || process.env.USERPROFILE || os.homedir();
     const cwd = process.cwd();
     const codexHome = process.env.CODEX_HOME ? path.resolve(process.env.CODEX_HOME) : path.join(homeDir, '.codex');
+    const ideLabel = isVSCodeTerminal(process.env) ? 'Visual Studio Code' : null;
+    const ideHosts = options.hostIds.length ? [] : detectIDEHosts();
     let scope = options.scope;
     while (!scope) {
-      const answer = (await question('Install scope: 1) This project [default]  2) Global user install: ')).trim().toLowerCase();
+      const projectLabel = ideLabel ? `This project (${ideLabel} workspace)` : 'This project';
+      const globalLabel = ideLabel ? `Global user install (${ideLabel})` : 'Global user install';
+      const answer = (await question(`Install scope: 1) ${projectLabel} [default]  2) ${globalLabel}: `)).trim().toLowerCase();
       if (!answer || ['1', 'project', 'p'].includes(answer)) scope = 'project';
       else if (['2', 'global', 'g'].includes(answer)) scope = 'global';
       else process.stdout.write('Choose 1 for this project or 2 for global.\n');
@@ -823,14 +860,25 @@ async function promptInstall(options) {
 
     let hostIds = options.hostIds;
     if (!hostIds.length) {
-      const detected = await detectHosts(cwd);
-      if (detected.length) {
-        process.stdout.write(`Detected project host hints: ${detected.map(({ id }) => id).join(', ')}\n`);
-        for (const { id, reason } of detected) process.stdout.write(`  ${id} from ${reason}\n`);
+      const detectedProjectHosts = await detectHosts(cwd);
+      if (ideLabel) process.stdout.write(`Detected IDE: ${ideLabel}\n`);
+      if (ideHosts.length) process.stdout.write(`Detected IDE host(s): ${ideHosts.join(', ')}\n`);
+      if (detectedProjectHosts.length) {
+        process.stdout.write(`Detected project host hints: ${detectedProjectHosts.map(({ id }) => id).join(', ')}\n`);
+        for (const { id, reason } of detectedProjectHosts) process.stdout.write(`  ${id} from ${reason}\n`);
       }
-      hostIds = await askSelection(question, 'Choose host(s):', HOSTS, {
-        defaultIds: detected.map(({ id }) => id),
-      });
+      const detectedIds = [...new Set([
+        ...ideHosts,
+        ...detectedProjectHosts.map(({ id }) => id),
+      ])];
+      if (detectedIds.length === 1) {
+        hostIds = detectedIds;
+        process.stdout.write(`Using detected host: ${detectedIds[0]}\n`);
+      } else {
+        hostIds = await askSelection(question, 'Choose host(s):', HOSTS, {
+          defaultIds: detectedIds,
+        });
+      }
     }
     const skillNames = options.skillNames.length
       ? options.skillNames
@@ -847,7 +895,10 @@ async function promptInstall(options) {
     }
 
     const plan = await prepareInstall({ scope, hostIds, skillNames, cwd, homeDir, codexHome, antigravitySurface });
-    process.stdout.write(`\nScope: ${scope} (${path.resolve(scope === 'project' ? cwd : homeDir)})\n`);
+    const scopeLabel = ideLabel
+      ? (scope === 'project' ? `${ideLabel} workspace` : `${ideLabel} user skills`)
+      : scope;
+    process.stdout.write(`\nScope: ${scope} (${scopeLabel}: ${path.resolve(scope === 'project' ? cwd : homeDir)})\n`);
     process.stdout.write(`Hosts: ${hostIds.join(', ')}\nSkills: ${skillNames.join(', ')}\nRouter: ${skillNames.includes(ROUTER_SKILL) ? 'selected' : 'not selected'}\n`);
     if (hostIds.includes('antigravity') && scope === 'global') process.stdout.write(`Antigravity surface: ${antigravitySurface}\n`);
     process.stdout.write('\nPreview:\n');
