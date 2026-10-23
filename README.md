@@ -100,7 +100,7 @@ Overdrive adapts to the current task, repository instructions, stack, and availa
 
 Pushes and pull requests run package checks, but do not publish to npm. To release an update, bump the `version` in `package.json`, merge the change, and publish a GitHub Release with a tag matching that version (for example, `v0.1.1`). The `npm-publish.yml` workflow reruns package checks and publishes only when the tag matches the package version.
 
-Before the first automated release, configure npm Trusted Publishing for `overdrive-skills`: select GitHub Actions, repository `hiroqt/agents.md`, and workflow file `.github/workflows/npm-publish.yml`, with direct publishing allowed. This uses GitHub OIDC instead of an npm token. Each npm version can be published only once, so release a new version for every package update. See [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/).
+Before the first automated release, configure npm Trusted Publishing for `overdrive-skills`: select GitHub Actions, repository `hiroqt/overdrive`, and workflow file `.github/workflows/npm-publish.yml`, with direct publishing allowed. This uses GitHub OIDC instead of an npm token. Each npm version can be published only once, so release a new version for every package update. See [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/).
 
 ### Continuity
 

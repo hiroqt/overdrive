@@ -15,7 +15,7 @@ test('package metadata targets the public unscoped npm package', async () => {
 
   assert.equal(metadata.name, 'overdrive-skills');
   assert.equal(metadata.publishConfig.access, 'public');
-  assert.equal(metadata.repository.url, 'git+https://github.com/hiroqt/agents.md.git');
+  assert.equal(metadata.repository.url, 'git+https://github.com/hiroqt/overdrive.git');
 });
 
 test('CLI help shows the unscoped npm install command', () => {
